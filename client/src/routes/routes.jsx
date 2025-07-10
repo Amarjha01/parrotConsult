@@ -25,6 +25,7 @@ import ConsultantSignupForm from '../forms/ConsultantSignupForm';
 import AuthModal from '../forms/AuthModal';
 import ChatBot from '../pages/chatbot';
 import ConsultantQuiz from '../forms/recomendform';
+import ConsultantSignup from '../forms/ConsultantSignup';
 
 const routes = createBrowserRouter([
   {
@@ -75,6 +76,7 @@ const routes = createBrowserRouter([
       { path: '/meeting/:bookingId', element: <MeetingRoom /> },
       { path: '/consultantApplicationForm', element: <ConsultantApplicationForm /> },
       { path: '/ConsultantSignupForm', element: <ConsultantSignupForm /> },
+      { path: '/ConsultantSignup', element: <ConsultantSignup /> },
 
 ]);
 
