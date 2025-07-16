@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ children, allowedRole }) => {
+const ProtectedRoutes = ({ children, allowedRole }) => {
   const admin = JSON.parse(localStorage.getItem("admin"));
   const consultant = JSON.parse(localStorage.getItem("consultant"));
   const user = JSON.parse(localStorage.getItem("user"));
@@ -27,4 +27,4 @@ const PrivateRoute = ({ children, allowedRole }) => {
   }
 };
 
-export default PrivateRoute;
+export default ProtectedRoutes;

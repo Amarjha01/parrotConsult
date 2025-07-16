@@ -61,3 +61,17 @@ background:rgba(244, 208, 66, 0.2);
   border-radius: 50%;
 background:rgba(0, 183, 219, 0.2);
 }
+
+.custom-toast {
+  border: 1px solid;
+  border-radius: 0.5rem;
+  padding: 12px;
+}
+
+.custome-toast-info-alert {
+  border-color: #3b82f6; /* Blue-500 */
+}
+
+.customeZindex{
+  z-index: -10;
+}

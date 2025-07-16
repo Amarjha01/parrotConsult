@@ -9,8 +9,6 @@ import {
   TrendingUp,
   Users
 } from 'lucide-react';
-import Navbar from '../components/global/navbar';
-import Footer from '../components/global/footer';
 import { Link } from 'react-router-dom';
 
 const PopularCategoriesPage = () => {

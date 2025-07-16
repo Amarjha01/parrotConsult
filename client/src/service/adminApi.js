@@ -3,7 +3,7 @@ import axios from "axios";
 // Create an axios instance with baseURL
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // ✅ This sends cookies with every request
+  withCredentials: true, 
 });
 
 export const registerAsAdmin = (formdata) => {
@@ -13,6 +13,7 @@ export const registerAsAdmin = (formdata) => {
     },
   });
 };
+
 export const loginAsAdmin = (formdata) => {
   return API.post("/admin/loginadminsecuredonly", formdata, {
     headers: {

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { X, Eye, EyeOff, Mail, Lock, User, Phone, Loader2 } from 'lucide-react';
 import axios from 'axios';
-import { loginAsUser } from '../service/userApi';
+import { loginUser } from '../service/userApi';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -47,7 +47,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             password: data.password
           };
 
-      const response = await loginAsUser(data);
+      const response = await loginUser(data);
       
       console.log('Auth success:', response.data);
        const userData = response.data?.status;

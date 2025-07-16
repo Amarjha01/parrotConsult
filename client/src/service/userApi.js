@@ -9,19 +9,28 @@ const API = axios.create({
 
 
 
-export const registerAsUser = (formdata) => {
-    return API.post("/user/registeruser", formdata, {
+export const registerUser = async (formdata) => {
+    const response = await API.post("/user/registeruser", formdata, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+    console.log('response 123 ' , response);
+    
+    return response;
   };
-  export const loginAsUser = (formdata) => {
-    return API.post("/user/loginuser", formdata, {
+
+  export const loginUser = async (formdata) => {
+    console.log(formdata);
+    
+    const response = await API.post("/user/loginuser", formdata, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+    console.log('response 1' , response);
+    
+    return response
   };
   
   export const logoutUSer = async () => {

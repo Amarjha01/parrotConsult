@@ -8,39 +8,35 @@ import AdminLoginForm from '../forms/adminRegistrationLogin';
 import UserDashboard from '../pages/ClientDashboard';
 
 
-import Home from '../pages/Home';
-import HowItWorksPage from '../pages/HowitWorks';
-import PopularCategoriesPage from '../pages/Categories';
-import AboutUsPage from '../pages/AboutUs';
-import ConsultantForm from '../components/global/ConsultantForm';
+import Home from '../pages/Home'; 
 import ConsultantDetailView from '../components/ConsultantProfile/consultantDetailView';
 import ConsultantProfile from '../pages/ConsultantProfile';
 import ViewAllConsultants from '../components/ConsultantProfile/ViewAllConsultant';
 import AdminDashboard from '../pages/AdminDashboard';
 import ConsultantDashboard from '../pages/ConsultantDashboard';
-import LoginSignupModal from '../forms/loginSignup';
 import MeetingRoom from '../videoroom/meeting';
-import ConsultantApplicationForm from '../forms/ConsultantApplicationform';
 import ConsultantSignupForm from '../forms/ConsultantSignupForm';
 import AuthModal from '../forms/AuthModal';
-import ChatBot from '../pages/chatbot';
+import ChatBot from '../pages/Chatbot';
 import ConsultantQuiz from '../forms/recomendform';
-import ConsultantSignup from '../forms/ConsultantSignup';
+import NewSignIn from '../forms/NewSignIn';
+import NewSignUp from '../forms/NewSignUp';
+import Profile from '../components/userDashboard/Profile';
+import Sessions from '../components/userDashboard/Sessions';
+import Dashboard from '../components/userDashboard/Dashboard';
+import ConsultantForm from '../components/userDashboard/ConsultantForm';
+import Modern404Page from '../components/global/Modern404Page';
 
 const routes = createBrowserRouter([
   {
     path: '/',
-    element: <App />, // This contains <Navbar />, <Outlet />, and <Footer />
+    element: <App />, // This contains <Asside />, <Outlet />, and <Footer />
     children: [
       { path: '', element: <Home /> },
+
       { path: 'adminsecuredlogin', element: <AdminLoginForm /> },
-      { path: 'howitworks', element: <HowItWorksPage /> },
-      { path: 'categories', element: <PopularCategoriesPage /> },
-      { path: 'aboutus', element: <AboutUsPage /> },
-      { path: 'consultantform', element: <ConsultantForm /> },
       { path: 'consultantprofile/:id/:name', element: <ConsultantDetailView /> },
       { path: 'consultant/profile', element: <ConsultantProfile /> },
-      { path: 'application-form', element: <ConsultantApplicationForm /> },
       { path: 'ViewAllConsultants', element: <ViewAllConsultants /> },
       { path: 'AuthModal', element: <AuthModal /> },
       { path: 'chatbot', element: <ChatBot /> },
@@ -62,7 +58,14 @@ const routes = createBrowserRouter([
           <ProtectedRoute allowedRole="user">
             <UserDashboard />
           </ProtectedRoute>
-        )
+        ),
+        children:[
+           {path:'/userdashboard/dashboard' , element: <Dashboard />},
+          {path:'/userdashboard/profile' , element: <Profile />},
+          {path:'/userdashboard/sessions' , element: <Sessions />},
+          {path:'/userdashboard/consultantform' , element: <ConsultantForm />},
+         
+        ]
       },
        {
         path: 'ConsultantDashboard',
@@ -72,11 +75,11 @@ const routes = createBrowserRouter([
           </ProtectedRoute>
         )
       },
-      { path: 'login&signup', element: <LoginSignupModal /> },
       { path: '/meeting/:bookingId', element: <MeetingRoom /> },
-      { path: '/consultantApplicationForm', element: <ConsultantApplicationForm /> },
       { path: '/ConsultantSignupForm', element: <ConsultantSignupForm /> },
-      { path: '/ConsultantSignup', element: <ConsultantSignup /> },
+      { path: '/newsignin', element: <NewSignIn /> },
+      { path: '/newsignup', element: <NewSignUp /> },
+      { path: '*', element: <Modern404Page /> },
 
 ]);
 

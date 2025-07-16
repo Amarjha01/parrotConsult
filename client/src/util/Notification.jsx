@@ -99,4 +99,21 @@ export const showNetworkErrorToast = (message) => {
     }
   );
 };
+export const showInfoToast = (message) => {
+  toast.info(
+    <div className="flex items-center">
+      <FiInfo className="text-blue-500 text-xl mr-3 icon6" />
+      <div>
+        <p className="font-semibold text-blue-600">Information</p>
+        <p className="text-sm text-blue-800">{message}</p>
+      </div>
+    </div>,
+    {
+      className: 'custom-toast custome-toast-info-alert',
+      progressClassName: '',
+      closeButton: true,
+      icon: false,
+    }
+  );
+};
 

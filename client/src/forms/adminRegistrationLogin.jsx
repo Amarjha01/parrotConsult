@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { loginAsAdmin, registerAsAdmin } from "../service/adminApi.js";
-import Navbar from "../components/global/navbar.jsx";
-import Footer from "../components/global/footer.jsx";
 import { useNavigate } from "react-router-dom";
 export default function AdminAuthForm() {
   const navigate = useNavigate();
@@ -104,7 +102,6 @@ export default function AdminAuthForm() {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Card */}
@@ -336,7 +333,6 @@ export default function AdminAuthForm() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

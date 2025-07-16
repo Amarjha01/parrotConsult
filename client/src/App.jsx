@@ -1,17 +1,167 @@
-import { Outlet } from 'react-router-dom';
-import Navbar from './components/global/navbar';
-import Footer from './components/global/footer';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  Search,
+  PlusSquare,
+  Heart,
+  User,
+  LogOut,
+  LayoutDashboard,
+  Settings,
+} from 'lucide-react';
 import ScrollToTop from './util/ScrollToTop';
+import './components/global/style.css';
+
+const navItems = [
+  { name: 'Home', icon: <Home size={20} />, path: '/', gradient: 'from-blue-500 to-purple-600' },
+  { name: 'Search', icon: <Search size={20} />, path: '/chatbot', gradient: 'from-green-500 to-teal-600' },
+  { name: 'Reels', icon: <PlusSquare size={20} />, path: '/reels', gradient: 'from-pink-500 to-rose-600' },
+  { name: 'Notifications', icon: <Heart size={20} />, path: '/notifications', gradient: 'from-red-500 to-pink-600' },
+  { name: 'Profile', icon: <User size={20} />, path: '/profile', gradient: 'from-indigo-500 to-purple-600' },
+];
 
 const App = () => {
+  const [userRole, setUserRole] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(true);
+  const [active, setActive] = useState('Home');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const updateRole = () => {
+      const consultant = localStorage.getItem("consultant");
+      const user = localStorage.getItem("user");
+      if (consultant) setUserRole("consultant");
+      else if (user) setUserRole("user");
+      else setUserRole(null);
+    };
+    updateRole();
+    window.addEventListener("storage", updateRole);
+    return () => window.removeEventListener("storage", updateRole);
+  }, []);
+
+  const handleDashboard = () => {
+    if (userRole === 'consultant') navigate('/ConsultantDashboard');
+    else if (userRole === 'user') navigate('/userdashboard/dashboard');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('consultant');
+    localStorage.removeItem('admin');
+    setUserRole(null);
+    navigate('/');
+  };
+
+  const NavButton = ({ name, icon, path, gradient }) => (
+    <button
+      onClick={() => {
+        setActive(name);
+        navigate(path);
+      }}
+      className={`relative flex items-center w-full p-3 my-1 rounded-xl font-medium transition-all duration-300 transform hover:scale-102 active:scale-98 group ${
+        active === name
+          ? `bg-gradient-to-r ${gradient} text-white`
+          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+      }`}
+    >
+      <div className="relative flex items-center justify-center w-6 h-6 min-w-[24px]">
+        {icon}
+        {name === 'Notifications' && hasNotifications && (
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+        )}
+      </div>
+      <span className={`ml-3 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 hidden'}`}>{name}</span>
+      {active === name && <div className="absolute right-0 top-0 h-full w-1 bg-white rounded-l-full" />}
+    </button>
+  );
+
+  const ActionButton = ({ icon, onClick, color, bgColor, label }) => (
+    <button
+      onClick={onClick}
+      className={`relative flex items-center w-full p-3 my-1 rounded-xl font-medium transition-all duration-300 transform hover:scale-102 active:scale-98 ${color || 'text-gray-600 hover:text-gray-900'} ${bgColor || 'hover:bg-gray-100'}`}
+    >
+      <div className="flex items-center justify-center w-6 h-6 min-w-[24px]">
+        {icon}
+      </div>
+      <span className={`ml-3 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 hidden'}`}>{label}</span>
+    </button>
+  );
+
   return (
     <>
-    <ScrollToTop />
-      <Navbar />
-      <main className="min-h-screen">
-        <Outlet />
-      </main>
-      <Footer />
+      <ScrollToTop />
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <aside
+          className={`hidden md:flex fixed min-h-screen flex-col border-r border-gray-200 bg-[#ffffff]/40 backdrop-blur-lg shadow-xl z-50 transition-all duration-300 ease-in-out ${isExpanded ? 'w-64' : 'w-20'}`}
+          onMouseEnter={() => setIsExpanded(true)}
+          onMouseLeave={() => setIsExpanded(false)}
+        >
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-evenly">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg hover:rotate-180 transition-transform duration-500">P</div>
+              {/* <h2 className={`text-lg font-semibold text-gray-800 transition-all duration-300 ${isExpanded ? 'block' : 'hidden'}`}>Parrot Consult</h2> */}
+            </div>
+          </div>
+          <nav className="flex-1 p-4 space-y-2 overflow-hidden">
+            {navItems.map(item => <NavButton key={item.name} {...item} />)}
+          </nav>
+          <div className="p-4 border-t border-gray-200 space-y-2">
+            {!userRole ? (
+              <ActionButton icon={<User size={20} />} onClick={() => navigate('/newsignin')} color="text-emerald-600 hover:text-emerald-800" bgColor="hover:bg-emerald-50" label="Login" />
+            ) : (
+              <>
+                <ActionButton icon={<LayoutDashboard size={20} />} onClick={handleDashboard} color="text-emerald-600 hover:text-emerald-800" bgColor="hover:bg-emerald-50" label="Dashboard" />
+                <ActionButton icon={<Settings size={20} />} onClick={() => navigate('/settings')} label="Settings" />
+                <ActionButton icon={<LogOut size={20} />} onClick={handleLogout} color="text-red-500 hover:text-red-700" bgColor="hover:bg-red-50" label="Logout" />
+              </>
+            )}
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 ml-0 md:ml-20 overflow-x-hidden">
+          <Outlet />
+        </main>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 md:hidden bg-white/90 backdrop-blur-lg border-t border-gray-200 shadow-lg z-50">
+        <div className="flex justify-around items-center py-2 px-4">
+          {navItems.slice(0, 4).map(item => (
+            <button
+              key={item.name}
+              onClick={() => {
+                setActive(item.name);
+                navigate(item.path);
+              }}
+              className={`flex flex-col items-center justify-center gap-1 p-2 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+                active === item.name ? 'text-purple-600 bg-purple-50' : 'text-gray-400 hover:text-gray-700'
+              }`}
+            >
+              <div className="relative">
+                {item.icon}
+                {item.name === 'Notifications' && hasNotifications && (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                )}
+              </div>
+              <span className="text-xs font-medium">{item.name}</span>
+            </button>
+          ))}
+          <button
+            onClick={() => navigate(userRole ? '/profile' : '/newsignin')}
+            className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl text-gray-400 hover:text-gray-700 transition-all duration-200 transform hover:scale-105 active:scale-95"
+          >
+            <User size={20} />
+            <span className="text-xs font-medium">{userRole ? 'Profile' : 'Login'}</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile spacing */}
+      <div className="md:hidden h-20" />
     </>
   );
 };

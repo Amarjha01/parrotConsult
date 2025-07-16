@@ -16,8 +16,6 @@ import {
   ArrowRight,
   Sparkles
 } from 'lucide-react';
-import Footer from '../components/global/footer';
-import Navbar from '../components/global/navbar';
 import {  Zap, DollarSign } from 'lucide-react';
 const AboutUsPage = () => {
   const [isVisible, setIsVisible] = useState(false);

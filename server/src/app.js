@@ -41,7 +41,8 @@ import bookingRouter from "./routes/Booking.Routes.js";
 import webhookrouter from "./routes/Webhook.Routes.js";
 import openaiRoute from "./routes/OpenAi.routes.js";
 import assistantRoute from "./routes/assistant.Routes.js";
-
+// import authOtpRouter from "./routes/AuthOtp.routes.js";
+import otpRoutes from "./routes/AuthOtp.routes.js";
 
 
 // using routes
@@ -54,6 +55,7 @@ app.use("/api/v1/booking", bookingRouter);
 app.use("/api/v1/webhook", webhookrouter);
 app.use("/api/v1/openai", openaiRoute);
 app.use("/api/v1/assistant", assistantRoute);
-console.log("✅ Assistant route mounted at /api/v1/assistant");
+app.use("/api/v1/auth", otpRoutes);
+// console.log("✅ Assistant route mounted at /api/v1/assistant");
 
 export default app;

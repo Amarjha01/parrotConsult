@@ -1,83 +1,77 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { Booking } from "../models/BookingModel.js";
 import { User } from "../models/UserModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/Apiresponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import genrateAccessTokenAndRefreshToken from "../utils/genrateAccessTokenAndRefreshToken.js";
 
-const genrateAccessTokenAndRefreshToken = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    const accessToken = user.genrateAccessToken();
-    const refreshToken = user.genrateRefreshToken();
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(
-      500,
-      "Failed to generate access token and refresh token"
-    );
-  }
-};
+
 
 // register user
-export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, phoneNumber } = req.body;
-  if (
-    [name, email, password, phoneNumber].some((field) => field?.trim() === "")
-  ) {
-    throw new ApiError(400, "All Fields are required");
-  }
 
-  const existingUser = await User.findOne({
-    $or: [{ email }, { phoneNumber }],
-  });
+export const registerUser = async (req, res) => {
+  console.log('api hit');
+  
+  try {
+    const { fullName, phone, password } = req.body;
+    console.log(fullName , phone , password);
+    
+// Check if user already exists
+const existingUser = await User.findOne({ phone });
+if (existingUser) {
+  return res.status(400).json({ message: 'User with this phone number already exists' });
+}
 
-  if (existingUser) {
-    throw new ApiError(
-      400,
-      "User With E-mail or Phonenumber already exists already exists"
-    );
-  }
+// Hash password
+const hashedPassword = await bcrypt.hash(password, 12);
 
-  const user = await User.create({
-    name: name.toLowerCase(),
-    email,
-    password,
-    phoneNumber,
-  });
-
-  const registeredUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
-
-  if (!registeredUser) {
-    throw new ApiError(500, "Failed to register user");
-  }
-  return res
-    .status(201)
-    .json(new ApiResponse(201, "User Registered Successfully", registeredUser));
+// Create and save user
+const newUser = new User({
+  fullName,
+  phone,
+  password: hashedPassword
 });
+
+await newUser.save();
+
+return res.status(201).json({
+  message: 'User registered successfully',
+  user: {
+    id: newUser._id,
+    fullName: newUser.fullName,
+    phone: newUser.phone
+  }
+});
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
 
 // login user
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password, phoneNumber } = req.body;
-  if ((!email && !phoneNumber) || !password) {
-    throw new ApiError(400, "email/Username and Password are required");
+  const { phoneNumber , password , OTPverified } = req.body;
+  console.log(phoneNumber);
+  
+  if (!phoneNumber || !password || OTPverified) {
+    throw new ApiError(400, "PhoneNo, Password and OTP verification are required");
   }
+const alluser = await User.find()
+console.log('all user' , alluser);
 
-  const user = await User.findOne({
-    $or: [{ email }, { phoneNumber }],
-  });
+  const user = await User.findOne({ phone : phoneNumber });
 
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
-  // checking if password is valid or not
-  if (!user.comparePassword(password)) {
-    throw new ApiError(401, "Invalid Password");
-  }
+const comparePassword = await bcrypt.compare(password , user.password)
+if(!comparePassword){
+  return res.status(401).json({message:'Please enter valid password'})
+}
+
 
   const { accessToken, refreshToken } = await genrateAccessTokenAndRefreshToken(
     user._id
@@ -96,7 +90,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(200, "User logged in successfully", loggedinUser));
+    .json(new ApiResponse(200, loggedinUser , 'success' , "User logged in successfully", ));
 
     // .json(
     //   new ApiResponse(
