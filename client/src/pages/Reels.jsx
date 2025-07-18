@@ -372,7 +372,7 @@ const Reels = () => {
               <p>Loading more reels...</p>
             </div>
           ) : (
-            <p>Scroll for more</p>
+            <p>Scroll for more.</p>
           )}
         </div>
       )}
