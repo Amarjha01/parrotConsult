@@ -15,11 +15,11 @@ app.use(cookieparser());
 app.use(
   cors({
     credentials: true,
-    origin: process.env.CORS_ORIGIN,
+    origin: [process.env.CORS_ORIGIN || 'http://localhost:5173' , 'https://parrotconsult.com'],
   })
 );
 
-console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN); // Debug this
+// console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN);
 
 // app.use(express.static('public'));
 

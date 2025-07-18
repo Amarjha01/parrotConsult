@@ -26,13 +26,17 @@ import Sessions from '../components/userDashboard/Sessions';
 import Dashboard from '../components/userDashboard/Dashboard';
 import ConsultantForm from '../components/userDashboard/ConsultantForm';
 import Modern404Page from '../components/global/Modern404Page';
+import Reels from '../pages/Reels';
 
+ const storedUser = localStorage.getItem("user");
+  const userData = JSON.parse(storedUser)
 const routes = createBrowserRouter([
   {
     path: '/',
     element: <App />, // This contains <Asside />, <Outlet />, and <Footer />
     children: [
       { path: '', element: <Home /> },
+      { path: '/reels', element: <Reels /> },
 
       { path: 'adminsecuredlogin', element: <AdminLoginForm /> },
       { path: 'consultantprofile/:id/:name', element: <ConsultantDetailView /> },
@@ -61,7 +65,9 @@ const routes = createBrowserRouter([
         ),
         children:[
            {path:'/userdashboard/dashboard' , element: <Dashboard />},
-          {path:'/userdashboard/profile' , element: <Profile />},
+          {path:'/userdashboard/profile' , element: <Profile userData={userData} />},
+          
+          
           {path:'/userdashboard/sessions' , element: <Sessions />},
           {path:'/userdashboard/consultantform' , element: <ConsultantForm />},
          

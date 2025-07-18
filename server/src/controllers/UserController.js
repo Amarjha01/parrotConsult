@@ -12,8 +12,6 @@ import genrateAccessTokenAndRefreshToken from "../utils/genrateAccessTokenAndRef
 // register user
 
 export const registerUser = async (req, res) => {
-  console.log('api hit');
-  
   try {
     const { fullName, phone, password } = req.body;
     console.log(fullName , phone , password);
@@ -137,3 +135,84 @@ export const seeBooking = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, booking));
 });
+
+
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const token = req.cookies?.accessToken;
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token' });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid token' });
+  }
+
+  const { _id } = decoded;
+  const updateData = { ...req.body };
+
+  // Handle profile photo if uploaded
+  if (req.file) {
+    const imageUrl = `/uploads/${req.file.filename}`; // Adjust based on your file serving strategy
+    updateData.profileImage = imageUrl;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(_id, updateData, { new: true });
+
+  if (!updatedUser) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  res.status(200).json({
+    message: 'Profile updated successfully',
+    user: updatedUser,
+  });
+});
+
+//---------------------------------Upgrade Profile------------------------------------------------//
+
+export const aadharVerify = asyncHandler(async (req, res) => {
+  console.log('api hit');
+  
+  // Get token from cookies
+  const token = req.cookies?.accessToken;
+console.log('token', token);
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+
+  // Decode token
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (err) {
+    console.log('Unauthorized: Invalid token' , err);
+    
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+
+  }
+
+  const { _id } = decoded;
+  const fieldsToModify = req.body;
+
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    { $set: fieldsToModify },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json({
+    message: "Aadhar details updated successfully",
+    user: updatedUser,
+  });
+});
+

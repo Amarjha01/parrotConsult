@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FileDown, IndianRupee, Calendar, GraduationCap, School, BriefcaseBusiness, Tag } from 'lucide-react';
 import {FaUser} from 'react-icons/fa'
+import {getAadharVerify} from '../../service/userApi.js'
 const ConsultantForm = () => {
   const [aadhaarVerified, setAadhaarVerified] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState('');
@@ -12,14 +13,31 @@ const ConsultantForm = () => {
     console.log(data);
     alert("Application submitted successfully");
   };
+const handleVerification = async () => {
+  if (aadhaarNumber.length === 12 && panNumber.length === 10) {
+    const payload = {
+      aadharVerified: true,
+      aadharNumber: aadhaarNumber,
+      panNumber: panNumber,
+    };
 
-  const handleVerification = () => {
-    if (aadhaarNumber.length === 12 && panNumber.length === 10) {
+    try {
+      const response = await getAadharVerify(payload);
+      console.log("Verification successful:", response);
       setAadhaarVerified(true);
-    } else {
-      alert('Please enter valid Aadhaar and PAN numbers.');
+      // Optional: update localStorage
+      // if (response.data?.user) {
+      //   localStorage.setItem("user", JSON.stringify(response.data.user));
+      // }
+
+    } catch (error) {
+      console.error("Verification failed:", error);
     }
-  };
+  } else {
+    alert("Please enter valid Aadhaar and PAN numbers.");
+  }
+};
+
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg p-8 shadow-md mt-6">

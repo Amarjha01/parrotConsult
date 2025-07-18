@@ -15,38 +15,50 @@ import {
   Check,
   AlertCircle
 } from "lucide-react";
+import { profileUpdate } from "../../service/userApi";
 
-const Profile = ({ userData }) => {
-  const [formData, setFormData] = useState({
-    email: userData?.email || "",
-    fullName: userData?.fullName || "",
-    phone: userData?.phone || "",
-    location: userData?.location || "",
-    bio: userData?.bio || ""
-  });
+const Profile = () => {
+  let userData = null;
+
+try {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    userData = JSON.parse(storedUser);
+  }
+} catch (error) {
+  console.error('Failed to parse user from localStorage:', error);
+}
+
+const [formData, setFormData] = useState({
+  email: String(userData?.email || ""),
+  fullName: String(userData?.fullName || ""),
+  phone: String(userData?.phone || ""),
+  location: String(userData?.location || ""),
+  bio: String(userData?.bio || "")
+});
+
   
   const [profileImage, setProfileImage] = useState(userData?.profileImage || "");
   const [editing, setEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+const [imageFile, setImageFile] = useState(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        alert("Image size should be less than 5MB");
-        return;
-      }
-      
-      setIsUploading(true);
-      // Simulate upload delay
-      setTimeout(() => {
-        const url = URL.createObjectURL(file);
-        setProfileImage(url);
-        setIsUploading(false);
-      }, 1000);
-    }
-  };
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Image size should be less than 5MB");
+    return;
+  }
+
+  setIsUploading(true);
+  setImageFile(file); // store actual file
+  const url = URL.createObjectURL(file);
+  setProfileImage(url);
+  setIsUploading(false);
+};
+
 
   const validateForm = () => {
     const errors = {};
@@ -79,15 +91,49 @@ const Profile = ({ userData }) => {
     }
   };
 
-  const handleSave = () => {
-    if (!validateForm()) return;
+const handleSave = async () => {
+  console.log("handleSave invoked");
+
+  // Step 1: Validate input
+  if (!validateForm()) return;
+
+  try {
+    // Step 2: Prepare form data
+    const formDataToSend = new FormData();
+    const { fullName, email, phone, location, bio } = formData;
+
+    formDataToSend.append("fullName", fullName.trim());
+    formDataToSend.append("email", email.trim());
+    formDataToSend.append("phone", phone.trim());
+    formDataToSend.append("location", location.trim());
+    formDataToSend.append("bio", bio.trim());
+
+    if (imageFile) {
+      formDataToSend.append("profileImage", imageFile);
+    }
+// console.log(formDataToSend);
+
+    // Step 3: Make API request
+    const response = await profileUpdate(formDataToSend);
+    // console.log("Profile update response:", response);
+
+    // Step 4: Update localStorage
+    const updatedUser = response?.user;
+    // console.log('log' , updatedUser);
     
-    // Simulate API call
-    setTimeout(() => {
+    if (updatedUser) {
+      localStorage.setItem("user", JSON.stringify(updatedUser));
       setEditing(false);
-      // Show success message
-    }, 500);
-  };
+    } else {
+      console.error("No user data returned from update API.");
+    }
+
+  } catch (err) {
+    console.error("Error updating profile:", err);
+  }
+};
+
+
 
   const handleCancel = () => {
     // Reset form data

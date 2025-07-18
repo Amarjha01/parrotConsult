@@ -43,8 +43,6 @@ export const registerUser = async (formdata) => {
   };
 
 
-
-
   export const seeBooking = async () => {
     try {
       const response = await API.get("/user/seebookings");
@@ -53,3 +51,32 @@ export const registerUser = async (formdata) => {
       throw error.response?.data || error;
     }
   }
+
+ export const profileUpdate = async (modifiedData) => {
+  // console.log('modifiedData' , modifiedData);
+  
+  const response = await API.post('/user/updateProfile', modifiedData, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  });
+    console.log('response' , response);
+
+  return response.data;
+  
+};
+
+export const getAadharVerify = async(DataToVerify)=>{
+  try {
+    const response = await API.post('/user/aadharVerify' , DataToVerify , {
+      headers:{
+        'Content-Type':'application/json'
+      }
+    })
+    console.log('aadasj' ,response);
+    return response;
+    
+  } catch (error) {
+    
+  }
+}

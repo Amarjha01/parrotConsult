@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, logoutUser, registerUser, seeBooking } from "../controllers/UserController.js";
+import { aadharVerify, loginUser, logoutUser, registerUser, seeBooking, updateProfile } from "../controllers/UserController.js";
 import {verifyUser} from "../middlewares/UserAuthMiddleware.js";
 import { postReview } from "../controllers/ReviewController.js";
 
@@ -12,7 +12,8 @@ userRouter.route("/logoutuser").post(verifyUser , logoutUser)
 userRouter.route("/seebookings").get(verifyUser , seeBooking)
 userRouter.route("/postreview").post(verifyUser , postReview)
 
-
+userRouter.post('/updateProfile' , updateProfile)
+userRouter.post('/aadharVerify' , aadharVerify)
 
 
 export default userRouter;

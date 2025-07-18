@@ -21,7 +21,7 @@ const accessToken = jwt.sign(
     phone: user.phone,
   },
   process.env.ACCESS_TOKEN_SECRET,
-  { expiresIn: '15m' }
+  { expiresIn: '7d' }
 );
 
 const refreshToken = jwt.sign(

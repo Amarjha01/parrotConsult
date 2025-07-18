@@ -34,22 +34,22 @@ jobs:
 
       - name: Deploy frontend to VPS
         run: |
-           scp -o StrictHostKeyChecking=no -r client/dist/* ${{ secrets.HOSTINGER_USERNAME }}@${{ secrets.HOSTINGER_HOST }}:/var/www/parrotConsult/client/dist
+           scp -o StrictHostKeyChecking=no -r client/dist/* ${{ secrets.HOSTINGER_USERNAME }}@${{ secrets.HOSTINGER_HOST }}:/var/www/parrotConsultTemp/client/dist
 
       - name: Deploy backend and fix permissions
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.HOSTINGER_USERNAME }}@${{ secrets.HOSTINGER_HOST }} << 'EOF'
-            cd /var/www/parrotConsult/server
+            cd /var/www/parrotConsultTemp/server
             git pull origin master
             npm install
 
             # Restart backend via PM2
-            pm2 restart parrotConsult || pm2 start index.js --name parrotConsult
+            pm2 restart parrotConsultTemp || pm2 start index.js --name parrotConsultTemp
             pm2 save
 
             # Fix ownership and permissions (automated)
-            sudo chown -R www-data:www-data /var/www/parrotConsult/server
-            sudo chmod -R 755 /var/www/parrotConsult/server
-            sudo chown -R www-data:www-data /var/www/parrotConsult/client/dist
-            sudo chmod -R 755 /var/www/parrotConsult/client/dist
+            sudo chown -R www-data:www-data /var/www/parrotConsultTemp/server
+            sudo chmod -R 755 /var/www/parrotConsultTemp/server
+            sudo chown -R www-data:www-data /var/www/parrotConsultTemp/client/dist
+            sudo chmod -R 755 /var/www/parrotConsultTemp/client/dist
           EOF

@@ -87,8 +87,12 @@ const userSchema = new mongoose.Schema({
   profileImage: { type: String, default: '' },
 
   role: { type: String, enum: ['user', 'consultant', 'admin'], default: 'user' },
-
-  consultantRequest: {
+  aadharVerified : {type:Boolean , default:false},
+  aadharNumber:Number,
+  panNumber:String,
+  bio:{type : String},
+  location:String,
+  consultantRequest: { 
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: null },
     documents: {
       aadhar: String,

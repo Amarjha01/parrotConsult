@@ -1,8 +1,3 @@
-import express from "express";
-
-const router = express.Router();
-
-
 import {Router} from 'express';
 import { sendOtpSms, verifyOtpSms } from "../controllers/OtpController.js";
 
