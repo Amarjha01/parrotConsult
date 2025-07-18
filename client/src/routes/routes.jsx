@@ -17,7 +17,7 @@ import ConsultantDashboard from '../pages/ConsultantDashboard';
 import MeetingRoom from '../videoroom/meeting';
 import ConsultantSignupForm from '../forms/ConsultantSignupForm';
 import AuthModal from '../forms/AuthModal';
-import ChatBot from '../pages/ChatBot.jsx';
+import ChatBot from '../pages/Temp.jsx';
 import ConsultantQuiz from '../forms/recomendform';
 import NewSignIn from '../forms/NewSignIn';
 import NewSignUp from '../forms/NewSignUp';
