@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { getSmartConsultantSuggestion } from "../service/openaiApi";
+import { getSmartConsultantSuggestion } from "../apis/openaiApi";
 import ConsultantRecommendationCard from "./Recomendationcard";
 
 const QuizResult = ({ answers }) => {

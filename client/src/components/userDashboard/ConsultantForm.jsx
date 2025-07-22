@@ -1,34 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FileDown, IndianRupee, Calendar, GraduationCap, School, BriefcaseBusiness, Tag } from 'lucide-react';
 import {FaUser} from 'react-icons/fa'
-import {getAadharVerify} from '../../service/userApi.js'
+import {getAadharVerify, submitConsultantApplication} from '../../apis/userApi.js'
+import { showSuccessToast } from '../../util/Notification.jsx';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ConsultantForm = () => {
   const [aadhaarVerified, setAadhaarVerified] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState('');
   const [panNumber, setPanNumber] = useState('');
-  const { register, handleSubmit } = useForm();
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const { register, handleSubmit , reset  } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    alert("Application submitted successfully");
-  };
+useEffect(()=>{
+  const userData = localStorage.user
+     if (userData) {
+      setAadhaarVerified(JSON.parse(userData).aadharVerified)
+     }
+      if (userData) {
+        let user = JSON.parse(userData )
+        if (user.consultantRequest.status === 'pending') {
+          setFormSubmitted(true)
+        }
+      }
+
+},[])
+
+ 
 const handleVerification = async () => {
   if (aadhaarNumber.length === 12 && panNumber.length === 10) {
     const payload = {
-      aadharVerified: true,
+    aadharVerified: true,
+     kycVerify:{
       aadharNumber: aadhaarNumber,
       panNumber: panNumber,
+  },
     };
 
     try {
       const response = await getAadharVerify(payload);
       console.log("Verification successful:", response);
+      
+      
       setAadhaarVerified(true);
       // Optional: update localStorage
-      // if (response.data?.user) {
-      //   localStorage.setItem("user", JSON.stringify(response.data.user));
-      // }
+      if (response.data?.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
 
     } catch (error) {
       console.error("Verification failed:", error);
@@ -39,8 +59,53 @@ const handleVerification = async () => {
 };
 
 
+ const onSubmit = async (data) => {
+    console.log(data);
+    const payload = {
+      consultantRequest:{
+        documents:{
+        },
+        consultantProfile: {
+            sessionFee: Number(data.rate),
+            daysPerWeek: '5',
+            qualification: data.qualification,
+            fieldOfStudy: data.field,
+            university: data.university,
+            graduationYear: Number(data.graduationYear),
+            shortBio: '',
+            languages: [''],
+            yearsOfExperience: Number(data.experience),
+            category: data.category
+  },
+      }
+    }
+   const response = await submitConsultantApplication(payload)
+   console.log('response' , response);
+   
+   if (response.status === 200) {
+    showSuccessToast('consultant Application form submited successfully')
+    reset();
+    let user = JSON.parse(localStorage.getItem("user"));
+    user.consultantRequest.status = "pending";
+    localStorage.setItem("user", JSON.stringify(user));
+   }
+
+  };
+
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg p-8 shadow-md mt-6">
+      <ToastContainer
+  position="top-right"
+  autoClose={4000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  
+/>
       <h2 className="text-2xl font-semibold text-[#0f5f42] mb-6">Become Consultant - Application Form</h2>
 
       {!aadhaarVerified && (
@@ -74,14 +139,14 @@ const handleVerification = async () => {
         </div>
       )}
 
-      {aadhaarVerified && (
+      {aadhaarVerified && !formSubmitted && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
           <div>
             <h3 className="text-xl font-semibold border-b border-[#0f5f42] pb-2 mb-4 text-[#103a35]">Professional Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block mb-1 font-medium">Years of Experience *</label>
-                <input {...register("experience")} placeholder="Enter years of experience" className="border rounded w-full px-3 py-2" />
+                <input type='Number' {...register("experience")} placeholder="Enter years of experience" className="border rounded w-full px-3 py-2" />
               </div>
               <div>
                 <label className="block mb-1 font-medium">Consulting Category *</label>
@@ -98,7 +163,7 @@ const handleVerification = async () => {
               </div>
               <div>
                 <label className="block mb-1 font-medium">Hourly Rate *</label>
-                <input {...register("rate")} placeholder="Enter hourly rate" className="border rounded w-full px-3 py-2" />
+                <input type='Number' {...register("rate")} placeholder="Enter hourly rate" className="border rounded w-full px-3 py-2" />
               </div>
             </div>
           </div>
@@ -125,7 +190,7 @@ const handleVerification = async () => {
               </div>
               <div>
                 <label className="block mb-1 font-medium">Graduation / Completion Year *</label>
-                <input {...register("graduationYear")} placeholder="e.g., 2020" className="border rounded w-full px-3 py-2" />
+                <input type='Number' {...register("graduationYear")} placeholder="e.g., 2020" className="border rounded w-full px-3 py-2" />
               </div>
             </div>
           </div>
@@ -140,6 +205,14 @@ const handleVerification = async () => {
           </button>
         </form>
       )}
+
+      {formSubmitted && (
+  <div className="bg-green-50 border border-green-300 text-green-800 rounded-xl p-6 text-center shadow-md animate-fade-in mt-6">
+    <h3 className="text-2xl font-bold mb-2 text-[#0f5f42]">Application Submitted Successfully</h3>
+    <p className="text-lg">Thank you for applying! Our team is reviewing your profile. You’ll hear from us soon.</p>
+    <div className="mt-6 text-sm text-gray-500">Status: <span className="font-semibold text-[#0f5f42]">Pending Verification</span></div>
+  </div>
+)}
     </div>
   );
 };

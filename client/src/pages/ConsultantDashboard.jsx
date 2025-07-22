@@ -12,8 +12,8 @@ import {
   Loader2,
   Menu,
 } from "lucide-react";
-import { loginAsConsultant } from "../service/consultantApi";
-import { getBookingsByConsultantId } from "../service/bookingApi";
+import { loginAsConsultant } from "../apis/consultantApi";
+import { getBookingsByConsultantId } from "../apis/bookingApi";
 import BookingCard from "./consultantdash/bookingcard";
 import EditConsultantProfile from "../forms/editconsultant";
 

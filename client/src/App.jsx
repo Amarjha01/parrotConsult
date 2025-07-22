@@ -18,7 +18,6 @@ const navItems = [
   { name: 'Search', icon: <Search size={20} />, path: '/chatbot', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Reels', icon: <PlusSquare size={20} />, path: '/reels', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Notifications', icon: <Heart size={20} />, path: '/notifications', color: 'hover:bg-[#1a5a3e]' },
-  { name: 'Profile', icon: <User size={20} />, path: '/profile', color: 'hover:bg-[#1a5a3e]' },
 ];
 
 

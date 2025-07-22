@@ -2,13 +2,13 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, Lock, Smartphone, CheckCircle } from 'lucide-react';
-import { OtpSms, verifyOtpSMS } from '../service/otpApi';
+import { OtpSms, verifyOtpSMS } from '../apis/otpApi.js';
 import { showErrorToast, showInfoToast, showSuccessToast } from '../util/Notification.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import AIParrot from '../assets/AIParrot.jpg'
-import { loginUser } from '../service/userApi.js';
+import { loginUser } from '../apis/userApi.js';
 export default function NewSignIn() {
   const [step, setStep] = useState('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -81,7 +81,7 @@ try {
   // localStorage.setItem("accessToken", response.data.accessToken);
 
   // ⬇️ Redirect to dashboard
-  setTimeout(() => navigate("/userdashboard"), 1000);
+  setTimeout(() => navigate("/userdashboard/dashboard"), 1000);
 }
 
 } catch (error) {

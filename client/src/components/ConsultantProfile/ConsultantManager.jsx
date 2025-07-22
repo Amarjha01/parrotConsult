@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 
 // Import your API service
-import { globalconsultantdetails } from "../../service/globalApi";
+import { globalconsultantdetails } from "../../apis/globalApi";
 import MeetExperts from "./meetTheExperts";
 import ConsultantDetailView from "./consultantDetailView";
 

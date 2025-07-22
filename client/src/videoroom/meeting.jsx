@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
-import { getBookingById } from "../service/bookingApi";
+import { getBookingById } from "../apis/bookingApi";
 
 let hasPlayedRemote = false;
 const cleanupWebRTC = ({

@@ -15,7 +15,7 @@ import {
   Check,
   AlertCircle
 } from "lucide-react";
-import { profileUpdate } from "../../service/userApi";
+import { profileUpdate } from "../../apis/userApi";
 
 const Profile = () => {
   let userData = null;

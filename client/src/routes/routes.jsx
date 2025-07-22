@@ -17,7 +17,7 @@ import ConsultantDashboard from '../pages/ConsultantDashboard';
 import MeetingRoom from '../videoroom/meeting';
 import ConsultantSignupForm from '../forms/ConsultantSignupForm';
 import AuthModal from '../forms/AuthModal';
-import ChatBot from '../pages/Temp.jsx';
+import ChatBot from '../pages/ChatBot.jsx';
 import ConsultantQuiz from '../forms/recomendform';
 import NewSignIn from '../forms/NewSignIn';
 import NewSignUp from '../forms/NewSignUp';
@@ -45,6 +45,8 @@ const routes = createBrowserRouter([
       { path: 'AuthModal', element: <AuthModal /> },
       { path: 'chatbot', element: <ChatBot /> },
       { path: 'consultant-quiz', element: <ConsultantQuiz /> },
+      { path: '/newsignin', element: <NewSignIn /> },
+      { path: '/newsignup', element: <NewSignUp /> },
     ]
   },
   {
@@ -83,8 +85,7 @@ const routes = createBrowserRouter([
       },
       { path: '/meeting/:bookingId', element: <MeetingRoom /> },
       { path: '/ConsultantSignupForm', element: <ConsultantSignupForm /> },
-      { path: '/newsignin', element: <NewSignIn /> },
-      { path: '/newsignup', element: <NewSignUp /> },
+      
       { path: '*', element: <Modern404Page /> },
 
 ]);

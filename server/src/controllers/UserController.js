@@ -216,3 +216,54 @@ console.log('token', token);
   });
 });
 
+export const consultantApplication = asyncHandler(async (req, res) => {
+  try {
+    const cookie = req.cookies?.accessToken;
+    if (!cookie) {
+      return res.status(401).json(ApiResponse(401, 'Unauthorized access'));
+    }
+
+    const decoded = jwt.verify(cookie, process.env.ACCESS_TOKEN_SECRET);
+    const { _id } = decoded;
+    const data = req.body;
+console.log('consultantApplication data ' , data);
+
+
+  let user =  await User.findByIdAndUpdate(
+  _id,
+  {
+    $set: {
+      'consultantRequest.status': 'pending',
+      'consultantRequest.requestedAt': new Date(),
+      'consultantRequest.documents': {},
+
+      'consultantRequest.consultantProfile.sessionFee': data?.consultantRequest?.consultantProfile?.sessionFee,
+      'consultantRequest.consultantProfile.daysPerWeek': data?.consultantRequest?.consultantProfile?.daysPerWeek || '5',
+      'consultantRequest.consultantProfile.qualification': data?.consultantRequest?.consultantProfile?.qualification,
+      'consultantRequest.consultantProfile.fieldOfStudy': data?.consultantRequest?.consultantProfile?.fieldOfStudy,
+      'consultantRequest.consultantProfile.university': data?.consultantRequest?.consultantProfile?.university,
+      'consultantRequest.consultantProfile.graduationYear': data?.consultantRequest?.consultantProfile?.graduationYear,
+      'consultantRequest.consultantProfile.shortBio': data?.consultantRequest?.consultantProfile?.shortBio || '',
+      'consultantRequest.consultantProfile.languages': Array.isArray(data?.languages)
+        ? data.languages
+        : [data?.languages],
+      'consultantRequest.consultantProfile.yearsOfExperience': data?.consultantRequest?.consultantProfile?.yearsOfExperience,
+      'consultantRequest.consultantProfile.category': data?.consultantRequest?.consultantProfile?.category,
+    },
+  },
+  { new: true }
+);
+
+
+    if (!user) {
+      return res.status(404).json(ApiResponse(404, 'User not found'));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, 'Consultant application submitted', user));
+  } catch (error) {
+    console.error('Error in consultantApplication:', error);
+    return res.status(500).json(ApiResponse(500, 'Something went wrong'));
+  }
+});

@@ -87,24 +87,26 @@ const userSchema = new mongoose.Schema({
   profileImage: { type: String, default: '' },
 
   role: { type: String, enum: ['user', 'consultant', 'admin'], default: 'user' },
-  aadharVerified : {type:Boolean , default:false},
-  aadharNumber:Number,
-  panNumber:String,
+ 
+  
+  
   bio:{type : String},
   location:String,
+
+ aadharVerified : {type:Boolean , default:false},
+  kycVerify:{
+    aadharNumber:Number,
+    panNumber:String,
+  },
+
   consultantRequest: { 
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: null },
     documents: {
-      aadhar: String,
-      pan: String
+      resume: String
     },
-    requestedAt: Date,
-    reviewedAt: Date
-  },
-
-  consultantProfile: {
+    consultantProfile: {
     sessionFee: Number,
-    daysPerWeek: [String],
+    daysPerWeek: String,
     qualification: String,
     fieldOfStudy: String,
     university: String,
@@ -114,7 +116,9 @@ const userSchema = new mongoose.Schema({
     yearsOfExperience: Number,
     category: String
   },
-
+    requestedAt: { type: Date, default: Date.now },
+    reviewedAt: Date
+  },
   createdAt: { type: Date, default: Date.now }
 });
 

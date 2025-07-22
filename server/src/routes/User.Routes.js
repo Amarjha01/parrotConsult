@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { aadharVerify, loginUser, logoutUser, registerUser, seeBooking, updateProfile } from "../controllers/UserController.js";
+import { aadharVerify, consultantApplication, loginUser, logoutUser, registerUser, seeBooking, updateProfile } from "../controllers/UserController.js";
 import {verifyUser} from "../middlewares/UserAuthMiddleware.js";
 import { postReview } from "../controllers/ReviewController.js";
 
@@ -14,6 +14,7 @@ userRouter.route("/postreview").post(verifyUser , postReview)
 
 userRouter.post('/updateProfile' , updateProfile)
 userRouter.post('/aadharVerify' , aadharVerify)
+userRouter.post('/consultantApplication' , consultantApplication)
 
 
 export default userRouter;

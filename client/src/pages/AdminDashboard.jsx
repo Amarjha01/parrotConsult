@@ -5,13 +5,13 @@ import {
   adminapproveconsultant,
   adminrejectconsultant,
   logout,
-} from "../service/adminApi";
+} from "../apis/adminApi";
 import DashboardOverview from "../components/admindashboard/dashoverview";
 import { Sidebar } from "../components/admindashboard/sidebar";
 import { Header } from "../components/admindashboard/header";
 import { ConsultantsManagement } from "../components/admindashboard/consultantmanagement";
 import { SettingsPanel } from "../components/admindashboard/settingPannel";
-import { adminSeeAllBookings } from "../service/adminApi"; // adjust path if needed
+import { adminSeeAllBookings } from "../apis/adminApi"; // adjust path if needed
 
 // Stats Card Component
 const StatsCard = ({ title, value, icon: Icon, color = "blue" }) => {

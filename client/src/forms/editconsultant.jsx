@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { updateConsultantProfile } from "../service/consultantApi";
+import { updateConsultantProfile } from "../apis/consultantApi";
 import { showSuccessToast, showErrorToast } from "../util/Notification";
 import { Plus, Clock, AlertCircle } from "lucide-react";
 

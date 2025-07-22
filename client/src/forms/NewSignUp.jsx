@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import { showSuccessToast, showInfoToast, showErrorToast } from '../util/Notification.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import AIParrot from '../assets/AIParrot.jpg'
-import { registerUser } from '../service/userApi.js';
+import { registerUser } from '../apis/userApi.js';
 
 export default function NewSignUp() {
   const [fullName, setFullName] = useState('');

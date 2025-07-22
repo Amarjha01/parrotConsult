@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { X, Eye, EyeOff, Mail, Lock, User, Phone, Loader2 } from 'lucide-react';
 import axios from 'axios';
-import { loginUser } from '../service/userApi';
+import { loginUser } from '../apis/userApi';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(false);

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
   X,
 } from "lucide-react";
-import { globalconsultantdetails } from "../service/globalApi";
+import { globalconsultantdetails } from "../apis/globalApi";
 import {
   confirmBooking,
   createOrder,
   creatependingBooking,
-} from "../service/bookingApi";
+} from "../apis/bookingApi";
 import AuthModal from "./AuthModal";
 
 const ConsultantBookingForm = ({ isOpen, onClose, preSelectedConsultant = null }) => {

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
-import { viewSingleConsultant } from "../../service/globalApi";
+import { viewSingleConsultant } from "../../apis/globalApi";
 import BookingPage from "../booking/BookingPage";
 
 export default function ConsultantDetailView() {

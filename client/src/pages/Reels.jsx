@@ -45,7 +45,7 @@ const Reel = React.memo(({ reel, isActive }) => {
   const videoRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(likes);
   const [showHeartAnimation, setShowHeartAnimation] = useState(false);

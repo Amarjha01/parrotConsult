@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, ChevronDown, Star, User, Calendar } from "lucide-react";
-import { globalconsultantdetails } from "../../service/globalApi";
+import { globalconsultantdetails } from "../../apis/globalApi";
 import BookingPage from "../booking/BookingPage";
 import { motion } from 'framer-motion';
 import { Link } from "react-router-dom";

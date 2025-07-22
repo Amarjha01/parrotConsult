@@ -80,3 +80,23 @@ export const getAadharVerify = async(DataToVerify)=>{
     
   }
 }
+
+export const submitConsultantApplication = async(data) =>{
+  console.log('consultantApplication data ' , data);
+
+  try {
+    if (!data) {
+      return 'please provide data';
+    }
+    const response = await API.post('/user/consultantApplication' , data ,{
+      headers: {
+     "Content-Type": "application/json",
+      }
+    })
+    return response;
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
