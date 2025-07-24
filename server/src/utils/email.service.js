@@ -2,13 +2,12 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.MAIL_HOST, 
+  port: 465,
+  secure: true, 
   auth: {
-    user: process.env.MAIL_USER, // your Gmail
-    pass: process.env.MAIL_PASS, // your app-specific password
-  },
-  tls: {
-    rejectUnauthorized: false, // 👈 This allows self-signed certs
+    user: process.env.MAIL_USER, 
+    pass: process.env.MAIL_PASS,
   },
 });
 

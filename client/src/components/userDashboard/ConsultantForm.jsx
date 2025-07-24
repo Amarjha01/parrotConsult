@@ -12,7 +12,9 @@ const ConsultantForm = () => {
   const [aadhaarNumber, setAadhaarNumber] = useState('');
   const [panNumber, setPanNumber] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formStatus, setFormStatus] = useState('pending');
   const { register, handleSubmit , reset  } = useForm();
+console.log(formStatus);
 
 useEffect(()=>{
   const userData = localStorage.user
@@ -24,6 +26,7 @@ useEffect(()=>{
         if (user.consultantRequest.status === 'pending') {
           setFormSubmitted(true)
         }
+        setFormStatus(user.consultantRequest.status)
       }
 
 },[])
@@ -139,7 +142,7 @@ const handleVerification = async () => {
         </div>
       )}
 
-      {aadhaarVerified && !formSubmitted && (
+      {aadhaarVerified && !formSubmitted &&formStatus === 'pending' && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
           <div>
             <h3 className="text-xl font-semibold border-b border-[#0f5f42] pb-2 mb-4 text-[#103a35]">Professional Information</h3>
@@ -206,13 +209,36 @@ const handleVerification = async () => {
         </form>
       )}
 
-      {formSubmitted && (
+     {formStatus === 'pending' && (
   <div className="bg-green-50 border border-green-300 text-green-800 rounded-xl p-6 text-center shadow-md animate-fade-in mt-6">
     <h3 className="text-2xl font-bold mb-2 text-[#0f5f42]">Application Submitted Successfully</h3>
     <p className="text-lg">Thank you for applying! Our team is reviewing your profile. You’ll hear from us soon.</p>
-    <div className="mt-6 text-sm text-gray-500">Status: <span className="font-semibold text-[#0f5f42]">Pending Verification</span></div>
+    <div className="mt-6 text-sm text-gray-500">
+      Status: <span className="font-semibold text-[#0f5f42]">Pending Verification</span>
+    </div>
   </div>
 )}
+
+{formStatus === 'approved' && (
+  <div className="bg-blue-50 border border-blue-300 text-blue-800 rounded-xl p-6 text-center shadow-md animate-fade-in mt-6">
+    <h3 className="text-2xl font-bold mb-2 text-[#1d4ed8]">Application Approved</h3>
+    <p className="text-lg">Congratulations! Your application has been approved. You may now access all features.</p>
+    <div className="mt-6 text-sm text-gray-500">
+      Status: <span className="font-semibold text-[#1d4ed8]">Approved</span>
+    </div>
+  </div>
+)}
+
+{formStatus === 'rejected' && (
+  <div className="bg-red-50 border border-red-300 text-red-800 rounded-xl p-6 text-center shadow-md animate-fade-in mt-6">
+    <h3 className="text-2xl font-bold mb-2 text-[#b91c1c]">Application Rejected</h3>
+    <p className="text-lg">Unfortunately, your application was not approved at this time. Please review and reapply later.</p>
+    <div className="mt-6 text-sm text-gray-500">
+      Status: <span className="font-semibold text-[#b91c1c]">Rejected</span>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

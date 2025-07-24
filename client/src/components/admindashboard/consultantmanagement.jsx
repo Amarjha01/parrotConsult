@@ -16,6 +16,7 @@ export const ConsultantsManagement = ({
   activeTab
 }) => {
   const [openCardId, setOpenCardId] = useState(null);
+console.log(onApprove);
 
   // 🧹 Optional: Reset openCardId when list updates
   useEffect(() => {
@@ -85,7 +86,7 @@ export const ConsultantsManagement = ({
            {consultants
   .filter((consultant) =>
     activeTab === 'consultants'
-      ? consultant.status === 'pending'
+      ? consultant.consultantRequest.status === 'pending'
       : activeTab === 'rejected'
       ? consultant.status === 'rejected'
       : false

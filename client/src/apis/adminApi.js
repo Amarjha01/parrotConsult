@@ -6,13 +6,7 @@ const API = axios.create({
   withCredentials: true, 
 });
 
-export const registerAsAdmin = (formdata) => {
-  return API.post("/admin/registeradminsecuredonly", formdata, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
+
 
 export const loginAsAdmin = (formdata) => {
   return API.post("/admin/loginadminsecuredonly", formdata, {
@@ -41,6 +35,8 @@ export const getallunapprovedconsultants = async () => {
 };
 
 export const adminapproveconsultant = async (consultantId) => {
+  console.log(consultantId);
+  
   try {
     const response = await API.post(
       `/admin/adminapproveconsultant/${consultantId}`
@@ -71,3 +67,14 @@ export const adminSeeAllBookings = async () => {
     throw error.response?.data || error;
   }
 };
+
+export const rejectedConsultants = async () =>{
+  try {
+    const response = await API.post('/admin/rejectedConsultants');
+    return response
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+}

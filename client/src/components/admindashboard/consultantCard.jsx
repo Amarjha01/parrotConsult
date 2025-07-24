@@ -7,7 +7,7 @@ const ConsultantCard = ({
   isOpen,
   onToggle,
 }) => {
-  console.log("Consultant:", consultant.name, "isOpen:", isOpen);
+  console.log("Consultant:", consultant.fullName, "isOpen:", isOpen);
 
   return (
     <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
@@ -16,7 +16,7 @@ const ConsultantCard = ({
         <div className="flex flex-col justify-between h-full w-full backdrop-blur-3xl rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden p-3">
           <div className="flex-1">
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {consultant.name}
+              {consultant.fullName}
             </h3>
 
             <div className="space-y-1 text-sm text-gray-600 mb-4">
@@ -50,16 +50,16 @@ const ConsultantCard = ({
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                {consultant.phoneNumber}
+                {consultant.phone}
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 text-sm">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                {consultant.experience} years experience
+                {consultant.consultantRequest.consultantProfile.yearsOfExperience} years experience
               </span>
               <span className="text-gray-500">
-                Applied {new Date(consultant.createdAt).toLocaleDateString()}
+                Applied {new Date(consultant.consultantRequest.requestedAt).toLocaleDateString()}
               </span>
             </div>
           </div>
@@ -125,7 +125,7 @@ const ConsultantCard = ({
                     label="Resume"
                     value={
                       <a
-                        href={consultant.resume}
+                        href={consultant?.consultantRequest?.documents?.resume}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:text-blue-800 underline font-medium"
@@ -136,11 +136,11 @@ const ConsultantCard = ({
                   />
                   <DetailItem
                     label="Primary Category"
-                    value={consultant.primaryCategory}
+                    value={consultant?.consultantRequest?.consultantProfile?.category}
                   />
                   <DetailItem
-                    label="Hourly Rate"
-                    value={`₹${consultant.hourlyRate}`}
+                    label="Session Fee"
+                    value={`₹${consultant?.consultantRequest?.consultantProfile?.sessionFee}`}
                   />
                 </div>
               </div>
@@ -151,14 +151,22 @@ const ConsultantCard = ({
                   Professional Details
                 </h4>
                 <div className="space-y-3">
-                  <DetailItem
+                  {/* <DetailItem
                     label="Specialized Services"
                     value={consultant.specializedServices?.join(", ")}
+                  /> */}
+                  <DetailItem
+                    label="Heighest Qualification"
+                    value={consultant?.consultantRequest?.consultantProfile?.qualification}
                   />
                   <DetailItem
+                    label="Field Of Study"
+                    value={consultant?.consultantRequest?.consultantProfile?.fieldOfStudy}
+                  />
+                  {/* <DetailItem
                     label="Key Skills"
                     value={consultant.keySkills?.join(", ")}
-                  />
+                  /> */}
                   <DetailItem
                     label="Languages"
                     value={consultant.languageProficiency?.join(", ")}
@@ -166,27 +174,7 @@ const ConsultantCard = ({
 
                   <DetailItem
                     label="Weekly Availability"
-                    value={
-                      Array.isArray(consultant.weeklyAvailability)
-                        ? consultant.weeklyAvailability
-                            .map(({ day, isActive, timeSlots }) => {
-                              if (
-                                !isActive ||
-                                !Array.isArray(timeSlots) ||
-                                timeSlots.length === 0
-                              ) {
-                                return `${day}: Not available`;
-                              }
-
-                              const slots = timeSlots
-                                .map(({ start, end }) => `${start} - ${end}`)
-                                .join(", ");
-
-                              return `${day}: ${slots}`;
-                            })
-                            .join(" | ")
-                        : "Not available"
-                    }
+                    value={consultant?.consultantRequest?.consultantProfile?.daysPerWeek}
                   />
 
                   {/* <DetailItem label="Weekly Availability" value={consultant.weeklyAvailability?.join(', ')} /> */}
@@ -197,7 +185,7 @@ const ConsultantCard = ({
               </div>
 
               {/* Status */}
-              <div className="space-y-4">
+              {/* <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
                   Status & Settings
                 </h4>
@@ -211,10 +199,10 @@ const ConsultantCard = ({
                     status={consultant.visibleOnPlatform}
                   />
                 </div>
-              </div>
+              </div> */}
 
               {/* Documents */}
-              <div className="space-y-4">
+              {/* <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
                   Documents
                 </h4>
@@ -236,7 +224,7 @@ const ConsultantCard = ({
                     />
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Certificates */}
               {consultant.certificates?.length > 0 && (

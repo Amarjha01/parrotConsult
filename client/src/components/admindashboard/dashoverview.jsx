@@ -25,6 +25,7 @@ const formatTimeAgo = (timestamp) => {
 
 const DashboardOverview = ({ consultants, bookings }) => {
   const [showAllActivities, setShowAllActivities] = useState(false);
+console.log('dashboard ' , consultants);
 
   // Combine bookings and consultants into one array
   const combinedActivity = [
@@ -47,16 +48,15 @@ const DashboardOverview = ({ consultants, bookings }) => {
   const rejectedCount = consultants.filter(
     (c) => c.status === "rejected"
   ).length;
+
   const pendingCount = consultants.filter(
-    (c) => c.status === "pending"
+    (c) => c.consultantRequest.status === "pending"
   ).length;
 
   // Sort activities by latest time
   const sortedActivity = combinedActivity.sort(
     (a, b) => new Date(b.time) - new Date(a.time)
   );
-
-  console.log("hello", consultants);
 
   if (!consultants || !bookings) {
     return (

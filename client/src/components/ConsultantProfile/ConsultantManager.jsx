@@ -18,7 +18,7 @@ export default function ConsultantManager() {
     const fetchConsultants = async () => {
       try {
         setLoading(true);
-        const response = await globalconsultantdetails();
+        const response = await globalconsultantdetails();        
         setConsultants(response.data || []);
       } catch (err) {
         setError(err.message || "Failed to fetch consultants");

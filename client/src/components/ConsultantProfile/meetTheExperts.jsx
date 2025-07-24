@@ -56,14 +56,17 @@ const sliderSettings = {
 
 
 export default function MeetExperts({ consultants, onViewProfile }) {
+
   const [selectedConsultant, setSelectedConsultant] = useState(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 const [getStarted , setGetStarted] = useState(false)
+
   const handleBookNow = (consultant) => {
     const user = JSON.parse(localStorage.getItem("user"));
     setSelectedConsultant(consultant);
     setIsBookingOpen(true);
   };
+
  const stepVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -72,6 +75,7 @@ const [getStarted , setGetStarted] = useState(false)
       transition: { duration: 0.5 }
     }
   };
+  
   return (
     <section className=" bg-white">
     
