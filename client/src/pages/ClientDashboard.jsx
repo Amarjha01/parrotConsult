@@ -12,7 +12,7 @@ const ClientDashboard = () => {
 
   return (
     <div>
-      <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow">
+      <div className="lg:hidden flex justify-end items-center p-4 bg-white shadow">
         <button onClick={handleNavbarOpen}>
           {isNavbarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
