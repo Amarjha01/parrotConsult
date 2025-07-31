@@ -18,9 +18,9 @@ const ClientDashboard = () => {
         </button>
       </div>
 
-      <div className=" lg:flex">
+      <div className="lg:flex">
         <SideBar isNavbarOpen={isNavbarOpen} handleNavbarOpen={handleNavbarOpen} />
-        <div className="lg:flex-1 bg-gray-50 p-6 ">
+        <div className="lg:flex-1 bg-gray-50 p-6 absolute h-[100vh] w-[100vw]">
           <Outlet />
         </div>
       </div>
