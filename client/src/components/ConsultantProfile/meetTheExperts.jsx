@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ConsultantCard from "./ConsultantCard";
-import ConsultantBookingForm from "../../forms/BookingForm";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';

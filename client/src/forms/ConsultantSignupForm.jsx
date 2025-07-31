@@ -215,6 +215,7 @@ const validateAvailability = () => {
   );
   return hasAvailability || 'Please select at least one day with time slots';
 };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {

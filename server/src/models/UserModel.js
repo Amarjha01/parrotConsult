@@ -1,120 +1,56 @@
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-
-// const userSchema = new mongoose.Schema(
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-     
-//     },
-   
-//     phoneNumber: {
-//       type: Number,
-//       required: true,
-//     },
-
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//     },
-//     password: {
-//       type: String,
-//       required: true,
-//     },
-//     role: {
-//       type: String,
-//       enum: ["user", "admin", "consultant"],
-//       default: "user",
-//     },
-//     refreshToken:{
-//       type: String
-//     },
-    
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// userSchema.pre("save", async function (next) {
-//   if (this.isModified("password")) {
-//     this.password = await bcrypt.hash(this.password, 10);
-//   }
-//   next();
-// });
-
-// userSchema.methods.comparePassword = async function (password) {
-//   return await bcrypt.compare(password, this.password);
-// };
-
-// userSchema.methods.genrateAccessToken = function () {
-//   return jwt.sign(
-//     {
-//       _id: this._id,
-//       name: this.name,
-//       email: this.email,
-//       role: this.role,
-//       phoneNumber: this.phoneNumber,
-//     },
-//     process.env.ACCESS_TOKEN_SECRET,
-//     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "1h" }
-//   );
-// };
-
-// userSchema.methods.genrateRefreshToken = function () {
-//   return jwt.sign(
-//     {
-//       _id: this._id,
-//     },
-//     process.env.REFRESH_TOKEN_SECRET,
-//     { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" }
-//   );
-// };
-
-// export const User = mongoose.model("User", userSchema);
-
-
 const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   phone: { type: Number, required: true, unique: true },
   password: { type: String, required: true },
-
-  // Optional and updatable later
   email: { type: String, unique: true, sparse: true },
   profileImage: { type: String, default: '' },
-
   role: { type: String, enum: ['user', 'consultant', 'admin'], default: 'user' },
- 
-  
-  
-  bio:{type : String},
   location:String,
+  videoFreeTrial:{type:Boolean , default:false},
+  chatFreeTrial:{type:Boolean , default:false},
+  suspended:{type:Boolean , default:false},
+  aadharVerified : {type:Boolean , default:false},
 
- aadharVerified : {type:Boolean , default:false},
   kycVerify:{
     aadharNumber:Number,
+    aadharURL:String,
     panNumber:String,
+    panURL:String,
+    createdAt: { type: Date, default: Date.now }
   },
 
   consultantRequest: { 
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: null },
     documents: {
-      resume: String
+      resume: String,
+      other:[
+        {
+        documentName:String,
+        documentType:String,
+        DocumentURL:String,
+        createdAt: { type: Date, default: Date.now }
+      }
+      ]
     },
     consultantProfile: {
     sessionFee: Number,
     daysPerWeek: String,
+    days:[String],
+    availableTimePerDay: String,
     qualification: String,
     fieldOfStudy: String,
     university: String,
     graduationYear: Number,
+    keySkills: [String],
+    Specialized:[String],
     shortBio: String,
     languages: [String],
     yearsOfExperience: Number,
-    category: String
+    category: String,
+    profileHealth:Number,
+    wallet:{type:Number , default: 0},
+    withdrawelHistory:[]
   },
     requestedAt: { type: Date, default: Date.now },
     reviewedAt: Date

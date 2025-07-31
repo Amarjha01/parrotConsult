@@ -54,10 +54,10 @@ export default function NewSignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4" style={{backgroundImage:`url(${AIParrot})`}}>
+    <div className="min-h-screen bg-gradient-to-r from-green-900 via-green-800 to-green-950 flex items-center justify-center px-4" >
       <ToastContainer />
       <div className=" backdrop-blur-2xl max-w-md w-full rounded-2xl shadow-xl p-8">
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-6">Sign Up</h2>
+        <h2 className="text-2xl font-bold text-center text-green-300 mb-6">Sign Up</h2>
 
         <div className="space-y-5">
           <div>

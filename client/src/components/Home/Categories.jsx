@@ -95,9 +95,8 @@ const PopularCategoriesPage = () => {
             const isHovered = hoveredCategory === category.id;
             
             return (
-             <Link to={'/ViewAllConsultants'}>
+             <Link to={'/ViewAllConsultants'} key={category.id}>
               <div
-                key={category.id}
                 className={`group relative transition-all duration-700 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
                 }`}

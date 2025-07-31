@@ -1,100 +1,53 @@
-// import mongoose from "mongoose";
-
-// const bookingSchema = new mongoose.Schema(
-//   {
-//     datetime: {
-//       type: Date,
-//       required: true,
-//     },
-//     consultant: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "Consultant",
-//       required: true,
-//     },
-//     user: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "User",
-//       required: true,
-//     },
-//     status: {
-//       type: String,
-//       enum: [
-//         "pending",
-//         "scheduled",
-//         "completed",
-//         "missed",
-//         "rescheduled",
-//         "cancelled",
-//       ],
-
-//       default: "pending",
-//     },
-//     rescheduledFrom: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "Booking",
-//       default: null,
-//     },
-//     duration: {
-//       type: Number,
-//       required: true,
-//     },
-//     projectDetails: {
-//       type: String,
-//     }
-//   },
-//   { timestamps: true }
-// );
-
-// export const Booking = mongoose.model("Booking", bookingSchema);
-
-
-
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema(
   {
-    datetime: {
-      type: Date,
-      required: true,
+    bookingDateTime: { 
+      type: Date, 
+      required: true 
     },
+
     consultant: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Consultant",
+      ref: "user",
       required: true,
     },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
+
+    payment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "paymentsrecord",
+      default:null
+    },
+    razorpay_order_id: { type: String, required: false },
+    meetingLink: { type: String },
     status: {
       type: String,
       enum: [
         "pending",
         "scheduled",
+        "in-progress",
         "completed",
+        "cancelled",
         "missed",
         "rescheduled",
-        "cancelled",
       ],
       default: "pending",
     },
+    startedAt: { type: Date },
+    completedAt: { type: Date },
     rescheduledFrom: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
       default: null,
     },
-    duration: {
-      type: Number,
-      required: true,
-    },
-    projectDetails: {
-      type: String,
-    },
-    razorpay_order_id: {
-      type: String,
-      required: false,
-    },
+    duration: { type: Number, required: true },
+    consultationDetail: { type: String },
   },
   { timestamps: true }
 );

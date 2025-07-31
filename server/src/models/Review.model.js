@@ -4,17 +4,17 @@ const reviewSchema = new mongoose.Schema(
   {
     consultant: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Consultant",
+      ref: "users",
       required: true,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "users",
       required: true,
     },
     session: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Booking", // optional but useful
+      ref: "Booking",
     },
     rating: {
       type: Number,

@@ -1,15 +1,15 @@
 import axios from "axios";
 
-// Create an axios instance with baseURL
+
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // ✅ This sends cookies with every request
+  withCredentials: true,
 });
 
 
 
 
-export const creatependingBooking = async (data) => {
+export const createBooking = async (data) => {
   try {
     const response = await API.post("/booking/createbooking", data);
     return response.data;
@@ -18,8 +18,14 @@ export const creatependingBooking = async (data) => {
   }
 }
 
-
-
+export const verifyPayment = async (data) => {
+  try {
+    const response = await API.post("/payment/verifypayment", data);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
 
 
 export const confirmBooking = async (data) => {
@@ -32,15 +38,11 @@ export const confirmBooking = async (data) => {
 }
 
 
-
-
-
- 
-
-export const getBookingsByConsultantId = async (consultantId) => {
+export const getBookingsByConsultantId = async () => {
   try {
-    const response = await API.get(`/booking/getbookingsviaConsultantid/${consultantId}`);
-    return response.data.data; // assuming you're using `new ApiResponse(code, data)`
+    const response = await API.get(`/booking/getbookingsviaConsultantid`);
+    return response.data.data; 
+    
   } catch (error) {
     throw error.response?.data || error;
   }
@@ -64,10 +66,9 @@ export const  createOrder  = async (data) => {
 
 
 
-export const getBookingById = async (bookingId) => {
+export const getBookingById = async () => {
   try {
-    const response = await API.get(`/booking/booking/${bookingId}`);
-    console.log("Booking API Response:", response.data); 
+    const response = await API.get(`/booking/getbooking`); 
     return response.data.data;
   } catch (error) {
     throw error.response?.data || error;

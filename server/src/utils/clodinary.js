@@ -13,7 +13,7 @@ const uploadOnCloudinary = async (localFilePath, resourceType = "raw") => {
   try {
     if (!localFilePath) return null;
 
-    const absolutePath = path.resolve(localFilePath); // <-- Fix for relative path
+    const absolutePath = path.resolve(localFilePath); 
     const response = await cloudinary.uploader.upload(absolutePath, {
       resource_type: resourceType,
     });

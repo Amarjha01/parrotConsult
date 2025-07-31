@@ -43,6 +43,7 @@ import openaiRoute from "./routes/OpenAi.routes.js";
 import assistantRoute from "./routes/assistant.Routes.js";
 // import authOtpRouter from "./routes/AuthOtp.routes.js";
 import otpRoutes from "./routes/AuthOtp.routes.js";
+import { meetingRoutes } from "./routes/meetingRoutes.js";
 
 
 // using routes
@@ -52,6 +53,7 @@ app.use("/api/v1/global", GlobalRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/payment", PaymentRouter);
 app.use("/api/v1/booking", bookingRouter);
+app.use("/api/v1/meeting", meetingRoutes);
 app.use("/api/v1/webhook", webhookrouter);
 app.use("/api/v1/openai", openaiRoute);
 app.use("/api/v1/assistant", assistantRoute);

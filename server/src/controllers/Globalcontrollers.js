@@ -4,7 +4,6 @@ import { ApiResponse } from "../utils/Apiresponse.js";
 
 export const seeallactiveconsultants = asyncHandler(async (req, res) => {
     const consultants = await User.find({ role : 'consultant' });
-       console.log(consultants);
     return res.status(200).json(new ApiResponse(200, consultants));
  
     

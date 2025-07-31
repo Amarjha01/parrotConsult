@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, User, MessageCircle } from 'lucide-react';
+import { createBooking, verifyPayment } from '../../apis/bookingApi';
 
-const BookingPage = ({ 
-  isOpen = true, 
-  onClose = () => {}, 
-  consultant = {
-    name: "Dr. Sarah Johnson",
-    about: "Expert business consultant with 10+ years of experience in strategic planning and growth optimization."
-  }
-}) => {
-  const [selectedDuration, setSelectedDuration] = useState('30');
+const BookingPage = ({ isOpen = true, onClose = () => {}, consultant}) => {
+  const [selectedDuration, setSelectedDuration] = useState('5');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [projectDetails, setProjectDetails] = useState('');
+  const [consultationDetails, setConsultationDetails] = useState('');
+  const [availableDates, setAvailableDates] = useState();
 
-  // Hardcoded availability: Monday to Saturday, 9am to 5pm
+useEffect(() => {
+  const consultantDays = consultant?.consultantRequest?.consultantProfile?.days?.map(day => day.trim());
+
   const generateAvailableDates = () => {
     const dates = [];
     const today = new Date();
@@ -23,58 +20,141 @@ const BookingPage = ({
     for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
+
       const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
 
-      if (dayName !== 'Sunday') {
+      if (consultantDays?.includes(dayName)) {
         dates.push({
           date: date.toISOString().split('T')[0],
           dayName,
-          displayDate: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          displayDate: date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }),
         });
       }
     }
+
     return dates;
   };
 
-  const availableDates = generateAvailableDates();
+  const generatedDates = generateAvailableDates();
+  setAvailableDates(generatedDates);
+}, [consultant]);
 
-  const generateTimeSlots = () => {
-    const slots = [];
-    const startTime = new Date('2024-01-01T09:00:00');
-    const endTime = new Date('2024-01-01T17:00:00');
 
-    while (startTime < endTime) {
-      slots.push(startTime.toTimeString().slice(0, 5));
-      startTime.setMinutes(startTime.getMinutes() + 30);
+
+ const generateTimeSlots = (startTimeStr, endTimeStr) => {
+  const slots = [];
+
+  const parseTime = (timeStr) => {
+    const [time, modifier] = timeStr.trim().split(' ');
+    let [hours, minutes] = time.split(':');
+    minutes = minutes || '00';
+
+    let hrs = parseInt(hours, 10);
+    if (modifier.toLowerCase() === 'pm' && hrs < 12) hrs += 12;
+    if (modifier.toLowerCase() === 'am' && hrs === 12) hrs = 0;
+
+    const date = new Date('2000-01-01');
+    date.setHours(hrs);
+    date.setMinutes(parseInt(minutes));
+    return date;
+  };
+
+  const startTime = parseTime(startTimeStr);
+  const endTime = parseTime(endTimeStr);
+
+  while (startTime < endTime) {
+    const hours = startTime.getHours().toString().padStart(2, '0');
+    const minutes = startTime.getMinutes().toString().padStart(2, '0');
+    slots.push(`${hours}:${minutes}`);
+    startTime.setMinutes(startTime.getMinutes() + 30);
+  }
+
+  return slots;
+};
+const availableTimePerDay = "9 AM - 3 PM";
+
+const getAvailableTimesForDate = () => {
+  const [start, end] = availableTimePerDay.split('-').map(t => t.trim());
+  return generateTimeSlots(start, end);
+};
+
+
+const handleBookMeeting = async () => {
+  const user = JSON.parse(localStorage.user);
+
+  const combinedDateTime = new Date(`${selectedDate}T${selectedTime}:00`);
+
+  const payload = {
+    datetime: combinedDateTime,
+    duration: selectedDuration,
+    consultationDetail: consultationDetails,
+    consultantId: consultant._id,
+    userId: user._id,
+  };
+
+  try {
+    const response = await createBooking(payload);
+    console.log("Booking response:", response);
+
+    const { bookingId, razorpayOrder } = response.data;
+
+    if (razorpayOrder && razorpayOrder.id) {
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "ParrotConsult",
+        description: "Consultation Fee",
+        order_id: razorpayOrder.id,
+
+        handler: async function (paymentResult) {
+          console.log(paymentResult);
+          
+          try {
+            const verifyPayload = {
+              bookingId,
+              razorpay_payment_id: paymentResult.razorpay_payment_id,
+              razorpay_order_id: paymentResult.razorpay_order_id,
+              razorpay_signature: paymentResult.razorpay_signature,
+              userId: user._id,
+              consultantId: consultant._id,
+              amount: razorpayOrder.amount,
+            };
+
+            const paymentResponse = await verifyPayment(verifyPayload);
+            console.log("Payment success:", paymentResponse);
+            alert("✅ Payment Successful! Booking confirmed.");
+          } catch (err) {
+            console.error("❌ Payment verification failed", err);
+            alert("❌ Payment verification failed");
+          }
+        },
+
+        prefill: {
+          name: user.fullname,
+          email: user.email,
+        },
+        theme: {
+          color: "#0f5f42",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } else {
+      alert("🎉 Booking confirmed as free trial (no payment needed).");
     }
-    return slots;
-  };
+  } catch (err) {
+    console.error(err);
+    alert("❌ Failed to book consultation");
+  }
+};
 
-  const getAvailableTimesForDate = () => {
-    return generateTimeSlots();
-  };
 
-  const handleBookMeeting = () => {
-    if (!selectedDate || !selectedTime || !projectDetails.trim()) {
-      alert('Please fill all required fields');
-      return;
-    }
-
-    const selectedDateObj = availableDates.find(d => d.date === selectedDate);
-    const message = `Hi! I'd like to book a consultation with ${consultant.name}.
-
-📅 Date: ${selectedDateObj.displayDate}
-⏰ Time: ${selectedTime}
-⏱️ Duration: ${selectedDuration === '15' ? '15 minutes (FREE)' : '30 minutes (₹499)'}
-
-📝 Project Details:
-${projectDetails}
-
-Looking forward to our meeting!`;
-
-    const whatsappUrl = `https://wa.me/918868864441?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
 
   const containerVariants = {
     hidden: { x: '100%', opacity: 0 },
@@ -108,11 +188,13 @@ Looking forward to our meeting!`;
               <motion.section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm" variants={stepVariants} initial="hidden" animate="visible" transition={{ delay: 0.1 }}>
                 <div className="flex items-start space-x-4 mb-6">
                   <div className="w-16 h-16 bg-gradient-to-r from-[#3b8c60] to-[#207158] rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-white" />
+                   {consultant && (
+                    <img src={consultant.profileImage || 'https://i.postimg.cc/bryMmCQB/profile-image.jpg'} className=' rounded-full' alt="" /> 
+                   )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-[#103e39] mb-2">{consultant.name}</h3>
-                    <p className="text-gray-600">{consultant.about}</p>
+                    <h3 className="text-xl font-semibold text-[#103e39] mb-2">{consultant.fullName.toUpperCase()}</h3>
+                    <p className="text-gray-600">{consultant.consultantRequest.consultantProfile.shortBio}</p>
                   </div>
                 </div>
 
@@ -120,17 +202,17 @@ Looking forward to our meeting!`;
                   <h4 className="text-lg font-semibold text-[#103e39] mb-4">How long would you like to meet for?</h4>
                   <div className="space-y-3">
                     <label className="flex items-center space-x-3 p-4 border rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
-                      <input type="radio" name="duration" value="15" checked={selectedDuration === '15'} onChange={(e) => setSelectedDuration(e.target.value)} className="w-5 h-5 text-[#3b8c60] focus:ring-[#3b8c60]" />
+                      <input type="radio" name="duration" value="5" checked={selectedDuration === '5'} onChange={(e) => setSelectedDuration(e.target.value)} className="w-5 h-5 text-[#3b8c60] focus:ring-[#3b8c60]" />
                       <div className="flex-1 flex items-center justify-between">
-                        <span className="font-medium text-[#103e39]">15 minutes</span>
-                        <span className="text-[#3b8c60] font-semibold">FREE</span>
+                        <span className="font-medium text-[#103e39]">5 minutes</span>
+                        <span className="text-[#3b8c60] font-semibold">FREE (One Time)</span>
                       </div>
                     </label>
                     <label className="flex items-center space-x-3 p-4 border rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
                       <input type="radio" name="duration" value="30" checked={selectedDuration === '30'} onChange={(e) => setSelectedDuration(e.target.value)} className="w-5 h-5 text-[#3b8c60] focus:ring-[#3b8c60]" />
                       <div className="flex-1 flex items-center justify-between">
                         <span className="font-medium text-[#103e39]">30 minutes</span>
-                        <span className="text-[#3b8c60] font-semibold">₹499</span>
+                        <span className="text-[#3b8c60] font-semibold">₹{consultant.consultantRequest.consultantProfile.sessionFee}</span>
                       </div>
                     </label>
                   </div>
@@ -181,10 +263,11 @@ Looking forward to our meeting!`;
 
                 {selectedDate && selectedTime && (
                   <motion.div className="mb-6" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
-                    <h4 className="text-lg font-semibold text-[#103e39] mb-4">Project Details</h4>
+                    <h4 className="text-lg font-semibold text-[#103e39] mb-4">consultation Detail
+                    </h4>
                     <textarea
-                      value={projectDetails}
-                      onChange={(e) => setProjectDetails(e.target.value)}
+                      value={consultationDetails}
+                      onChange={(e) => setConsultationDetails(e.target.value)}
                       placeholder="Please describe your project or what you'd like to discuss during the consultation..."
                       className="w-full p-4 border border-gray-200 rounded-xl focus:border-[#3b8c60] focus:ring-2 focus:ring-[#3b8c60]/20 outline-none transition-all resize-none"
                       rows="4"
@@ -192,10 +275,10 @@ Looking forward to our meeting!`;
                   </motion.div>
                 )}
 
-                {selectedDate && selectedTime && projectDetails.trim() && (
+                {selectedDate && selectedTime  && (
                   <motion.button
                     onClick={handleBookMeeting}
-                    className="w-full md:w-[30%] bg-gradient-to-r from-[#3b8c60] to-[#207158] text-white font-semibold py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                    className="w-full md:w-[40%] bg-gradient-to-r from-[#3b8c60] to-[#207158] text-white font-semibold py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}

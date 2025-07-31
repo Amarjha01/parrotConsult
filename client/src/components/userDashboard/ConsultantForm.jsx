@@ -18,11 +18,14 @@ console.log(formStatus);
 
 useEffect(()=>{
   const userData = localStorage.user
+  
      if (userData) {
       setAadhaarVerified(JSON.parse(userData).aadharVerified)
      }
       if (userData) {
         let user = JSON.parse(userData )
+        console.log(user);
+        
         if (user.consultantRequest.status === 'pending') {
           setFormSubmitted(true)
         }
@@ -63,26 +66,24 @@ const handleVerification = async () => {
 
 
  const onSubmit = async (data) => {
-    console.log(data);
-    const payload = {
-      consultantRequest:{
-        documents:{
-        },
-        consultantProfile: {
-            sessionFee: Number(data.rate),
-            daysPerWeek: '5',
-            qualification: data.qualification,
-            fieldOfStudy: data.field,
-            university: data.university,
-            graduationYear: Number(data.graduationYear),
-            shortBio: '',
-            languages: [''],
-            yearsOfExperience: Number(data.experience),
-            category: data.category
-  },
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "resume" && value instanceof FileList && value.length > 0) {
+        formData.append("resume", value[0]); 
+      } else {
+        formData.append(key, value);
       }
-    }
-   const response = await submitConsultantApplication(payload)
+    });
+
+
+      // console.log("FormData preview:");
+      // for (let [key, val] of formData.entries()) {
+      //   console.log(`${key}:`, val);
+      // }
+  
+  
+   const response = await submitConsultantApplication(formData)
    console.log('response' , response);
    
    if (response.status === 200) {
@@ -111,7 +112,7 @@ const handleVerification = async () => {
 />
       <h2 className="text-2xl font-semibold text-[#0f5f42] mb-6">Become Consultant - Application Form</h2>
 
-      {!aadhaarVerified && (
+      {!aadhaarVerified &&  (
         <div className="space-y-4 mb-8">
           <div>
             <label className="block mb-1 font-medium">Aadhaar Number</label>
@@ -142,7 +143,7 @@ const handleVerification = async () => {
         </div>
       )}
 
-      {aadhaarVerified && !formSubmitted &&formStatus === 'pending' && (
+      {aadhaarVerified && !formSubmitted && (formStatus === 'pending' || formStatus === null) && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
           <div>
             <h3 className="text-xl font-semibold border-b border-[#0f5f42] pb-2 mb-4 text-[#103a35]">Professional Information</h3>

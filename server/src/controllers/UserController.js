@@ -6,6 +6,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/Apiresponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import genrateAccessTokenAndRefreshToken from "../utils/genrateAccessTokenAndRefreshToken.js";
+import { uploadOnCloudinary } from "../utils/clodinary.js";
 
 
 
@@ -139,11 +140,12 @@ export const seeBooking = asyncHandler(async (req, res) => {
 
 
 export const updateProfile = asyncHandler(async (req, res) => {
+  console.log('yha call hua hai ');
+  
   const token = req.cookies?.accessToken;
-
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: No token' });
-  }
+  console.log(token);
+  
+  if (!token) return res.status(401).json({ message: 'Unauthorized: No token' });
 
   let decoded;
   try {
@@ -153,12 +155,58 @@ export const updateProfile = asyncHandler(async (req, res) => {
   }
 
   const { _id } = decoded;
-  const updateData = { ...req.body };
+  const body = req.body;
 
-  // Handle profile photo if uploaded
-  if (req.file) {
-    const imageUrl = `/uploads/${req.file.filename}`; // Adjust based on your file serving strategy
-    updateData.profileImage = imageUrl;
+  const resumeFile = req.files?.resume?.[0];
+  if (!resumeFile)
+    return res.status(400).json({ message: "Resume file is missing" });
+  const resume = await uploadOnCloudinary(resumeFile.path, "raw");
+  if (!resume?.url)
+    return res.status(400).json({ message: "Failed to upload resume" });
+  // Base update object
+  const updateData = {
+    fullName: body.fullName,
+    phone: body.phone,
+    email: body.email,
+    location: body.location,
+    profileImage: req.file ? `/uploads/${req.file.filename}` : body.profileImage || '',
+  };
+
+  // 🔁 Add consultant nested update only if role is consultant
+  if (body.role === 'consultant') {
+    updateData.consultantRequest = {
+      ...updateData.consultantRequest,
+      status: 'pending',
+      requestedAt: new Date(),
+      consultantProfile: {
+        sessionFee: Number(body.sessionFee),
+        daysPerWeek: body.daysPerWeek,
+        days: body.days?.split(',') || [],
+        availableTimePerDay: body.availableTimePerDay,
+        qualification: body.qualification,
+        fieldOfStudy: body.fieldOfStudy,
+        university: body.university,
+        graduationYear: Number(body.graduationYear),
+        keySkills: body.keySkills?.split(',') || [],
+        shortBio: body.shortBio,
+        languages: body.languages?.split(',') || [],
+        yearsOfExperience: Number(body.yearsOfExperience),
+        category: body.category,
+        profileHealth: Number(body.profileHealth || 0),
+      },
+      documents: {
+        resume: resume?.url,
+        other: body.other || [],
+      },
+    };
+
+    // KYC
+    updateData.kycVerify = {
+      aadharNumber: body.aadharNumber,
+      aadharURL: body.aadharURL,
+      panNumber: body.panNumber,
+      panURL: body.panURL,
+    };
   }
 
   const updatedUser = await User.findByIdAndUpdate(_id, updateData, { new: true });
@@ -172,6 +220,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     user: updatedUser,
   });
 });
+
 
 //---------------------------------Upgrade Profile------------------------------------------------//
 
@@ -217,6 +266,8 @@ console.log('token', token);
 });
 
 export const consultantApplication = asyncHandler(async (req, res) => {
+  console.log(req.body);
+  
   try {
     const cookie = req.cookies?.accessToken;
     if (!cookie) {
@@ -226,33 +277,40 @@ export const consultantApplication = asyncHandler(async (req, res) => {
     const decoded = jwt.verify(cookie, process.env.ACCESS_TOKEN_SECRET);
     const { _id } = decoded;
     const data = req.body;
-console.log('consultantApplication data ' , data);
 
+    const resumeFile = req.files?.resume?.[0];
+  if (!resumeFile)
+    return res.status(400).json({ message: "Resume file is missing" });
+  const resume = await uploadOnCloudinary(resumeFile.path, "raw");
+  if (!resume?.url)
+    return res.status(400).json({ message: "Failed to upload resume" });
+    
 
-  let user =  await User.findByIdAndUpdate(
+ let user = await User.findByIdAndUpdate(
   _id,
   {
     $set: {
       'consultantRequest.status': 'pending',
       'consultantRequest.requestedAt': new Date(),
-      'consultantRequest.documents': {},
+      'consultantRequest.documents.resume': resume?.url,
 
-      'consultantRequest.consultantProfile.sessionFee': data?.consultantRequest?.consultantProfile?.sessionFee,
-      'consultantRequest.consultantProfile.daysPerWeek': data?.consultantRequest?.consultantProfile?.daysPerWeek || '5',
-      'consultantRequest.consultantProfile.qualification': data?.consultantRequest?.consultantProfile?.qualification,
-      'consultantRequest.consultantProfile.fieldOfStudy': data?.consultantRequest?.consultantProfile?.fieldOfStudy,
-      'consultantRequest.consultantProfile.university': data?.consultantRequest?.consultantProfile?.university,
-      'consultantRequest.consultantProfile.graduationYear': data?.consultantRequest?.consultantProfile?.graduationYear,
-      'consultantRequest.consultantProfile.shortBio': data?.consultantRequest?.consultantProfile?.shortBio || '',
-      'consultantRequest.consultantProfile.languages': Array.isArray(data?.languages)
+      'consultantRequest.consultantProfile.sessionFee': Number(data.rate),
+      'consultantRequest.consultantProfile.daysPerWeek': data.daysPerWeek || '5',
+      'consultantRequest.consultantProfile.qualification': data.qualification,
+      'consultantRequest.consultantProfile.fieldOfStudy': data.field,
+      'consultantRequest.consultantProfile.university': data.university,
+      'consultantRequest.consultantProfile.graduationYear': Number(data.graduationYear),
+      'consultantRequest.consultantProfile.shortBio': data.shortBio || '',
+      'consultantRequest.consultantProfile.languages': Array.isArray(data.languages)
         ? data.languages
-        : [data?.languages],
-      'consultantRequest.consultantProfile.yearsOfExperience': data?.consultantRequest?.consultantProfile?.yearsOfExperience,
-      'consultantRequest.consultantProfile.category': data?.consultantRequest?.consultantProfile?.category,
+        : [data.languages],
+      'consultantRequest.consultantProfile.yearsOfExperience': Number(data.experience),
+      'consultantRequest.consultantProfile.category': data.category,
     },
   },
   { new: true }
 );
+
 
 
     if (!user) {
@@ -267,3 +325,6 @@ console.log('consultantApplication data ' , data);
     return res.status(500).json(ApiResponse(500, 'Something went wrong'));
   }
 });
+
+
+

@@ -1,198 +1,203 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  UploadCloud, 
-  Edit3, 
-  Save, 
-  X, 
-  Camera, 
-  MapPin, 
+import {
+  User,
+  Phone,
+  Mail,
+  UploadCloud,
+  Edit3,
+  Save,
+  X,
+  Camera,
+  MapPin,
   Calendar,
   Shield,
   Check,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
+import { useForm, Controller } from "react-hook-form";
 import { profileUpdate } from "../../apis/userApi";
 
 const Profile = () => {
-  let userData = null;
 
-try {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser) {
-    userData = JSON.parse(storedUser);
-  }
-} catch (error) {
-  console.error('Failed to parse user from localStorage:', error);
-}
-
-const [formData, setFormData] = useState({
-  email: String(userData?.email || ""),
-  fullName: String(userData?.fullName || ""),
-  phone: String(userData?.phone || ""),
-  location: String(userData?.location || ""),
-  bio: String(userData?.bio || "")
-});
-
-  
-  const [profileImage, setProfileImage] = useState(userData?.profileImage || "");
   const [editing, setEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [validationErrors, setValidationErrors] = useState({});
-const [imageFile, setImageFile] = useState(null);
+  const [imageFile,  ] = useState(null);
 
-const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    alert("Image size should be less than 5MB");
-    return;
-  }
+  const onSubmit = async (data) => {
 
-  setIsUploading(true);
-  setImageFile(file); // store actual file
-  const url = URL.createObjectURL(file);
-  setProfileImage(url);
-  setIsUploading(false);
-};
+     const storedUser = JSON.parse(localStorage.getItem("user"));
+     const role = storedUser?.role;
+      const dataToSend = { ...data, role };
+      console.log(data);
+      
+    const response = await profileUpdate(dataToSend);
+     const formData = new FormData();
 
-
-  const validateForm = () => {
-    const errors = {};
-    
-    if (!formData.fullName.trim()) {
-      errors.fullName = "Full name is required";
-    }
-    
-    if (!formData.email.trim()) {
-      errors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = "Please enter a valid email";
-    }
-    
-    if (!formData.phone.trim()) {
-      errors.phone = "Phone number is required";
-    } else if (!/^\+?[\d\s-()]{10,}$/.test(formData.phone)) {
-      errors.phone = "Please enter a valid phone number";
-    }
-
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear validation error when user starts typing
-    if (validationErrors[field]) {
-      setValidationErrors(prev => ({ ...prev, [field]: "" }));
-    }
-  };
-
-const handleSave = async () => {
-  console.log("handleSave invoked");
-
-  // Step 1: Validate input
-  if (!validateForm()) return;
-
-  try {
-    // Step 2: Prepare form data
-    const formDataToSend = new FormData();
-    const { fullName, email, phone, location, bio } = formData;
-
-    formDataToSend.append("fullName", fullName.trim());
-    formDataToSend.append("email", email.trim());
-    formDataToSend.append("phone", phone.trim());
-    formDataToSend.append("location", location.trim());
-    formDataToSend.append("bio", bio.trim());
-
-    if (imageFile) {
-      formDataToSend.append("profileImage", imageFile);
-    }
-// console.log(formDataToSend);
-
-    // Step 3: Make API request
-    const response = await profileUpdate(formDataToSend);
-    // console.log("Profile update response:", response);
-
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "resume" && value instanceof FileList && value.length > 0) {
+        formData.append("resume", value[0]); 
+      } else {
+        formData.append(key, value);
+      }
+    });
     // Step 4: Update localStorage
     const updatedUser = response?.user;
-    // console.log('log' , updatedUser);
-    
+
     if (updatedUser) {
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem("user", JSON.stringify(formData));
       setEditing(false);
+      window.location.reload()
     } else {
       console.error("No user data returned from update API.");
     }
+  };
 
-  } catch (err) {
-    console.error("Error updating profile:", err);
+  let userData = null;
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      userData = JSON.parse(storedUser);
+    }
+  } catch (error) {
+    console.error("Failed to parse user from localStorage:", error);
   }
-};
+
+  const [formData, setFormData] = useState({
+    // Basic Info
+    email: String(userData?.email || ""),
+    fullName: String(userData?.fullName || ""),
+    phone: String(userData?.phone || ""),
+    location: String(userData?.location || ""),
+    profileImage: String(userData?.profileImage || ""),
+
+    // KYC Info
+    aadharNumber: String(userData?.kycVerify?.aadharNumber || ""),
+    aadharURL: String(userData?.kycVerify?.aadharURL || ""),
+    panNumber: String(userData?.kycVerify?.panNumber || ""),
+    panURL: String(userData?.kycVerify?.panURL || ""),
+
+    // Consultant Profile Info
+    sessionFee:
+      userData?.consultantRequest?.consultantProfile?.sessionFee?.toString() ||
+      "",
+    daysPerWeek:
+      userData?.consultantRequest?.consultantProfile?.daysPerWeek || "",
+    days:
+      userData?.consultantRequest?.consultantProfile?.days?.join(", ") || "",
+    availableTimePerDay:
+      userData?.consultantRequest?.consultantProfile?.availableTimePerDay || "",
+    qualification:
+      userData?.consultantRequest?.consultantProfile?.qualification || "",
+    fieldOfStudy:
+      userData?.consultantRequest?.consultantProfile?.fieldOfStudy || "",
+    university:
+      userData?.consultantRequest?.consultantProfile?.university || "",
+    graduationYear: String(
+      userData?.consultantRequest?.consultantProfile?.graduationYear || ""
+    ),
+    keySkills:
+      userData?.consultantRequest?.consultantProfile?.keySkills?.join(", ") ||
+      "",
+    shortBio: userData?.consultantRequest?.consultantProfile?.shortBio || "",
+    languages:
+      userData?.consultantRequest?.consultantProfile?.languages?.join(", ") ||
+      "",
+    yearsOfExperience: String(
+      userData?.consultantRequest?.consultantProfile?.yearsOfExperience || ""
+    ),
+    category: userData?.consultantRequest?.consultantProfile?.category || "",
+
+    // Documents
+    resume: userData?.consultantRequest?.documents?.resume || "",
+    otherDocuments: userData?.consultantRequest?.documents?.other || [],
+
+    // Flags
+    aadharVerified: Boolean(userData?.aadharVerified || false),
+    profileHealth: String(
+      userData?.consultantRequest?.consultantProfile?.profileHealth || ""
+    ),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      location: formData.location,
+      profileImage: formData.profileImage,
+
+      aadharNumber: formData.aadharNumber,
+      aadharURL: formData.aadharURL,
+      panNumber: formData.panNumber,
+      panURL: formData.panURL,
+
+      sessionFee: formData.sessionFee,
+      daysPerWeek: formData.daysPerWeek,
+      days: formData.days,
+      availableTimePerDay: formData.availableTimePerDay,
+      qualification: formData.qualification,
+      fieldOfStudy: formData.fieldOfStudy,
+      university: formData.university,
+      graduationYear: formData.graduationYear,
+      keySkills: formData.keySkills,
+      shortBio: formData.shortBio,
+      languages: formData.languages,
+      yearsOfExperience: formData.yearsOfExperience,
+      category: formData.category,
+
+      resume: formData.resume,
+      profileHealth: formData.profileHealth,
+    },
+  });
+
+  const [profileImage, setProfileImage] = useState(
+    userData?.profileImage || ""
+  );
+  
 
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    setImageFile(file); // store actual file
+    const url = URL.createObjectURL(file);
+    setProfileImage(url);
+    setIsUploading(false);
+  };
 
   const handleCancel = () => {
-    // Reset form data
-    setFormData({
-      email: userData?.email || "",
-      fullName: userData?.fullName || "",
-      phone: userData?.phone || "",
-      location: userData?.location || "",
-      bio: userData?.bio || ""
-    });
-    setValidationErrors({});
+    window.location.reload()
     setEditing(false);
   };
 
-  const InputField = ({ icon: Icon, label, value, onChange, type = "text", error, placeholder }) => (
-    <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-        <Icon size={16} className="text-gray-500" />
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className={`w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none ${
-            error 
-              ? 'border-red-300 focus:border-red-500 bg-red-50' 
-              : 'border-gray-200 focus:border-blue-500 bg-white hover:border-gray-300'
-          }`}
-        />
-        {error && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <AlertCircle size={16} className="text-red-500" />
-          </div>
-        )}
-      </div>
-      {error && (
-        <motion.p 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-sm text-red-600 flex items-center gap-1"
-        >
-          <AlertCircle size={14} />
-          {error}
-        </motion.p>
-      )}
-    </div>
-  );
-
-  const DisplayField = ({ icon: Icon, label, value, color = "text-gray-700" }) => (
+  const DisplayField = ({
+    icon: Icon,
+    label,
+    value,
+    color = "text-gray-700",
+  }) => (
     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
       <div className="p-2 bg-white rounded-lg shadow-sm">
         <Icon size={18} className="text-gray-600" />
       </div>
       <div className="flex-1">
         <p className="text-sm font-medium text-gray-500">{label}</p>
-        <p className={`text-base font-semibold ${color}`}>{value || "Not provided"}</p>
+        <p className={`text-base font-semibold ${color}`}>
+          {value || "Not provided"}
+        </p>
       </div>
     </div>
   );
@@ -209,7 +214,9 @@ const handleSave = async () => {
           <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
             <User size={24} className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Profile Information
+          </h2>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
@@ -235,7 +242,7 @@ const handleSave = async () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.div>
-            
+
             <AnimatePresence>
               {editing && (
                 <motion.label
@@ -259,7 +266,7 @@ const handleSave = async () => {
               )}
             </AnimatePresence>
           </div>
-          
+
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-500">Profile Photo</p>
             <p className="text-xs text-gray-400 mt-1">Max size: 5MB</p>
@@ -270,62 +277,235 @@ const handleSave = async () => {
         <div className="flex-1">
           <AnimatePresence mode="wait">
             {editing ? (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
-              >
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField
-                    icon={User}
-                    label="Full Name"
-                    value={formData.fullName}
-                    onChange={(value) => handleInputChange('fullName', value)}
-                    error={validationErrors.fullName}
-                    placeholder="Enter your full name"
-                  />
-                  <InputField
-                    icon={Mail}
-                    label="Email Address"
-                    value={formData.email}
-                    onChange={(value) => handleInputChange('email', value)}
-                    type="email"
-                    error={validationErrors.email}
-                    placeholder="Enter your email"
-                  />
-                  <InputField
-                    icon={Phone}
-                    label="Phone Number"
-                    value={formData.phone}
-                    onChange={(value) => handleInputChange('phone', value)}
-                    type="tel"
-                    error={validationErrors.phone}
-                    placeholder="Enter your phone number"
-                  />
-                  <InputField
-                    icon={MapPin}
-                    label="Location"
-                    value={formData.location}
-                    onChange={(value) => handleInputChange('location', value)}
-                    placeholder="Enter your location"
-                  />
+                  <div className="flex flex-col ">
+                    <label className="form-label">
+                      <User size={16} /> Full Name
+                    </label>
+                    <input
+                      {...register("fullName", { required: true })}
+                      className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="form-label">
+                      <Mail size={16} /> Email Address
+                    </label>
+                    <input
+                      {...register("email", { required: true })}
+                      className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      type="email"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="form-label">
+                      <Phone size={16} /> Phone Number
+                    </label>
+                    <input
+                      {...register("phone", { required: true })}
+                      className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      type="tel"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="form-label">
+                      <MapPin size={16} /> Location
+                    </label>
+                    <input
+                      {...register("location")}
+                      className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                    />
+                  </div>
                 </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
-                    <Edit3 size={16} className="text-gray-500" />
-                    Bio
-                  </label>
-                  <textarea
-                    value={formData.bio}
-                    onChange={(e) => handleInputChange('bio', e.target.value)}
-                    placeholder="Tell us about yourself..."
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none bg-white hover:border-gray-300 transition-all duration-200 resize-none"
-                  />
+
+                {userData?.role === "consultant" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-100 mt-6">
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <Edit3 size={16} /> Session Fee (INR)
+                      </label>
+                      <input
+                        {...register("sessionFee")}
+                        type="number"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <Calendar size={16} /> Days per Week
+                      </label>
+                      <input
+                        {...register("daysPerWeek")}
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Qualification
+                      </label>
+                      <input
+                        {...register("qualification")}
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Field of Study
+                      </label>
+                      <input
+                        {...register("fieldOfStudy")}
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <MapPin size={16} /> University
+                      </label>
+                      <input
+                        {...register("university")}
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <Calendar size={16} /> Graduation Year
+                      </label>
+                      <input
+                        {...register("graduationYear")}
+                        type="number"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <Edit3 size={16} /> Short Bio
+                      </label>
+                      <textarea
+                        {...register("shortBio")}
+                        rows={2}
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white resize-none"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Languages
+                      </label>
+                      <input
+                        {...register("languages")}
+                        placeholder="English, Hindi"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Experience (Years)
+                      </label>
+                      <input
+                        {...register("yearsOfExperience")}
+                        type="number"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <Calendar size={16} /> Available Days
+                      </label>
+                      <input
+                        {...register("days")}
+                        placeholder="Monday, Wednesday"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <Calendar size={16} /> Available Time Per Day
+                      </label>
+                      <input
+                        {...register("availableTimePerDay")}
+                        placeholder="6 PM - 9 PM"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Key Skills
+                      </label>
+                      <input
+                        {...register("keySkills")}
+                        placeholder="React, Node.js"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Resume Link
+                      </label>
+                      <input
+                        {...register("resume")}
+                        type="file"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+
+                    <div className=" flex flex-col">
+                      <label className="form-label">
+                        <User size={16} /> Category
+                      </label>
+                      <input
+                        {...register("category")}
+                        placeholder="Web Development"
+                        className=" outline-none border rounded-sm p-1 focus:border-green-900 focus:bg-gray-400 focus:text-white"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="flex gap-3"
+                    >
+                      <motion.button
+                        onClick={handleCancel}
+                        className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <X size={18} />
+                        Cancel
+                      </motion.button>
+                      <motion.button
+                        type="submit"
+                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Save size={18} />
+                        Save Changes
+                      </motion.button>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
-              </motion.div>
+              </form>
             ) : (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -363,11 +543,73 @@ const handleSave = async () => {
                   value="January 2024"
                   color="text-gray-700"
                 />
-                
-                {formData.bio && (
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm font-medium text-gray-500 mb-2">Bio</p>
-                    <p className="text-gray-700 leading-relaxed">{formData.bio}</p>
+
+                {userData?.role === "consultant" && (
+                  <div className="space-y-4 pt-4 border-t border-gray-100 mt-4">
+                    <DisplayField
+                      icon={Edit3}
+                      label="Session Fee (INR)"
+                      value={formData.sessionFee}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={Calendar}
+                      label="Days per Week"
+                      value={formData.daysPerWeek}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={User}
+                      label="Qualification"
+                      value={formData.qualification}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={User}
+                      label="Field of Study"
+                      value={formData.fieldOfStudy}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={MapPin}
+                      label="University"
+                      value={formData.university}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={Calendar}
+                      label="Graduation Year"
+                      value={formData.graduationYear}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={User}
+                      label="Languages"
+                      value={formData.languages}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={User}
+                      label="Experience (Years)"
+                      value={formData.yearsOfExperience}
+                      color="text-gray-700"
+                    />
+                    <DisplayField
+                      icon={User}
+                      label="Category"
+                      value={formData.category}
+                      color="text-gray-700"
+                    />
+                    {formData.shortBio && (
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm font-medium text-gray-500 mb-2">
+                          Short Bio
+                        </p>
+                        <p className="text-gray-700 leading-relaxed">
+                          {formData.shortBio}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -377,50 +619,20 @@ const handleSave = async () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
-        <AnimatePresence mode="wait">
-          {editing ? (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="flex gap-3"
-            >
-              <motion.button
-                onClick={handleCancel}
-                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <X size={18} />
-                Cancel
-              </motion.button>
-              <motion.button
-                onClick={handleSave}
-                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Save size={18} />
-                Save Changes
-              </motion.button>
-            </motion.div>
-          ) : (
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              onClick={() => setEditing(true)}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Edit3 size={18} />
-              Edit Profile
-            </motion.button>
-          )}
-        </AnimatePresence>
-      </div>
+      {!editing && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          onClick={() => setEditing(true)}
+          className=" relative mt-10 lg:left-[75%] px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Edit3 size={18} />
+          Edit Profile
+        </motion.button>
+      )}
     </motion.div>
   );
 };

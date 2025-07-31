@@ -57,7 +57,7 @@ export const registerUser = async (formdata) => {
   
   const response = await API.post('/user/updateProfile', modifiedData, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'multipart/form-data'
     },
   });
     console.log('response' , response);
@@ -90,7 +90,7 @@ export const submitConsultantApplication = async(data) =>{
     }
     const response = await API.post('/user/consultantApplication' , data ,{
       headers: {
-     "Content-Type": "application/json",
+     'Content-Type': 'multipart/form-data', 
       }
     })
     return response;

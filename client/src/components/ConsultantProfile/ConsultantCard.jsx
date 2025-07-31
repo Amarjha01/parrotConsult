@@ -27,7 +27,7 @@ export default function ConsultantCard({ consultant, onBookNow }) {
     primaryCategory = consultant.consultantRequest.consultantProfile.category,
     languageProficiency,
     address = consultant.location,
-    profilePicture,
+    profilePicture = consultant.profileImage,
     hourlyRate,
     experience = consultant.consultantRequest.consultantProfile.yearsOfExperience,
     availabilityPerWeek = consultant.consultantRequest.consultantProfile.daysPerWeek,

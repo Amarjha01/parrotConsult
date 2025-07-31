@@ -51,21 +51,24 @@ export default function ConsultantDetailView() {
   if (!consultant) return <div className="text-center py-10">Loading...</div>;
 
   const {
-    name,
+    fullName,
     email,
-    phoneNumber,
-    address,
-    experience,
-    profilePicture,
-    primaryCategory,
+    phoneNumber = consultant.phone,
+    address = consultant.location,
+    experience = consultant.consultantRequest.consultantProfile.yearsOfExperience,
+    profileImage,
+    primaryCategory = consultant.consultantRequest.consultantProfile.category,
+    shortBio = consultant.consultantRequest.consultantProfile.shortBio,
     specializedServices,
-    keySkills,
-    languageProficiency,
-    availabilityPerWeek,
-    hourlyRate,
-    preferredWorkingHours,
-    bookingLeadTime,
-    education,
+    keySkills = consultant.consultantRequest.consultantProfile.keySkills,
+    languageProficiency = consultant.consultantRequest.consultantProfile.languages,
+    hourlyRate = consultant.consultantRequest.consultantProfile.sessionFee,
+    preferredWorkingHours = consultant.consultantRequest.consultantProfile.availableTimePerDay,
+    daysPerWeek = consultant.consultantRequest.consultantProfile.days,
+    HeighestQualification = consultant.consultantRequest.consultantProfile.qualification,
+    university = consultant.consultantRequest.consultantProfile.university,
+    fieldOfStudy = consultant.consultantRequest.consultantProfile.fieldOfStudy,
+    graduationYear = consultant.consultantRequest.consultantProfile.graduationYear,
     certificates,
   } = consultant;
 
@@ -133,12 +136,12 @@ export default function ConsultantDetailView() {
       <div className="bg-white rounded-2xl shadow p-6 md:p-8">
         <div className="flex flex-col md:flex-row gap-6 md:gap-10">
           <img
-            src={profilePicture || "https://i.postimg.cc/bryMmCQB/profile-image.jpg"}
+            src={profileImage || "https://i.postimg.cc/bryMmCQB/profile-image.jpg"}
             alt="profile"
             className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white shadow-md"
           />
           <div className="flex-1">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">{name}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">{fullName}</h2>
             <p className="text-lg text-teal-700 font-semibold mb-2">{primaryCategory}</p>
             <div className="text-gray-600 space-y-1 text-sm md:text-base">
               <p><Mail className="inline w-5 h-5 mr-2 text-teal-600" />{email}</p>
@@ -170,6 +173,12 @@ export default function ConsultantDetailView() {
         </div>
 
         {/* Skills and Details */}
+
+       <div className="w-full px-6 mt-6 py-4 border border-gray-200 rounded-2xl text-lg lg:text-xl 2xl:text-2xl bg-white shadow-sm">
+          <p className="text-xl font-semibold text-gray-800 mb-3">Short Bio</p>
+          <p className="text-gray-700 leading-relaxed">{shortBio}</p>
+        </div>
+
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
             { title: "Specialized Services", icon: <Star />, items: specializedServices, color: "bg-teal-100 text-teal-800" },
@@ -202,27 +211,42 @@ export default function ConsultantDetailView() {
             </h3>
             <p className="text-gray-600 text-sm md:text-base">
               <strong>Working Hours:</strong> {preferredWorkingHours || "09:30 - 05:00"}<br />
-              <strong>Lead Time:</strong> {bookingLeadTime || "2 day"}<br />
-              <strong>Hours/Week:</strong> {availabilityPerWeek || "10"} hours
+              <p className=" text-md font-bold">Days Per Week:</p>
+              {daysPerWeek && daysPerWeek.map((days, index)=>(
+                
+                  <div>
+                    {days}
+                  </div>
+                ))
+              }
+              {/* <strong>Lead Time:</strong> {bookingLeadTime || "2 day"}<br />
+              <strong>Hours/Week:</strong> {availabilityPerWeek || "10"} hours */}
             </p>
           </div>
         </div>
 
         {/* Education */}
-        {education?.length > 0 && (
+        {HeighestQualification?.length > 0 && (
           <div className="mt-10">
             <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-teal-600" />
               Education
             </h3>
             <div className="space-y-4">
-              {education.map((edu, i) => (
+              {/* {education.map((edu, i) => (
                 <div key={i} className="border-l-4 border-teal-500 pl-4">
                   <h4 className="font-semibold text-gray-800">{edu.qualification}</h4>
                   <p className="text-gray-600">{edu.university}</p>
                   <p className="text-sm text-gray-500">{edu.fieldOfStudy} • {edu.graduationYear}</p>
                 </div>
-              ))}
+              ))} */}
+            
+                <div  className="border-l-4 border-teal-500 pl-4">
+                  <h4 className="font-semibold text-gray-800">{HeighestQualification?.toUpperCase()}</h4>
+                  <p className="text-gray-600">{university}</p>
+                  <p className="text-sm text-gray-500">{fieldOfStudy} • {graduationYear}</p>
+                </div>
+            
             </div>
           </div>
         )}

@@ -3,58 +3,64 @@ import { Booking } from "../models/BookingModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/Apiresponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import razorpay from "razorpay";
 import crypto from "crypto";
+import { User } from "../models/UserModel.js";''
+import razorpay from "../utils/razorPayInstance.js";
+import jwt from "jsonwebtoken";
 
-// export const createPendingBooking = asyncHandler(async (req, res) => {
-//   const { consultantId, userId, datetime, duration, projectDetails } = req.body;
+export const createBooking = asyncHandler(async (req, res) => {
+  const { consultantId, userId, datetime, duration, consultationDetail } = req.body;
+  //  console.log(consultantId, userId, datetime, duration, consultationDetail);
 
-//   const booking = await Booking.create({
-//     consultant: consultantId,
-//     user: userId,
-//     datetime,
-//     duration,
-//     projectDetails,
-//     status: "pending",
-//   });
+  const consultant = await User.findById(consultantId);
+  if (!consultant) {
+    throw new ApiError(404, "Consultant not found");
+  }
+   const sessionFee = consultant.consultantRequest.consultantProfile.sessionFee
 
-//   if (!booking) {
-//     throw new ApiError(500, "Something went wrong while creating booking");
-//   }
 
-//   return res
-//     .status(201)
-//     .json(new ApiResponse(201, booking, "Booking created successfully"));
-// });
 
-// const razorpay = new Razorpay({
-//   key_id: process.env.RAZORPAY_KEY_ID,
-//   key_secret: process.env.RAZORPAY_KEY_SECRET,
-// });
+  if (duration == 5 && consultant.videoFreeTrial === false) {
+    const booking = await Booking.create({
+      consultant: consultantId,
+      user: userId,
+      bookingDateTime:datetime,
+      duration,
+      consultationDetail,
+      status: "scheduled",
+    });
 
-export const createPendingBooking = asyncHandler(async (req, res) => {
-  const { consultantId, userId, datetime, duration, projectDetails } = req.body;
+    if (!booking) {
+      throw new ApiError(500, "Something went wrong while creating booking");
+    }
 
-  // 💡 Replace this with your own logic if pricing varies
-  const amount = calculateAmount(duration); // e.g., Rs 500 -> 500 * 100 = 50000 paise
+    consultant.videoFreeTrial = true;
+    await consultant.save();
 
-  // 🔐 Create Razorpay Order
+    return res.status(201).json(
+      new ApiResponse(201, {
+        bookingId: booking._id,
+      }, "Booking has been confirmed (free trial)")
+    );
+  }
+
+
   const razorpayOrder = await razorpay.orders.create({
-    amount: amount * 100, // in paise
+    amount: sessionFee * 100,
     currency: "INR",
     receipt: `rcpt_${Date.now()}`,
     payment_capture: 1,
   });
 
-  // 📝 Save booking with Razorpay order ID
+
   const booking = await Booking.create({
     consultant: consultantId,
     user: userId,
-    datetime,
+    bookingDateTime:datetime,
     duration,
-    projectDetails,
+    consultationDetail,
     status: "pending",
-    razorpay_order_id: razorpayOrder.id, // 💥 this links booking ↔ Razorpay
+    razorpay_order_id: razorpayOrder.id,
   });
 
   if (!booking) {
@@ -67,67 +73,50 @@ export const createPendingBooking = asyncHandler(async (req, res) => {
       razorpayOrder,
     }, "Booking and payment order created")
   );
+ 
 });
 
-export const confirmBooking = asyncHandler(async (req, res) => {
-  const {
-    bookingId,
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-  } = req.body;
-
-  const secret = process.env.RAZORPAY_KEY_SECRET;
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(razorpay_order_id + "|" + razorpay_payment_id)
-    .digest("hex");
-
-  if (expectedSignature !== razorpay_signature) {
-    throw new ApiError(
-      400,
-      "Invalid Razorpay signature. Payment may be spoofed."
-    );
-  }
-
-  const booking = await Booking.findByIdAndUpdate(
-    bookingId,
-    { status: "scheduled" },
-    { new: true }
-  ).populate("consultant");
-
-  if (!booking) {
-    throw new ApiError(404, "Booking not found");
-  }
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, booking, "Booking confirmed and payment verified")
-    );
-});
 
 // get bookings by consultant id
 
 export const getBookingsByConsultantId = asyncHandler(async (req, res) => {
-  const { consultantId } = req.params;
+  const cookies = req.cookies.accessToken
 
+ const token =  jwt.verify(cookies , process.env.ACCESS_TOKEN_SECRET)
+
+ const {_id : consultantId } = token
   const bookings = await Booking.find({
     consultant: consultantId,
     status: "scheduled",
-  }).populate("user", "name"); // Only populates the name field of the user
+  }).populate("user", "fullName profileImage")
+    .populate("consultant", "fullName")
 
+    
+  console.log('bookings' , bookings);
+  
   return res.status(200).json(new ApiResponse(200, bookings));
 });
 
-
-
 export const getBookingById = asyncHandler(async (req, res) => {
-  const booking = await Booking.findById(req.params.id).populate("user consultant");
+ const cookies = req.cookies.accessToken
+
+ const token =  jwt.verify(cookies , process.env.ACCESS_TOKEN_SECRET)
+
+ const {_id } = token
+
+  const booking = await Booking.find({
+   user : _id ,
+   status: { $in: ["scheduled", "in-progress", "completed", "cancelled", "missed", "rescheduled"] }
+  }).populate("consultant" , "fullName  profileImage");
+
+  console.log(booking);
+  
 
   if (!booking) {
     throw new ApiError(404, "Booking not found");
   }
-
+  
+  
   return res.status(200).json(new ApiResponse(200, booking));
 });
+

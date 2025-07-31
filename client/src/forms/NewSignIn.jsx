@@ -168,15 +168,14 @@ try {
   );
 
   return (
-    <div className="min-h-screen text-white bg-gray-50 flex items-center justify-center px-4 " 
-    style={{ backgroundImage: `url(${AIParrot})` }}>
+    <div className="min-h-screen text-white bg-gradient-to-r from-green-900 via-green-800 to-green-950 flex items-center justify-center px-4 ">
       <ToastContainer />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className=" backdrop-blur-2xl w-full max-w-md rounded-2xl shadow-xl p-8"
       >
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-6">Sign In</h2>
+        <h2 className="text-2xl font-bold text-center text-green-300 mb-6">Sign In</h2>
         <AnimatePresence mode="wait">
           {step === 'phone' && renderPhoneStep()}
           {step === 'otp' && renderOtpStep()}

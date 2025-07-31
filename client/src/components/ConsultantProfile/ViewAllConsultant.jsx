@@ -11,113 +11,13 @@ const useAnimation = (isVisible) => ({
   transition: "all 0.3s ease-in-out",
 });
 
-// const categories = [
-//   "All Categories",
-//   "IT Consulting",
-//   "Business Strategy",
-//   "Marketing",
-//   "Finance",
-//   "Business",
-// ];
-
 
 const availabilities = ["All Availability", "Available", "Busy"];
 const priceRanges = ["All Prices", "Budget", "Standard", "Premium"];
 
-// const ConsultantCard = ({ consultant, index, onBookNow }) => {
-//   const [isHovered, setIsHovered] = useState(false);
-//   const animationStyle = useAnimation(true);
-
-//   const hoverStyle = {
-//     transform: isHovered ? "translateY(-5px)" : "translateY(0px)",
-//     boxShadow: isHovered
-//       ? "0 8px 25px rgba(0,0,0,0.15)"
-//       : "0 2px 10px rgba(0,0,0,0.1)",
-//     transition: "all 0.3s ease",
-//   };
- 
-
-//   return (
-//     <div
-//       className="bg-white rounded-4xl p-0 border border-green-800 overflow-hidden"
-//       style={{ ...animationStyle, ...hoverStyle }}
-//       onMouseEnter={() => setIsHovered(true)}
-//       onMouseLeave={() => setIsHovered(false)}
-//     >
-//       {/* Entire clickable area (excluding Book Now button) */}
-//       <Link
-//         to={`/consultantprofile/${consultant._id}/${consultant.name}`}
-//         className="block p-6"
-//       >
-//         <div className="flex items-start space-x-4">
-//           <div className="w-16 h-16 bg-gray-300 rounded-full overflow-hidden flex-shrink-0">
-//             {consultant.profilePicture ? (
-//               <img
-//                 src={consultant.profilePicture}
-//                 alt={consultant.name}
-//                 className="w-full h-full object-cover"
-//                 onError={(e) => {
-//                   e.target.src =
-//                     "https://i.postimg.cc/bryMmCQB/profile-image.jpg";
-//                 }}
-//               />
-//             ) : (
-//               <User className="w-8 h-8 text-gray-600 mx-auto mt-4" />
-//             )}
-//           </div>
-
-//           <div className="flex-1">
-//             <h3 className="text-lg font-semibold text-gray-900 mb-1 capitalize">
-//               {consultant.name}
-//             </h3>
-//             <p className="text-sm text-teal-700 font-medium mb-1 capitalize">
-//               {consultant.primaryCategory}
-            
-              
-//             </p>
-//             <p className="text-xs text-gray-500 mb-2">{consultant.email}</p>
-//             <p className="text-xs text-gray-500 mb-2">
-//               *******{consultant.phoneNumber?.toString().slice(-3)}
-//             </p>
-//             <p className="text-xs text-gray-500 mb-2">{consultant.address}</p>
-
-//             {/* Rating */}
-//             <div className="flex items-center mb-3">
-//               {[...Array(5)].map((_, i) => (
-//                 <Star
-//                   key={i}
-//                   className={`w-4 h-4 ${
-//                     i < Math.floor(consultant.rating)
-//                       ? "text-yellow-400 fill-current"
-//                       : "text-gray-300"
-//                   }`}
-//                 />
-//               ))}
-//               <span className="ml-2 text-sm text-gray-600">
-//                 {consultant.rating?.toFixed(1)}
-//               </span>
-//             </div>
-//           </div>
-//         </div>
-//       </Link>
-
-//       {/* Book Now Button (outside the clickable card link) */}
-//       <div className="px-6 pb-6">
-//         <button
-//           className="w-80px   bg-green-900 hover:bg-green-800 text-white font-medium py-2 px-4  transition-all duration-200 cursor-pointer rounded-4xl"
-//           onClick={(e) => {
-//             e.stopPropagation(); // prevent Link click
-//             onBookNow(consultant);
-//           }}
-//         >
-//           Book Now
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
 const ConsultantCard = ({ consultant, index, onBookNow }) => {
+  console.log(consultant);
+  
   const [isHovered, setIsHovered] = useState(false);
   const animationStyle = useAnimation(true);
 
@@ -156,9 +56,9 @@ const ConsultantCard = ({ consultant, index, onBookNow }) => {
         <div className="flex items-start space-x-5">
           <div className="relative">
             <div className="w-18 h-18 bg-gradient-to-br from-green-100 to-teal-100 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-green-200 group-hover:ring-green-300 transition-all duration-300">
-              {consultant.profilePicture ? (
+              {consultant.profileImage ? (
                 <img
-                  src={consultant.profilePicture}
+                  src={consultant.profileImage}
                   alt={consultant.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {

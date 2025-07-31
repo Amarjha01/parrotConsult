@@ -14,7 +14,8 @@ import ConsultantProfile from '../pages/ConsultantProfile';
 import ViewAllConsultants from '../components/ConsultantProfile/ViewAllConsultant';
 import AdminDashboard from '../pages/AdminDashboard';
 import ConsultantDashboard from '../pages/ConsultantDashboard';
-import MeetingRoom from '../videoroom/meeting';
+import MeetingRoom from '../pages/MeetingRoom.jsx';
+// import MeetingRoom from '../videoroom/meeting';
 import ConsultantSignupForm from '../forms/ConsultantSignupForm';
 import AuthModal from '../forms/AuthModal';
 import ChatBot from '../pages/ChatBot.jsx';
@@ -27,6 +28,8 @@ import Dashboard from '../components/userDashboard/Dashboard';
 import ConsultantForm from '../components/userDashboard/ConsultantForm';
 import Modern404Page from '../components/global/Modern404Page';
 import Reels from '../pages/Reels';
+import Wallet from '../components/userDashboard/Wallet.jsx';
+import BookedSession from '../components/userDashboard/BookedSession.jsx';
 
  const storedUser = localStorage.getItem("user");
   const userData = JSON.parse(storedUser)
@@ -60,18 +63,24 @@ const routes = createBrowserRouter([
 
         {
         path: 'userdashboard',
-        element: (
-          <ProtectedRoute allowedRole="user">
-            <UserDashboard />
-          </ProtectedRoute>
-        ),
+        element: <UserDashboard />,
         children:[
-           {path:'/userdashboard/dashboard' , element: <Dashboard />},
-          {path:'/userdashboard/profile' , element: <Profile userData={userData} />},
+          { path: 'dashboard', element: <Dashboard /> },
+          {path:'profile' , element: <Profile userData={userData} />},
           
           
-          {path:'/userdashboard/sessions' , element: <Sessions />},
-          {path:'/userdashboard/consultantform' , element: <ConsultantForm />},
+          {path:'sessions' , element: <Sessions />},
+          {path:'consultantform' , element: <ConsultantForm />},
+          {path:'wallet' , element: (
+            <ProtectedRoute allowedRole="consultant">
+              <Wallet />
+            </ProtectedRoute>
+          )},
+          {path:'Bookedsessions' , element: (
+            <ProtectedRoute allowedRole="consultant">
+              <BookedSession />
+            </ProtectedRoute>
+          )},
          
         ]
       },
