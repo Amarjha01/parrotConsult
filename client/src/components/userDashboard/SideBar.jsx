@@ -4,7 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FaUserTie, FaWallet } from "react-icons/fa";
 import { TbCalendarUser } from "react-icons/tb";
 
-const user = JSON.parse(localStorage.user);
+const user = localStorage.user ? JSON.parse(localStorage.user) : null;
+
 const currentRole = user?.role || 'user';
 
 const baseMenuItems = [
@@ -13,13 +14,14 @@ const baseMenuItems = [
   { name: 'My Sessions', icon: <Layers size={20} />, path: '/userdashboard/sessions', color: 'from-emerald-500 to-teal-500' },
   { name: 'Profile Upgrade', icon: <FaUserTie size={20} />, path: '/userdashboard/consultantform', color: 'from-emerald-500 to-teal-500' },
 ];
-
+console.log(currentRole);
 const consultantItems = [
   { name: 'Booked Sessions', icon: <TbCalendarUser size={20} />, path: '/userdashboard/Bookedsessions', color: 'from-indigo-500 to-purple-500' },
   { name: 'Wallet', icon: <FaWallet size={20} />, path: '/userdashboard/wallet', color: 'from-pink-500 to-red-500' },
 ];
 
 const menuItems = currentRole === 'consultant' ? [...baseMenuItems, ...consultantItems] : baseMenuItems;
+
 
 const SideBar = () => {
   const navigate = useNavigate();

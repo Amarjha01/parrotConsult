@@ -143,7 +143,6 @@ export const updateProfile = asyncHandler(async (req, res) => {
   console.log('yha call hua hai ');
   
   const token = req.cookies?.accessToken;
-  console.log(token);
   
   if (!token) return res.status(401).json({ message: 'Unauthorized: No token' });
 
