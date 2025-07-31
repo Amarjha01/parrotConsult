@@ -140,11 +140,10 @@ export const seeBooking = asyncHandler(async (req, res) => {
 
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  console.log('yha call hua hai ');
-  
+  console.log("Request received");
+
   const token = req.cookies?.accessToken;
-  
-  if (!token) return res.status(401).json({ message: 'Unauthorized: No token' });
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
   let decoded;
   try {
@@ -153,54 +152,73 @@ export const updateProfile = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: 'Invalid token' });
   }
 
-  const { _id } = decoded;
-  const body = req.body;
+const {_id : userId , role} = decoded;
+console.log(role);
 
-  const resumeFile = req.files?.resume?.[0];
-  if (!resumeFile)
-    return res.status(400).json({ message: "Resume file is missing" });
-  const resume = await uploadOnCloudinary(resumeFile.path, "raw");
-  if (!resume?.url)
-    return res.status(400).json({ message: "Failed to upload resume" });
-  // Base update object
-  const updateData = {
-    fullName: body.fullName,
-    phone: body.phone,
-    email: body.email,
-    location: body.location,
-    profileImage: req.file ? `/uploads/${req.file.filename}` : body.profileImage || '',
-  };
+  const { body, files } = req;
+  console.log('Body:', body);
+  console.log('Files:', files);
 
-  // 🔁 Add consultant nested update only if role is consultant
-  if (body.role === 'consultant') {
-    updateData.consultantRequest = {
-      ...updateData.consultantRequest,
-      status: 'pending',
-      requestedAt: new Date(),
-      consultantProfile: {
-        sessionFee: Number(body.sessionFee),
-        daysPerWeek: body.daysPerWeek,
-        days: body.days?.split(',') || [],
-        availableTimePerDay: body.availableTimePerDay,
-        qualification: body.qualification,
-        fieldOfStudy: body.fieldOfStudy,
-        university: body.university,
-        graduationYear: Number(body.graduationYear),
-        keySkills: body.keySkills?.split(',') || [],
-        shortBio: body.shortBio,
-        languages: body.languages?.split(',') || [],
-        yearsOfExperience: Number(body.yearsOfExperience),
-        category: body.category,
-        profileHealth: Number(body.profileHealth || 0),
-      },
-      documents: {
-        resume: resume?.url,
-        other: body.other || [],
-      },
-    };
+  const updateFields = {};
 
-    // KYC
-    updateData.kycVerify = {
+  // Handle normal fields
+  if (body.fullName) updateFields.fullName = body.fullName;
+  if (body.phone) updateFields.phone = body.phone;
+  if (body.email) updateFields.email = body.email;
+  if (body.location) updateFields.location = body.location;
+
+  // Handle profile image
+  if (files?.profileImage?.[0]) {
+    const uploadedImg = await uploadOnCloudinary(files.profileImage[0].path);
+    if (!uploadedImg?.url) return res.status(400).json({ message: "Failed to upload profile image" });
+    updateFields.profileImage = uploadedImg.url;
+  }
+
+  // Handle resume (for consultant)
+  if (role === 'consultant') {
+console.log(role , );
+
+    const existingUser = await User.findById(userId);
+ 
+const oldProfile = existingUser.consultantRequest?.consultantProfile || {};
+const oldDocs = existingUser.consultantRequest?.documents || {};
+
+const consultantRequest = {
+  status: 'pending',
+  requestedAt: new Date(),
+  consultantProfile: {
+    sessionFee: Number(body.sessionFee || oldProfile.sessionFee),
+    daysPerWeek: body.daysPerWeek || oldProfile.daysPerWeek,
+    days: body.days?.split(',').map(d => d.trim()) || oldProfile.days,
+    availableTimePerDay: body.availableTimePerDay || oldProfile.availableTimePerDay,
+    qualification: body.qualification || oldProfile.qualification,
+    fieldOfStudy: body.fieldOfStudy || oldProfile.fieldOfStudy,
+    university: body.university || oldProfile.university,
+    graduationYear: Number(body.graduationYear || oldProfile.graduationYear),
+    keySkills: body.keySkills?.split(',') || oldProfile.keySkills,
+    shortBio: body.shortBio || oldProfile.shortBio,
+    languages: body.languages?.split(',') || oldProfile.languages,
+    yearsOfExperience: Number(body.yearsOfExperience || oldProfile.yearsOfExperience),
+    category: body.category || oldProfile.category,
+    profileHealth: Number(body.profileHealth || oldProfile.profileHealth || 0),
+  },
+  documents: {
+    ...oldDocs,
+    other: body.other || oldDocs.other || []
+  }
+};
+
+
+    // Upload resume if available
+    if (files?.resume?.[0]) {
+      const resume = await uploadOnCloudinary(files.resume[0].path, "raw");
+      if (!resume?.url) return res.status(400).json({ message: "Failed to upload resume" });
+      consultantRequest.documents.resume = resume.url;
+    }
+
+    updateFields.consultantRequest = consultantRequest;
+
+    updateFields.kycVerify = {
       aadharNumber: body.aadharNumber,
       aadharURL: body.aadharURL,
       panNumber: body.panNumber,
@@ -208,17 +226,15 @@ export const updateProfile = asyncHandler(async (req, res) => {
     };
   }
 
-  const updatedUser = await User.findByIdAndUpdate(_id, updateData, { new: true });
+  const updatedUser = await User.findByIdAndUpdate(userId, { $set: updateFields }, { new: true });
 
-  if (!updatedUser) {
-    return res.status(404).json({ message: 'User not found' });
-  }
+  if (!updatedUser) return res.status(404).json({ message: 'User not found' });
 
-  res.status(200).json({
-    message: 'Profile updated successfully',
-    user: updatedUser,
-  });
+  res.status(200).json({ message: 'Profile updated', user: updatedUser });
 });
+
+
+
 
 
 //---------------------------------Upgrade Profile------------------------------------------------//

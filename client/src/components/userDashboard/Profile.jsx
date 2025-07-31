@@ -22,36 +22,44 @@ const Profile = () => {
 
   const [editing, setEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [imageFile,  ] = useState(null);
+  const [imageFile, setImageFile ] = useState(null);
+  
 
-  const onSubmit = async (data) => {
+ const onSubmit = async (data) => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const role = storedUser?.role;
 
-     const storedUser = JSON.parse(localStorage.getItem("user"));
-     const role = storedUser?.role;
-      const dataToSend = { ...data, role };
-      console.log(data);
-      
-    const response = await profileUpdate(dataToSend);
-     const formData = new FormData();
+ 
+  // ✅ Create a FormData object to send
+const formData = new FormData();
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "resume" && value instanceof FileList && value.length > 0) {
-        formData.append("resume", value[0]); 
-      } else {
-        formData.append(key, value);
-      }
-    });
-    // Step 4: Update localStorage
-    const updatedUser = response?.user;
+Object.entries(data).forEach(([key, value]) => {
+  if (key === "resume" && value instanceof FileList && value.length > 0) {
+    formData.append("resume", value[0]);
+  } else {
+    formData.append(key, value);
+  }
+});
 
-    if (updatedUser) {
-      localStorage.setItem("user", JSON.stringify(formData));
-      setEditing(false);
-      window.location.reload()
-    } else {
-      console.error("No user data returned from update API.");
-    }
-  };
+if(imageFile){
+  formData.append("profileImage", imageFile);
+}
+  
+  // ✅ Send FormData to API
+  const response = await profileUpdate(formData);
+
+  // ✅ Save updated user object (not FormData) to localStorage
+  const updatedUser = response?.user;
+
+  if (updatedUser) {
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setEditing(false);
+    window.location.reload();
+  } else {
+    console.error("No user data returned from update API.");
+  }
+};
+
 
   let userData = null;
   try {
@@ -172,9 +180,10 @@ const Profile = () => {
     }
 
     setIsUploading(true);
-    setImageFile(file); // store actual file
+    setImageFile(file); 
     const url = URL.createObjectURL(file);
     setProfileImage(url);
+    
     setIsUploading(false);
   };
 

@@ -53,7 +53,7 @@ export const registerUser = async (formdata) => {
   }
 
  export const profileUpdate = async (modifiedData) => {
-  // console.log('modifiedData' , modifiedData);
+  console.log('modifiedData' , modifiedData);
   
   const response = await API.post('/user/updateProfile', modifiedData, {
     headers: {

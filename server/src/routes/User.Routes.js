@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { upload } from "../middlewares/multer.js";
+import multer from 'multer';
+const storage = multer.diskStorage({});
+const upload = multer({ storage });
 import { aadharVerify, consultantApplication, loginUser, logoutUser, registerUser, seeBooking, updateProfile } from "../controllers/UserController.js";
 import {verifyUser} from "../middlewares/UserAuthMiddleware.js";
 import { postReview } from "../controllers/ReviewController.js";
@@ -13,11 +15,15 @@ userRouter.route("/logoutuser").post(verifyUser , logoutUser)
 userRouter.route("/seebookings").get(verifyUser , seeBooking)
 userRouter.route("/postreview").post(verifyUser , postReview)
 
-userRouter.post('/updateProfile' ,
-     upload.fields([
-        { name: "resume", maxCount: 1 },
-      ]),
-    updateProfile)
+userRouter.post(
+  '/updateProfile',
+  upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'profileImage', maxCount: 1 },
+  ]),
+  updateProfile
+);
+
 
 
 userRouter.post('/aadharVerify' ,

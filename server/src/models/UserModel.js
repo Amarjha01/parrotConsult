@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
         {
         documentName:String,
         documentType:String,
-        DocumentURL:String,
+        documentURL:String,
         createdAt: { type: Date, default: Date.now }
       }
       ]
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
     category: String,
     profileHealth:Number,
     wallet:{type:Number , default: 0},
-    withdrawelHistory:[]
+    withdrawalHistory:[]
   },
     requestedAt: { type: Date, default: Date.now },
     reviewedAt: Date
