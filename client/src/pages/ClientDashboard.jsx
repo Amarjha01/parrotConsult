@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import SideBar from '../components/userDashboard/SideBar';
-import { Outlet } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home } from 'lucide-react';
 
 const ClientDashboard = () => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleNavbarOpen = () => {
     setIsNavbarOpen(prev => !prev);
   };
 
+  const goHome = () => {
+    navigate('/'); // Update to your actual home path if different
+  };
+
   return (
     <div>
-      {/* Mobile Header with Hamburger */}
-      <div className="lg:hidden flex justify-end items-center p-4 bg-white shadow">
+      {/* Mobile Header with Hamburger and Home */}
+      <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow">
+        <button onClick={goHome} className="mr-4 text-blue-600 hover:text-blue-800">
+          <Home size={24} />
+        </button>
         <button onClick={handleNavbarOpen}>
           {isNavbarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>

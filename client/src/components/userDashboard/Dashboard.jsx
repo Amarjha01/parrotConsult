@@ -9,8 +9,6 @@ import {
   Clock, 
   Target,
   ArrowRight,
-  Bell,
-  Search,
   Plus
 } from "lucide-react";
 
@@ -128,7 +126,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Simulated user data - in real app, this would come from props or context
-    setUserName("Alex Johnson");
+   const user = (JSON.parse(localStorage?.user));
+    setUserName(user.fullName)
     
     // Update time every minute
     const timer = setInterval(() => {
@@ -164,44 +163,12 @@ const Dashboard = () => {
             <div className="flex items-center gap-4">
               <div className="flex flex-col">
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Good {currentTime.getHours() < 12 ? 'morning' : currentTime.getHours() < 17 ? 'afternoon' : 'evening'}, {userName.split(" ")[0]} 👋
+                  Good {currentTime.getHours() < 12 ? 'morning' : currentTime.getHours() < 17 ? 'afternoon' : 'evening'}, {userName && userName.split(" ")[0].charAt(0).toUpperCase() + userName.split(" ")[0].slice(1)} 👋
                 </h1>
                 <p className="text-sm text-gray-600">
                   {formatDate(currentTime)} • {formatTime(currentTime)}
                 </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="pl-10 pr-4 py-2 bg-gray-100 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                />
-              </div>
-              
-              <motion.button
-                className="relative p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Bell size={20} className="text-gray-600" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-              </motion.button>
-              
-              <motion.button
-                onClick={() => {
-                  // In real app, this would handle logout
-                  alert("Logout clicked");
-                }}
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-2 rounded-lg shadow-md font-medium transition-all duration-200"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Logout
-              </motion.button>
             </div>
           </div>
         </div>
