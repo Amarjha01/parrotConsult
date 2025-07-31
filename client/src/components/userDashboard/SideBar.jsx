@@ -37,8 +37,7 @@ const SideBar = ({ isNavbarOpen, handleNavbarOpen }) => {
 
   return (
     <div className={`min-h-screen w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl flex flex-col lg:relative fixed lg top-0 transition-transform transform
-        ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'}
-         translate-x-0  z-40`}>
+        ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-40`}>
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-transparent to-teal-600/5" />
       <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-full blur-2xl animate-pulse" />
       <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-teal-500/10 to-transparent rounded-full blur-2xl animate-pulse delay-1000" />
