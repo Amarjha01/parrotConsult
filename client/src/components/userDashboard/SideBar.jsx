@@ -51,8 +51,8 @@ const handleLogout = () => {
       <div className="relative py-8 px-6 border-b border-slate-700/50">
       <Link to={'/'}>
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
-            <Zap className="text-white" size={20} />
+          <div className=" h-12 w-12 p-0.5 bg-[#ffffff]/10  backdrop-blur-2xl rounded-xl flex items-center justify-center shadow-2xl">
+            <img src="/parrot.png" alt="" />
           </div>
           <div>
            

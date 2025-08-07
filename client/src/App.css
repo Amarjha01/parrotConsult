@@ -75,3 +75,25 @@ background:rgba(0, 183, 219, 0.2);
 .customeZindex{
   z-index: -10;
 }
+
+/* The entire scrollbar */
+::-webkit-scrollbar {
+  width: 8px;               /* vertical scrollbar */
+  height: 8px;              /* horizontal scrollbar */
+}
+
+/* The draggable scrolling handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(4, 82, 4);        /* Scroll thumb color */
+  border-radius: 10px;
+}
+
+/* The track (progress bar background) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;      /* Track color */
+}
+
+/* Optional: when hovering over the thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: darkgreen;
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   Home,
   Search,
@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import ScrollToTop from './util/ScrollToTop';
 import './components/global/style.css';
-
+import './App.css'
 const navItems = [
   { name: 'Home', icon: <Home size={20} />, path: '/', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Search', icon: <Search size={20} />, path: '/chatbot', color: 'hover:bg-[#1a5a3e]' },
@@ -107,9 +107,9 @@ const App = () => {
         >
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-evenly">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg hover:rotate-180 transition-transform duration-500">
-                P
-              </div>
+              <Link to={'/'} className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg ">
+                <img src="/parrot.png" alt="" />
+              </Link>
             </div>
           </div>
           <nav className="flex-1 p-4 space-y-2 overflow-hidden">
