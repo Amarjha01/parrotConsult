@@ -1,0 +1,221 @@
+const statusCode = [
+   {    
+    '101': 'Switching Protocols',
+    '102': 'Processing',
+    '103': 'Early Hints',
+    '200': 'OK',
+    '201': 'Created',
+    '202': 'Accepted',
+    '203': 'Non-Authoritative Information',
+    '204': 'No Content',
+    '205': 'Reset Content',
+    '206': 'Partial Content',
+    '207': 'Multi-Status',
+    '208': 'Already Reported',
+    '226': 'IM Used',
+    '300': 'Multiple Choices',
+    '301': 'Moved Permanently',
+    '302': 'Found',
+    '303': 'See Other',
+    '304': 'Not Modified',
+    '305': 'Use Proxy',
+    '307': 'Temporary Redirect',
+    '308': 'Permanent Redirect',
+    '400': 'Bad Request',
+    '401': 'Unauthorized',
+    '402': 'Payment Required',
+    '403': 'Forbidden',
+    '404': 'Not Found',
+    '405': 'Method Not Allowed',
+    '406': 'Not Acceptable',
+    '407': 'Proxy Authentication Required',
+    '408': 'Request Timeout',
+    '409': 'Conflict',
+    '410': 'Gone',
+    '411': 'Length Required',
+    '412': 'Precondition Failed',
+    '413': 'Payload Too Large',
+    '414': 'URI Too Long',
+    '415': 'Unsupported Media Type',
+    '416': 'Range Not Satisfiable',
+    '417': 'Expectation Failed',
+    '418': "I'm a Teapot",
+    '421': 'Misdirected Request',
+    '422': 'Unprocessable Entity',
+    '423': 'Locked',
+    '424': 'Failed Dependency',
+    '425': 'Too Early',
+    '426': 'Upgrade Required',
+    '428': 'Precondition Required',
+    '429': 'Too Many Requests',
+    '431': 'Request Header Fields Too Large',
+    '451': 'Unavailable For Legal Reasons',
+    '500': 'Internal Server Error',
+    '501': 'Not Implemented',
+    '502': 'Bad Gateway',
+    '503': 'Service Unavailable',
+    '504': 'Gateway Timeout',
+    '505': 'HTTP Version Not Supported',
+    '506': 'Variant Also Negotiates',
+    '507': 'Insufficient Storage',
+    '508': 'Loop Detected',
+    '509': 'Bandwidth Limit Exceeded',
+    '510': 'Not Extended',
+    '511': 'Network Authentication Required'
+   }
+]
+
+🔧 SERVER-SIDE (Node.js) Built-in Events
+📍 Use: io.on(...) or socket.on(...)
+
+| **Event Name**   | **Where it's used**        | **Description**                                                       |
+| ---------------- | -------------------------- | --------------------------------------------------------------------- |
+| `connection`     | `io.on()`                  | Triggered when a client connects to the server.                       |
+| `disconnect`     | `socket.on()`              | Triggered when a client disconnects (browser close, tab reload, etc). |
+| `disconnecting`  | `socket.on()`              | Triggered right before the socket disconnects. Useful for cleanup.    |
+| `error`          | `socket.on()`              | Triggered when an error occurs on that socket.                        |
+| `connect_error`  | `io.on()` or `socket.on()` | Triggered when there's a connection error.                            |
+| `newListener`    | `socket.on()`              | Fired when a new event listener is added to the socket.               |
+| `removeListener` | `socket.on()`              | Fired when an event listener is removed.                              |
+
+🧑‍💻 CLIENT-SIDE (Browser) Built-in Events
+📍 Use: socket.on(...) (in your frontend JS)
+
+| **Event Name**      | **Description**                                                            |
+| ------------------- | -------------------------------------------------------------------------- |
+| `connect`           | Fired when the client successfully connects to the server.                 |
+| `disconnect`        | Fired when the client is disconnected (manually or due to network issues). |
+| `connect_error`     | Triggered when the connection fails (e.g., server down, wrong URL).        |
+| `connect_timeout`   | Triggered if the connection takes too long.                                |
+| `error`             | General error event.                                                       |
+| `reconnect`         | Triggered after a successful reconnection.                                 |
+| `reconnect_attempt` | When the client is attempting to reconnect.                                |
+| `reconnecting`      | (Same as above; used in older versions)                                    |
+| `reconnect_error`   | Fired when reconnection fails.                                             |
+| `reconnect_failed`  | Fired when reconnection attempts stop after failing.                       |
+
+
+
+// Server side
+socket.on('eventName', (data) => { ... });  // Receive from client
+socket.emit('eventName', data);             // Send to client
+
+// Client side (in browser)
+socket.on('eventName', (data) => { ... });  // Receive from server
+socket.emit('eventName', data);             // Send to server
+
+
+
+
+
+
+
+
+
+
+You're doing a great job so far—based on everything you've asked and implemented, you’ve covered a lot of essential Socket.IO concepts already. Here's a checklist of **Socket.IO topics**, and I’ll mark which ones you’ve already touched and what you **might still want to explore** before moving to video microservices (WebRTC):
+
+---
+
+### ✅ **Topics You've Already Understood or Used**
+
+1. **Setting up Socket.IO server with Express or HTTP**
+2. **Client-side connection using `io()`**
+3. **`io.on("connection", socket => {...})`**
+4. **`socket.on()` and `socket.emit()` for event listening and emitting**
+5. **Sending private messages to specific socket IDs (`to(socketId).emit`)**
+6. **Tracking online users with `socket.handshake.query.userId`**
+7. **Handling disconnects and cleaning up**
+8. **Joining a room using `socket.join(roomId)` for 1:1 chats**
+
+---
+
+### 🟡 **Important Concepts to Still Explore**
+
+> These are especially useful as you move toward production apps or complex systems.
+
+#### 1. **Socket.IO Rooms (In Detail)**
+
+* You’ve used `.join(roomId)` but it’s worth diving deeper:
+
+  * How to **broadcast** to everyone **in a room** except the sender.
+  * `io.to(roomId).emit(...)` vs `socket.to(roomId).emit(...)`
+  * How to manage **rooms dynamically**.
+
+#### 2. **Namespaces**
+
+* You’ve used the default namespace (`/`), but Socket.IO also allows multiple **namespaces** (e.g., `/chat`, `/admin`)
+* Useful to **isolate** functionality and manage load.
+
+#### 3. **Broadcasting**
+
+* `socket.broadcast.emit()` – emits to **everyone except the sender**.
+* `io.emit()` – emits to **everyone**.
+* `socket.to(room).emit()` – emits to **everyone in room except sender**.
+* Learn where and when to use each.
+
+#### 4. **Middleware in Socket.IO**
+
+* Like Express middleware but for sockets:
+  E.g., to **authenticate users before allowing connection**.
+
+```js
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  // validate token here...
+  next();
+});
+```
+
+#### 5. **Socket.IO Acknowledgements (Callback Support)**
+
+* Client can send a message and expect a response:
+
+```js
+socket.emit("event", data, (response) => {
+  console.log("Server replied:", response);
+});
+```
+
+#### 6. **Scaling Socket.IO with Redis Adapter**
+
+* If you ever want to scale to multiple Node.js servers, you’ll need this.
+* Ensures all nodes **share state** like rooms and sockets.
+
+#### 7. **Error Handling and Reconnection**
+
+* How to handle:
+
+  * Failed connections
+  * `socket.on("connect_error", ...)`
+  * Reconnection strategies
+
+#### 8. **Security Considerations**
+
+* Limit origin (`cors`)
+* Authentication (JWT, etc.)
+* Preventing abuse (rate-limiting, max connection attempts)
+
+#### 9. **Heartbeat and Timeouts**
+
+* Understand `pingTimeout`, `pingInterval` settings
+* Helps keep connections healthy
+
+#### 10. **Socket.IO Server Events**
+
+* Like `connect_error`, `connect_timeout`, `reconnect_attempt`, etc.
+* These are very useful to monitor and debug real-time systems.
+
+---
+
+### 🔜 Recommended Path Forward
+
+1. ✅ **Finish your P2P chat app fully with rooms.**
+2. 🟡 Learn **Socket.IO middleware & authentication**.
+3. 🟡 Explore **Socket.IO rooms and namespaces more deeply**.
+4. 🟡 Learn about **broadcasting and acknowledgements**.
+5. 🔥 Then move into **WebRTC** + **Socket.IO** for P2P video.
+
+---
+
+Would you like me to generate a **custom roadmap or checklist** for you to complete your Socket.IO learning fast before you jump into the video microservice?
