@@ -1,7 +1,3 @@
-import React from 'react'
-import Logo from './logo'
-
-
 export default function Footer() {
     return (
       <footer className="py-8 px-6 bg-green-900 text-white">

@@ -66,6 +66,8 @@ const handleVerification = async () => {
 
 
  const onSubmit = async (data) => {
+  console.log(data);
+  
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {

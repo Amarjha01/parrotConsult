@@ -44,6 +44,7 @@ import assistantRoute from "./routes/assistant.Routes.js";
 // import authOtpRouter from "./routes/AuthOtp.routes.js";
 import otpRoutes from "./routes/AuthOtp.routes.js";
 import { meetingRoutes } from "./routes/meetingRoutes.js";
+import Chatrouter from "./routes/chat.routes.js";
 
 
 // using routes
@@ -58,6 +59,6 @@ app.use("/api/v1/webhook", webhookrouter);
 app.use("/api/v1/openai", openaiRoute);
 app.use("/api/v1/assistant", assistantRoute);
 app.use("/api/v1/auth", otpRoutes);
-// console.log("✅ Assistant route mounted at /api/v1/assistant");
+app.use("/api/v1/chat", Chatrouter);
 
 export default app;

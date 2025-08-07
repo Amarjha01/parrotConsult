@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Home, User, LogOut, Layers, ChevronRight, Zap } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaUserTie, FaWallet } from "react-icons/fa";
 import { TbCalendarUser } from "react-icons/tb";
 
@@ -34,26 +34,36 @@ const SideBar = ({ isNavbarOpen, handleNavbarOpen }) => {
     setActiveItem(currentItem?.name || '');
   }, [location.pathname]);
 
-
+const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('consultant');
+    localStorage.removeItem('admin');
+    setUserRole(null);
+    navigate('/');
+  };
   return (
     <div className={`min-h-screen w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl flex flex-col lg:relative fixed lg top-0 transition-transform transform
         ${isNavbarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 z-40`}>
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-transparent to-teal-600/5" />
+      <div className="absolute  bg-gradient-to-br from-emerald-600/5 via-transparent to-teal-600/5" />
       <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-full blur-2xl animate-pulse" />
       <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-teal-500/10 to-transparent rounded-full blur-2xl animate-pulse delay-1000" />
 
       <div className="relative py-8 px-6 border-b border-slate-700/50">
+      <Link to={'/'}>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
             <Zap className="text-white" size={20} />
           </div>
           <div>
+           
             <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
               Parrot Consult
             </h1>
+           
             <p className="text-xs text-slate-400">Professional Dashboard</p>
           </div>
         </div>
+        </Link>
       </div>
 
       <nav className="flex-1 px-4 py-6 space-y-2 relative">
@@ -141,7 +151,7 @@ const SideBar = ({ isNavbarOpen, handleNavbarOpen }) => {
           <div className="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
             <LogOut size={18} />
           </div>
-          <span className="flex-1 text-left text-sm">Logout</span>
+          <span onClick={handleLogout} className="flex-1 text-left text-sm cursor-pointer">Logout</span>
           <ChevronRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
         </button>
       </div>

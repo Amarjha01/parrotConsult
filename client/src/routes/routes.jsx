@@ -13,7 +13,6 @@ import ConsultantDetailView from '../components/ConsultantProfile/consultantDeta
 import ConsultantProfile from '../pages/ConsultantProfile';
 import ViewAllConsultants from '../components/ConsultantProfile/ViewAllConsultant';
 import AdminDashboard from '../pages/AdminDashboard';
-import ConsultantDashboard from '../pages/ConsultantDashboard';
 import MeetingRoom from '../pages/MeetingRoom.jsx';
 // import MeetingRoom from '../videoroom/meeting';
 import ConsultantSignupForm from '../forms/ConsultantSignupForm';
@@ -30,6 +29,9 @@ import Modern404Page from '../components/global/Modern404Page';
 import Reels from '../pages/Reels';
 import Wallet from '../components/userDashboard/Wallet.jsx';
 import BookedSession from '../components/userDashboard/BookedSession.jsx';
+import Inbox from '../pages/Inbox.jsx';
+import ChatDetail from '../pages/ChatDetail.jsx';
+import ChatPageWrapper from '../pages/ChatPageWrapper.jsx';
 
  const storedUser = localStorage.getItem("user");
   const userData = JSON.parse(storedUser)
@@ -47,6 +49,8 @@ const routes = createBrowserRouter([
       { path: 'ViewAllConsultants', element: <ViewAllConsultants /> },
       { path: 'AuthModal', element: <AuthModal /> },
       { path: 'chatbot', element: <ChatBot /> },
+      { path: 'chat', element: <ChatPageWrapper /> },
+      { path: 'inbox', element: <Inbox /> },
       { path: 'consultant-quiz', element: <ConsultantQuiz /> },
       { path: '/newsignin', element: <NewSignIn /> },
       { path: '/newsignup', element: <NewSignUp /> },
@@ -84,14 +88,7 @@ const routes = createBrowserRouter([
          
         ]
       },
-       {
-        path: 'ConsultantDashboard',
-        element: (
-          <ProtectedRoute allowedRole="consultant">
-            <ConsultantDashboard />
-          </ProtectedRoute>
-        )
-      },
+       
       { path: '/meeting/:bookingId', element: <MeetingRoom /> },
       { path: '/ConsultantSignupForm', element: <ConsultantSignupForm /> },
       

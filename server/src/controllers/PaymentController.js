@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { Booking } from "../models/BookingModel.js"; // adjust path
-import { paymentRecords } from "../models/paymentRecordModel.js";
+import { PaymentRecords } from "../models/PaymentRecordModel.js";
 
 export const verifyPayment = async (req, res) => {
   const {
@@ -42,7 +42,7 @@ export const verifyPayment = async (req, res) => {
     }
 
     // Step 4: Save payment record
-   const payment = await paymentRecords.create({
+   const payment = await PaymentRecords.create({
       consultant: booking.consultant._id,
       user: booking.user._id,
       amount: booking.consultant.consultantRequest.consultantProfile.sessionFee, 

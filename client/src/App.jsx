@@ -17,7 +17,7 @@ const navItems = [
   { name: 'Home', icon: <Home size={20} />, path: '/', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Search', icon: <Search size={20} />, path: '/chatbot', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Reels', icon: <PlusSquare size={20} />, path: '/reels', color: 'hover:bg-[#1a5a3e]' },
-  { name: 'Chat', icon: <MessageCircle size={20} />, path: '/chat', color: 'hover:bg-[#1a5a3e]' },
+  { name: 'Inbox', icon: <MessageCircle size={20} />, path: '/inbox', color: 'hover:bg-[#1a5a3e]' },
 ];
 
 const App = () => {

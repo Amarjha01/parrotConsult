@@ -13,19 +13,27 @@ import {
   Calendar,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { viewSingleConsultant } from "../../apis/globalApi";
 import BookingPage from "../booking/BookingPage";
-
+import axios from 'axios'
 export default function ConsultantDetailView() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [consultant, setConsultant] = useState();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [getStarted, setGetStarted] = useState(false);
+  const [isMessageOpen , setIsMessageOpen] = useState(false)
 
   const handleBookNow = () => {
     setIsBookingOpen(true);
   };
+ 
+const currentUser = JSON.parse(localStorage.user);
+  const userId = currentUser._id;
+  const role = currentUser.role;
+
+ 
 
   const stepVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -70,8 +78,29 @@ export default function ConsultantDetailView() {
     fieldOfStudy = consultant.consultantRequest.consultantProfile.fieldOfStudy,
     graduationYear = consultant.consultantRequest.consultantProfile.graduationYear,
     certificates,
+    _id
   } = consultant;
 
+   const handleSendMessage = async () => {
+    // Optionally ensure chat exists before navigation by hitting the backend:
+    try {
+      const resp = await axios.get(
+        `http://localhost:8011/api/v1/chat/${userId}/${_id}`,
+        { withCredentials: true }
+      );
+      console.log(resp);
+      
+      const chatId = resp.data.chat._id; 
+      console.log(chatId);
+      
+      navigate(
+        `/chat?otherId=${_id}&role=user&chatId=${chatId}`
+      );
+    } catch (e) {
+      console.warn('Could not ensure chat exists, navigating anyway', e);
+      navigate(`/chat?otherId=${_id}&role=user`);
+    }
+  };
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-20 py-8">
       {isBookingOpen && (
@@ -166,7 +195,7 @@ export default function ConsultantDetailView() {
               >
                 Book Consultation
               </button>
-              <button className="border border-teal-700 text-teal-700 px-6  rounded-lg hover:bg-teal-700 hover:text-white">
+              <button onClick={handleSendMessage} className="border border-teal-700 text-teal-700 px-6  rounded-lg hover:bg-teal-700 hover:text-white">
                 Send Message
               </button>
             </div>

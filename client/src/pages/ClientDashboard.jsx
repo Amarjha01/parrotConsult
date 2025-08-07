@@ -12,7 +12,7 @@ const ClientDashboard = () => {
   };
 
   const goHome = () => {
-    navigate('/'); // Update to your actual home path if different
+    navigate('/'); 
   };
 
   return (
