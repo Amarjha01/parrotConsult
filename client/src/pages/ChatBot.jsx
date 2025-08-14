@@ -95,7 +95,7 @@ const handleSend = async () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white overflow-hidden customeZindex ">
+    <div className="flex flex-col h-screen bg-white overflow-hidden  ">
 
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6 relative scrollbar-custom">

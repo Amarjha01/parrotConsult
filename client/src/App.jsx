@@ -10,13 +10,14 @@ import {
   LayoutDashboard,
   Settings,
 } from 'lucide-react';
+import { SiGoogledisplayandvideo360 } from "react-icons/si";
 import ScrollToTop from './util/ScrollToTop';
-import './components/global/style.css';
+
 import './App.css'
 const navItems = [
   { name: 'Home', icon: <Home size={20} />, path: '/', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Search', icon: <Search size={20} />, path: '/chatbot', color: 'hover:bg-[#1a5a3e]' },
-  { name: 'Reels', icon: <PlusSquare size={20} />, path: '/reels', color: 'hover:bg-[#1a5a3e]' },
+  { name: 'Quickify', icon: <SiGoogledisplayandvideo360 size={20} />, path: '/reels', color: 'hover:bg-[#1a5a3e]' },
   { name: 'Inbox', icon: <MessageCircle size={20} />, path: '/inbox', color: 'hover:bg-[#1a5a3e]' },
 ];
 
@@ -24,9 +25,24 @@ const App = () => {
   const [userRole, setUserRole] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(true);
-  const [active, setActive] = useState('Home');
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [active, setActive] = useState();
+const navigate = useNavigate();
+const location = useLocation();
+
+console.log(location.pathname);
+
+   useEffect(() => {
+  const currentNav = navItems.find(item => item.path === location.pathname);
+  if (currentNav) {
+    console.log(currentNav);
+    
+    setActive(currentNav.name);
+  }
+}, [location.pathname]);
+ 
+ 
+
+
 
   useEffect(() => {
     const updateRole = () => {
@@ -96,7 +112,7 @@ const App = () => {
   return (
     <>
       <ScrollToTop />
-      <div className="flex min-h-screen">
+      <div className="flex md:min-h-screen ">
         {/* Sidebar (Desktop only) */}
         <aside
           className={`hidden md:flex fixed min-h-screen flex-col border-r border-[#103e37] bg-[#103e37]/90 backdrop-blur-lg shadow-xl z-50 transition-all duration-300 ease-in-out ${
@@ -148,14 +164,14 @@ const App = () => {
 
         {/* Main Content Area */}
         <main
-          className="flex-1 ml-0 md:ml-20 overflow-x-hidden pb-[5rem] pt-4 px-2 sm:px-4"
+          className="flex-1 ml-0 md:ml-20 overflow-x-hidden  md:pt-2  sm:pl-2"
         >
           <Outlet />
         </main>
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 md:hidden bg-white/30 backdrop-blur-lg border-t border-gray-200 shadow-lg z-50">
+      <nav className="fixed bottom-0 left-0 right-0 md:hidden bg-green-900/10 backdrop-blur-lg border-t border-green-900/20 shadow-lg z-50">
         <div className="flex justify-around items-center py-2 px-4">
           {navItems.slice(0, 4).map(item => (
             <button
@@ -164,8 +180,8 @@ const App = () => {
                 setActive(item.name);
                 navigate(item.path);
               }}
-              className={`flex flex-col items-center justify-center gap-1 p-2 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 ${
-                active === item.name ? 'text-white bg-[#227047]/70' : 'text-black hover:text-white'
+              className={`flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+                active === item.name ? 'text-white bg-[#227047]/90' : 'text-green-900 hover:text-white'
               }`}
             >
               <div className="relative">
@@ -180,7 +196,7 @@ const App = () => {
 
           <button
             onClick={() => navigate(userRole ? '/userdashboard/dashboard' : '/newsignin')}
-            className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl text-gray-900 hover:text-gray-700 transition-all duration-200 transform hover:scale-105 active:scale-95"
+            className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl text-green-900 hover:text-gray-700 transition-all duration-200 transform hover:scale-105 active:scale-95"
           >
             <User size={20} />
             <span className="text-xs font-medium">{userRole ? 'Profile' : 'Login'}</span>

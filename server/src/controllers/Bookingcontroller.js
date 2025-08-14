@@ -92,7 +92,7 @@ export const getBookingsByConsultantId = asyncHandler(async (req, res) => {
     .populate("consultant", "fullName")
 
     
-  console.log('bookings' , bookings);
+  // console.log('bookings' , bookings);
   
   return res.status(200).json(new ApiResponse(200, bookings));
 });
@@ -109,7 +109,7 @@ export const getBookingById = asyncHandler(async (req, res) => {
    status: { $in: ["scheduled", "in-progress", "completed", "cancelled", "missed", "rescheduled"] }
   }).populate("consultant" , "fullName  profileImage");
 
-  console.log(booking);
+  // console.log(booking);
   
 
   if (!booking) {

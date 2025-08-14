@@ -14,6 +14,7 @@
   "author": "abhinav dhiman",
   "license": "ISC",
   "dependencies": {
+    "agora-access-token": "^2.0.4",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",

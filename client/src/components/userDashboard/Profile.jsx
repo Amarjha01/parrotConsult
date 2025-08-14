@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { profileUpdate } from "../../apis/userApi";
+import { showErrorToast } from "../../util/Notification";
+import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
 
@@ -47,7 +49,8 @@ if(imageFile){
   
   // ✅ Send FormData to API
   const response = await profileUpdate(formData);
-
+ showErrorToast(response)
+  
   // ✅ Save updated user object (not FormData) to localStorage
   const updatedUser = response?.user;
 
@@ -217,6 +220,7 @@ if(imageFile){
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 max-w-4xl mx-auto overflow-hidden"
     >
+       <ToastContainer />
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">

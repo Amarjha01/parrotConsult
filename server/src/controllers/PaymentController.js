@@ -22,11 +22,6 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Order ID mismatch" });
     }
 
-    // Step 3: Generate signature
-    // const generated_signature = crypto
-    //   .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    //   .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-    //   .digest("hex");
 
         const body = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
@@ -55,8 +50,17 @@ export const verifyPayment = async (req, res) => {
     // Step 5: Mark booking as confirmed
     booking.status = "scheduled";
     booking.payment = payment._id;
+    booking.meetingLink = booking.consultant._id+booking.user._id
     await booking.save();
+     const consultant = await User.findByIdAndUpdate(
+  booking.consultant._id,
+  {
+    $inc: { 'consultantRequest.consultantProfile.wallet': booking.consultant.consultantRequest.consultantProfile.sessionFee }
+  },
+  { new: true }
+);
 
+      await consultant.save()
     res.status(200).json({ success: true, message: "Payment verified successfully" });
   } catch (err) {
     console.error("Verify Payment Error:", err);
@@ -66,6 +70,8 @@ export const verifyPayment = async (req, res) => {
 
 // server/src/sockets/meetingSocket.js
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import constants from "constants";
+import { User } from "../models/UserModel.js";
 export const webhook = asyncHandler(async (req, res) => {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
   

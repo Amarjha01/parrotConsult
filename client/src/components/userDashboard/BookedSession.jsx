@@ -96,13 +96,13 @@ const BookedSession = () => {
             return (
               <div
                 key={session._id}
-                className={`group relative bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 ${
+                className={`group  bg-white rounded-2xl border border-slate-200 overflow-hidden  duration-300 hover:shadow-2xl hover:shadow-slate-200/50  ${
                   isHovered ? 'ring-2 ring-emerald-500/20' : ''
                 }`}
                 onMouseEnter={() => setHoveredSession(session._id)}
                 onMouseLeave={() => setHoveredSession(null)}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-slate-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute  bg-gradient-to-br from-transparent via-transparent to-slate-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div className="relative p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -143,10 +143,10 @@ const BookedSession = () => {
                   </div>
 
                   <a
-                    href={session.meetingLink || '#'}
+                    href={session.meetingLink && session.status === 'scheduled' ? `/joinMeeting/${session.meetingLink}` : '' || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group/btn inline-flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25"
+                    className="group/btn cursor-pointer z-30 inline-flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25"
                   >
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center group-hover/btn:bg-white/30 transition-colors">
                       {session.status === 'scheduled' ? <Play size={16} className="ml-0.5" /> : <Video size={16} />}
@@ -158,9 +158,7 @@ const BookedSession = () => {
                   </a>
                 </div>
 
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 animate-pulse" />
-                </div>
+               
               </div>
             );
           })}

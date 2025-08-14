@@ -10,6 +10,7 @@ import {
   Zap
 } from 'lucide-react';
 import { getBookingById } from '../../apis/bookingApi';
+import { Link } from 'react-router-dom';
 
 const Sessions = () => {
   const [sessions, setSessions] = useState([]);
@@ -135,15 +136,17 @@ const Sessions = () => {
                     </div>
                   </div>
 
-                  <button className="group/btn inline-flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25">
+                  <a href={session.status === 'scheduled' ? `/joinMeeting/${session.meetingLink}` : ''} target='_blanck' className="group/btn inline-flex items-center gap-3 w-full px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25">
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center group-hover/btn:bg-white/30 transition-colors">
                       {session.status === 'scheduled' ? <Play size={16} className="ml-0.5" /> : <Video size={16} />}
                     </div>
                     <span className="flex-1 text-left">
-                      {session.status === 'scheduled' ? 'Join Meeting' : 'View Recording'}
+                     
+                      {session.status === 'scheduled' ? 'Join Meeting' : 'Completed'}
+                 
                     </span>
                     <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
               </div>
             );

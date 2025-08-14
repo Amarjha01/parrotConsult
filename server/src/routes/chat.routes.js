@@ -35,7 +35,7 @@ Chatrouter.get('/inbox', extractUser, async (req, res) => {
     const isConsultant = req.currentUser.role === 'consultant';
   
     const filter = isConsultant ? { consultant: userId } : { user: userId };
-     console.log(filter);
+    //  console.log(filter);
      
     const chats = await Chat.find(filter)
       .sort({ updatedAt: -1 })
@@ -44,7 +44,7 @@ Chatrouter.get('/inbox', extractUser, async (req, res) => {
         populate: { path: 'sender', select: 'FullName profileImage' },
       })
       .populate(isConsultant ? 'user' : 'consultant', 'fullName profileImage');
-  console.log('dfgukjygguytgfduchat' , chats);
+  // console.log('dfgukjygguytgfduchat' , chats);
 // console.log(chats.lastMessage.sender);
 
   

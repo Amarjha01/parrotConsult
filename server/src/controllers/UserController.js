@@ -143,7 +143,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
   console.log("Request received");
 
   const token = req.cookies?.accessToken;
-  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  if (!token) return res.status(401).json({ message: 'Please Login Again' });
 
   let decoded;
   try {
@@ -233,7 +233,43 @@ const consultantRequest = {
   res.status(200).json({ message: 'Profile updated', user: updatedUser });
 });
 
+export const walletData = asyncHandler(async(req , resp)=>{
+  try {
+    const token = req.cookies.accessToken || req.headers["authorization"];
+    if (token?.startsWith("Bearer ")) {
+      token = token.replace("Bearer ", "");
+    }
 
+    if(!token){
+      return resp.status(401).json({
+        message:"unauthorized access"
+      })
+    }
+
+    const decoded = jwt.verify(token , process.env.ACCESS_TOKEN_SECRET)
+    const { _id } = decoded
+
+    const consultant = await User.findById(_id).select('consultantRequest.consultantProfile.wallet');
+
+    if(!consultant){
+      return resp.status(404).json({
+        message:'user not found please try login again'
+      })
+    }
+    console.log(consultant);
+    
+    return resp.status(200).json({
+      message:'wallet amount fetched successfully',
+      data:consultant.consultantRequest.consultantProfile
+    })
+  } catch (error) {
+    console.log(error);
+    
+    return resp.status(500).json({
+      error
+    })
+  }
+})
 
 
 

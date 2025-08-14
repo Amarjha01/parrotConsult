@@ -11,6 +11,9 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  server: {
+    allowedHosts: ['d8709a0a51b6.ngrok-free.app'], // allow your ngrok host
+  },
   plugins: [
     react(),
     tailwindcss(),

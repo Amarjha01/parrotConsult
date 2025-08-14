@@ -154,7 +154,7 @@ const Reel = React.memo(({ reel, isActive }) => {
   return (
     <div
       ref={ref}
-      className="h-screen w-full snap-start flex justify-center items-center bg-black relative"
+      className="h-[85vh] md:h-screen w-full snap-start flex justify-center items-center bg-black relative"
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
@@ -341,7 +341,7 @@ const Reels = () => {
   }, []);
 
   return (
-    <div className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
+    <div className="h-[84vh] md:h-screen bg-white w-full md:w-[690px] overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
       <style jsx>{`
         .scrollbar-hide {
           -ms-overflow-style: none;

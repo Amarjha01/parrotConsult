@@ -17,6 +17,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import {  Zap, DollarSign } from 'lucide-react';
+import { sendContactUsMail } from '../../apis/globalApi';
 const AboutUsPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -43,15 +44,17 @@ const [hoveredCard, setHoveredCard] = useState(null);
     e.preventDefault();
     setIsSubmitting(true);
     
+    await sendContactUsMail(formData);
+    
     // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      // setFormData({ name: '', email: '', subject: '', message: '' });
       
       // Reset success message after 3 seconds
       setTimeout(() => setIsSubmitted(false), 3000);
-    }, 2000);
+    }, 7000);
   };
 
   const stats = [

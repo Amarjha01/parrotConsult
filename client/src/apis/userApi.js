@@ -51,11 +51,20 @@ export const registerUser = async (formdata) => {
       throw error.response?.data || error;
     }
   }
-
+ export const fetchWalletData = async()=>{
+  try {
+    const response = await API.get('/user/fetchWalletData')
+    return response.data
+  } catch (error) {
+    console.log(error);
+    return error
+  }
+ } 
  export const profileUpdate = async (modifiedData) => {
   console.log('modifiedData' , modifiedData);
   
-  const response = await API.post('/user/updateProfile', modifiedData, {
+try {
+    const response = await API.post('/user/updateProfile', modifiedData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -63,6 +72,12 @@ export const registerUser = async (formdata) => {
     console.log('response' , response);
 
   return response.data;
+} catch (error) {
+   console.log('error in update profile', error);
+  return error.response.data.message
+ 
+  
+}
   
 };
 

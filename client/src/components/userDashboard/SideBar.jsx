@@ -3,7 +3,7 @@ import { Home, User, LogOut, Layers, ChevronRight, Zap } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaUserTie, FaWallet } from "react-icons/fa";
 import { TbCalendarUser } from "react-icons/tb";
-
+import { TiVideo } from "react-icons/ti";
 const user = localStorage.user ? JSON.parse(localStorage.user) : null;
 
 const currentRole = user?.role || 'user';
@@ -17,6 +17,7 @@ const baseMenuItems = [
 console.log(currentRole);
 const consultantItems = [
   { name: 'Booked Sessions', icon: <TbCalendarUser size={20} />, path: '/userdashboard/Bookedsessions', color: 'from-indigo-500 to-purple-500' },
+  { name: 'Reels Controller', icon: <TiVideo size={20} />, path: '/userdashboard/reelscontroller', color: 'from-indigo-500 to-purple-500' },
   { name: 'Wallet', icon: <FaWallet size={20} />, path: '/userdashboard/wallet', color: 'from-pink-500 to-red-500' },
 ];
 

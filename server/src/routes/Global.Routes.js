@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { seeallactiveconsultants, viewSingleConsultant } from "../controllers/Globalcontrollers.js";
+import { seeallactiveconsultants, sendContactUsData, viewSingleConsultant } from "../controllers/Globalcontrollers.js";
 
 import { getReview } from "../controllers/ReviewController.js";
 
@@ -15,5 +15,7 @@ GlobalRouter.route("/viewSingleConsultant").post(
 );
 
 GlobalRouter.route("/getreviewslist").get(getReview);
+
+GlobalRouter.post('/sendContactUsData' , sendContactUsData)
 
 export default GlobalRouter;

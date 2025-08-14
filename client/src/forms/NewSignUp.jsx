@@ -4,7 +4,6 @@ import { Phone, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
 import { showSuccessToast, showInfoToast, showErrorToast } from '../util/Notification.jsx';
 import 'react-toastify/dist/ReactToastify.css';
-import AIParrot from '../assets/AIParrot.jpg'
 import { registerUser } from '../apis/userApi.js';
 
 export default function NewSignUp() {

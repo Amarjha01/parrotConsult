@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmojiPicker from "emoji-picker-react";
-const CHAT_SERVER = import.meta.env.VITE_CHAT_SERVER_URL || 'http://localhost:8011';
+const CHAT_SERVER = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8011';
 
 const getId = (val) => {
   if (!val) return '';

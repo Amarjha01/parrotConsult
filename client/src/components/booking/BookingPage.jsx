@@ -9,7 +9,9 @@ const BookingPage = ({ isOpen = true, onClose = () => {}, consultant}) => {
   const [selectedTime, setSelectedTime] = useState('');
   const [consultationDetails, setConsultationDetails] = useState('');
   const [availableDates, setAvailableDates] = useState();
-
+  console.log(' booking' , consultant);
+  console.log(availableDates);
+  
 useEffect(() => {
   const consultantDays = consultant?.consultantRequest?.consultantProfile?.days?.map(day => day.trim());
 
@@ -128,6 +130,7 @@ const handleBookMeeting = async () => {
             const paymentResponse = await verifyPayment(verifyPayload);
             console.log("Payment success:", paymentResponse);
             alert("✅ Payment Successful! Booking confirmed.");
+            window.location.href = 'userdashboard/sessions';
           } catch (err) {
             console.error("❌ Payment verification failed", err);
             alert("❌ Payment verification failed");

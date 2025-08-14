@@ -7,7 +7,6 @@ import { showErrorToast, showInfoToast, showSuccessToast } from '../util/Notific
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import AIParrot from '../assets/AIParrot.jpg'
 import { loginUser } from '../apis/userApi.js';
 export default function NewSignIn() {
   const [step, setStep] = useState('phone');
@@ -168,7 +167,7 @@ try {
   );
 
   return (
-    <div className="min-h-screen text-white bg-gradient-to-r from-green-900 via-green-800 to-green-950 flex items-center justify-center px-4 ">
+    <div className="md:min-h-screen h-[84vh] text-white bg-gradient-to-r from-green-900 via-green-800 to-green-950 flex items-center justify-center px-4 ">
       <ToastContainer />
       <motion.div
         initial={{ opacity: 0, y: 20 }}

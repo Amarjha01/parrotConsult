@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import {Link} from 'react-router-dom'
 import { 
   User, 
   Layers, 
@@ -11,7 +12,7 @@ import {
   ArrowRight,
   Plus
 } from "lucide-react";
-
+import { RiVideoUploadLine } from "react-icons/ri";
 const cardData = [
   {
     title: "Profile Completion",
@@ -51,9 +52,9 @@ const cardData = [
 ];
 
 const quickActions = [
-  { title: "Book Session", icon: <Plus size={20} />, color: "bg-blue-500" },
-  { title: "View Calendar", icon: <CalendarCheck size={20} />, color: "bg-green-500" },
-  { title: "Update Profile", icon: <User size={20} />, color: "bg-purple-500" },
+  { title: "Book Session", url:'/ViewAllConsultants' , icon: <Plus size={20} />, color: "bg-blue-500" },
+  { title: "upload Quickify", url:'/userdashboard/reelscontroller' , icon: <RiVideoUploadLine size={20} />, color: "bg-green-500" },
+  { title: "Update Profile", url:'/userdashboard/profile' , icon: <User size={20} />, color: "bg-purple-500" },
   { title: "Analytics", icon: <TrendingUp size={20} />, color: "bg-orange-500" },
 ];
 
@@ -102,9 +103,10 @@ const DashboardCard = ({ title, icon, value, subtitle, gradient, bgColor, progre
   </motion.div>
 );
 
-const QuickActionCard = ({ title, icon, color }) => (
+const QuickActionCard = ({ title, icon, color , url }) => (
+ <Link to={url}>
   <motion.button
-    className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group"
+    className=" cursor-pointer bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group"
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
   >
@@ -118,6 +120,7 @@ const QuickActionCard = ({ title, icon, color }) => (
       <ArrowRight size={16} className="text-gray-400 group-hover:text-gray-600 ml-auto" />
     </div>
   </motion.button>
+ </Link>
 );
 
 const Dashboard = () => {

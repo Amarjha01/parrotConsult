@@ -9,14 +9,9 @@ import UserDashboard from '../pages/ClientDashboard';
 
 
 import Home from '../pages/Home'; 
-import ConsultantDetailView from '../components/ConsultantProfile/consultantDetailView';
-import ConsultantProfile from '../pages/ConsultantProfile';
-import ViewAllConsultants from '../components/ConsultantProfile/ViewAllConsultant';
+import ConsultantDetailView from '../components/Home/ConsultantProfile/consultantDetailView.jsx';
+import ViewAllConsultants from '../components/Home/ConsultantProfile/ViewAllConsultant.jsx';
 import AdminDashboard from '../pages/AdminDashboard';
-import MeetingRoom from '../pages/MeetingRoom.jsx';
-// import MeetingRoom from '../videoroom/meeting';
-import ConsultantSignupForm from '../forms/ConsultantSignupForm';
-import AuthModal from '../forms/AuthModal';
 import ChatBot from '../pages/ChatBot.jsx';
 import ConsultantQuiz from '../forms/recomendform';
 import NewSignIn from '../forms/NewSignIn';
@@ -30,8 +25,9 @@ import Reels from '../pages/Reels';
 import Wallet from '../components/userDashboard/Wallet.jsx';
 import BookedSession from '../components/userDashboard/BookedSession.jsx';
 import Inbox from '../pages/Inbox.jsx';
-import ChatDetail from '../pages/ChatDetail.jsx';
-import ChatPageWrapper from '../pages/ChatPageWrapper.jsx';
+import ChatPageWrapper from '../components/p2pChat/ChatPageWrapper.jsx';
+import VideoCall from '../components/VideoCall.jsx';
+import ReelsController from '../components/userDashboard/reelsController/reelsController.jsx';
 
  const storedUser = localStorage.getItem("user");
   const userData = JSON.parse(storedUser)
@@ -45,9 +41,8 @@ const routes = createBrowserRouter([
 
       { path: 'adminsecuredlogin', element: <AdminLoginForm /> },
       { path: 'consultantprofile/:id/:name', element: <ConsultantDetailView /> },
-      { path: 'consultant/profile', element: <ConsultantProfile /> },
       { path: 'ViewAllConsultants', element: <ViewAllConsultants /> },
-      { path: 'AuthModal', element: <AuthModal /> },
+      
       { path: 'chatbot', element: <ChatBot /> },
       { path: 'chat', element: <ChatPageWrapper /> },
       { path: 'inbox', element: <Inbox /> },
@@ -85,12 +80,18 @@ const routes = createBrowserRouter([
               <BookedSession />
             </ProtectedRoute>
           )},
+          {path:'reelscontroller' , element: (
+            <ProtectedRoute allowedRole="consultant">
+              <ReelsController />
+            </ProtectedRoute>
+          )},
          
         ]
       },
        
-      { path: '/meeting/:bookingId', element: <MeetingRoom /> },
-      { path: '/ConsultantSignupForm', element: <ConsultantSignupForm /> },
+     
+      
+      { path: '/joinMeeting/:meetingRoomId', element: <VideoCall /> },
       
       { path: '*', element: <Modern404Page /> },
 

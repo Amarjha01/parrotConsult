@@ -12,6 +12,8 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async ({ to, subject, text, html }) => {
+  console.log(to);
+  
   const info = await transporter.sendMail({
     from: `"Parrot Consulting" <${process.env.MAIL_USER}>`,
     to,

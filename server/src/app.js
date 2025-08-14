@@ -45,6 +45,8 @@ import assistantRoute from "./routes/assistant.Routes.js";
 import otpRoutes from "./routes/AuthOtp.routes.js";
 import { meetingRoutes } from "./routes/meetingRoutes.js";
 import Chatrouter from "./routes/chat.routes.js";
+import agoraRouter from "./routes/agora.js";
+import reelRoutes from "./routes/reelRoutes.js";
 
 
 // using routes
@@ -60,5 +62,7 @@ app.use("/api/v1/openai", openaiRoute);
 app.use("/api/v1/assistant", assistantRoute);
 app.use("/api/v1/auth", otpRoutes);
 app.use("/api/v1/chat", Chatrouter);
+app.use("/api/v1/agora", agoraRouter);
+app.use("/api/v1/reel", reelRoutes);
 
 export default app;

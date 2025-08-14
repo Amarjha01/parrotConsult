@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from 'multer';
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
-import { aadharVerify, consultantApplication, loginUser, logoutUser, registerUser, seeBooking, updateProfile } from "../controllers/UserController.js";
+import { aadharVerify, consultantApplication, loginUser, logoutUser, registerUser, seeBooking, updateProfile, walletData } from "../controllers/UserController.js";
 import {verifyUser} from "../middlewares/UserAuthMiddleware.js";
 import { postReview } from "../controllers/ReviewController.js";
 
@@ -37,7 +37,7 @@ userRouter.post('/consultantApplication' ,
         { name: "resume", maxCount: 1 },
       ]),
       consultantApplication)
-
+userRouter.get('/fetchWalletData' , walletData)
 
 
 export default userRouter;

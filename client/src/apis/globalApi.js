@@ -14,7 +14,9 @@ const API = axios.create({
 export const globalconsultantdetails = async () => {
     try {
       const response = await API.get("/global/globalseeallactiveconsultants");
-      return response.data;
+      return response.data.data;
+      
+      
     } catch (error) {
       throw error.response?.data || error;
     }
@@ -31,4 +33,13 @@ export const viewSingleConsultant = async (id) => {
 
 
 
-  
+  export const sendContactUsMail = async(data) =>{
+    try {
+      const response = await API.post('/global/sendContactUsData' , data)
+      console.log(response);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  } 
