@@ -1,25 +1,23 @@
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-// // https://vite.dev/config/
-// export default defineConfig({
-//   plugins: [react(), tailwindcss()],
-// })
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   server: {
-    allowedHosts: ['d8709a0a51b6.ngrok-free.app'], // allow your ngrok host
+    allowedHosts: ['d8709a0a51b6.ngrok-free.app'],
   },
   plugins: [
     react(),
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+      includeAssets: [
+        'favicon.svg',
+        'favicon.ico',
+        'robots.txt',
+        'apple-touch-icon.png'
+      ],
       manifest: {
         name: 'Parrot Consult',
         short_name: 'ParrotConsult',
@@ -46,6 +44,9 @@ export default defineConfig({
             purpose: 'any maskable'
           }
         ]
+      },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // 5 MB
       }
     })
   ]

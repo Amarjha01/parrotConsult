@@ -8,7 +8,7 @@ const ReelsController = () => {
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
-  const API_URL = "http://localhost:8011/api/v1/reel";
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/reel`;
 
   // Fetch user's reels
   const fetchMyReels = async () => {

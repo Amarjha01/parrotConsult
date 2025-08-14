@@ -3,7 +3,7 @@ import AgoraUIKit from 'agora-react-uikit';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
-const SERVER_URL = 'http://localhost:8011/api/v1/agora'; 
+const SERVER_URL = `${import.meta.env.VITE_API_BASE_URL}/agora`; 
 
 export default function VideoCall() {
   const [videoCall, setVideoCall] = useState(false);
