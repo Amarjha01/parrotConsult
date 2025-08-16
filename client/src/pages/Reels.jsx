@@ -1,34 +1,32 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
+import axios from 'axios';
 
-const videoUrls = [
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830221/AQOyYVQD5-B7u3WDqNXMTC3R_j2wrVkXFEYVZW2r-xcnOUlgpe09Yea3T1iI3q8JhtP-oI2rgQaUhNcriH3SN-t8toADpgaam1eDzMk_ppoedp.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830218/AQNVB61Qrynm5Jlj0XS0FrUxfrdvSZwuDz4aBSHEFwXACDfFh5id50LWmQ7577Agk2yJOekJ-7XPAcLFzrPV4UR0EHR8grlPLF0oEpg_puo7tq.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830212/AQMYeig7BuHcNTlAhCfKle68AgSlEmViPv5itmqeQAXWfv5iWtKa1rTl5sF1HTBF_N2QZmphmvESh-_oFMdib0_UmSne9c-RcA1WD4s_ljiytt.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830191/AQMMgN7uvKV6wW5BKaC_-LiFwpLwHKWCASEbfXrZymB-ga1zU0VDqWDAAVNU8SjXY_brw0SLKcQhra97GhNvP2dsjcQBIMCPiIWs_ak_ttdwbj.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830188/AQNpvT1mYTEEAZ447ojoTQMffNxyPrvfPXi1P1V1AWWdN51nZDIK-VMBAGb9epQlDwn9W4yHi_PKpm9QY1-rjIdvm_QYvfoX8k3kLaA_iwyphf.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830186/AQNRGKh92JwkJgmiVcPREuuQ-xTOsDO8NjSygaFIhtK4CvAamq7mo52W9VuGzAfIVeUQLdntMUZ9Gs2F_dUXu9kV8CpcYJkOoAdfDOQ_dq8zxy.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830166/AQPC-Fgvfy5mAjPd8Skv2Ypk-MM8y0-5ZcMhWf7cSbKBb7t5b03OseqglesT1TdGOA9Ggam3Qy-9Pbsaz6KHEn6rEv3fWZUYnGAQ3lQ_nkdgf4.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830166/AQOY1BrPMwHtax16BqXqGguStnzjeb646AO-qtFMbOG_G7rDsH6GFBx7xNjGm2GkPxhGahAPQEyT0csXMd_U65YaaoRlY7Dl5MUa3qQ_bcut9u.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830165/AQNQIZ1RyT75DABEDbxVs-yKj9T4S4oifkwCQ1I7BDobjiS_i99nhfmw9-52WyCsHFZ4uldLMAYZc7QzA9T_x9EWzDvMm8hXD83eEwE_b346m5.mp4',
-  'https://res.cloudinary.com/dbnticsz8/video/upload/v1752830164/AQPB8wbOscXId3op5zBCASGcWkgBrx-cp9wRjmZnzATn12JEL8hjfUMu8YDhFLmeWJVarXqLccbC6rbwRIdpoJQdLeKEXNLIhNKCnwQ_ngt0uo.mp4'
-];
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Generate unique IDs more efficiently
-let reelIdCounter = 0;
-const generateReelId = () => `reel-${++reelIdCounter}`;
+// API functions
+const api = {
+  fetchReels: async (page = 1, limit = 5) => {
+    const response = await axios.get(`${BASE_URL}/reel/feed?page=${page}&limit=${limit}`, {
+      withCredentials: true
+    });
+    return response.data;
+  },
 
-const generateDummyReels = (count = 5) => {
-  return Array.from({ length: count }, () => ({
-    id: generateReelId(),
-    video: videoUrls[Math.floor(Math.random() * videoUrls.length)],
-    likes: Math.floor(Math.random() * 10000) + 100,
-    comments: Math.floor(Math.random() * 500) + 10,
-    shares: Math.floor(Math.random() * 1000) + 5,
-    isLiked: false,
-    username: `user_${Math.floor(Math.random() * 1000)}`,
-    caption: `Amazing content! #reel #viral #content${Math.floor(Math.random() * 100)}`,
-  }));
+  likeReel: async (reelId) => {
+    const response = await axios.post(`${BASE_URL}/reel/${reelId}/like`, {}, {
+      withCredentials: true
+    });
+    return response.data;
+  },
+
+  commentOnReel: async (reelId, comment) => {
+    const response = await axios.post(`${BASE_URL}/reel/${reelId}/comment`, 
+      { comment }, 
+      { withCredentials: true }
+    );
+    return response.data;
+  }
 };
 
 const formatCount = (count) => {
@@ -40,20 +38,70 @@ const formatCount = (count) => {
   return count.toString();
 };
 
-const Reel = React.memo(({ reel, isActive }) => {
-  const { video, likes, comments, shares, isLiked: initialLiked, username, caption } = reel;
+// Check if user is logged in
+const checkAuthUser = () => {
+  try {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+};
+
+// Login prompt function
+const promptLogin = (action = 'perform this action') => {
+  const shouldLogin = window.confirm(`Please log in to ${action}. Would you like to go to login page?`);
+  if (shouldLogin) {
+    // Redirect to login page or open login modal
+    window.location.href = '/login'; // Adjust this path as needed
+  }
+};
+
+// Shuffle array function
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+const Reel = React.memo(({ reel, isActive, onUpdateReel }) => {
+  const { 
+    _id,
+    URL: videoUrl, 
+    likes = 0, 
+    comments = [], 
+    shares = 0, 
+    user: reelOwner,
+    description: caption,
+    createdAt 
+  } = reel;
+
   const videoRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [isLiked, setIsLiked] = useState(initialLiked);
-  const [likeCount, setLikeCount] = useState(likes);
   const [showHeartAnimation, setShowHeartAnimation] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [currentLikes, setCurrentLikes] = useState(likes);
+  const [isUserLiked, setIsUserLiked] = useState(false);
   
   const { ref, inView } = useInView({ 
     threshold: 0.7,
     triggerOnce: false 
   });
+
+  const currentUser = checkAuthUser();
+
+  // Check if current user has already liked this reel
+  useEffect(() => {
+    // You might need to implement a way to check if user has liked the reel
+    // This could be done by adding a user's liked reels list or checking via API
+    // For now, we'll assume the backend returns this information
+    setIsUserLiked(false); // This should be updated based on your backend response
+  }, [_id, currentUser]);
 
   // Handle video play/pause based on visibility
   useEffect(() => {
@@ -100,48 +148,117 @@ const Reel = React.memo(({ reel, isActive }) => {
     }
   }, [isMuted]);
 
-  // Handle like action
-  const handleLike = useCallback((e) => {
+  // Handle like action with authentication check
+  const handleLike = useCallback(async (e) => {
     e.stopPropagation();
-    setIsLiked(!isLiked);
-    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
     
-    if (!isLiked) {
-      setShowHeartAnimation(true);
-      setTimeout(() => setShowHeartAnimation(false), 1000);
+    if (!currentUser) {
+      promptLogin('like this reel');
+      return;
     }
-  }, [isLiked]);
+
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      const response = await api.likeReel(_id);
+      
+      // Update local state immediately for better UX
+      const newLikeState = !isUserLiked;
+      setIsUserLiked(newLikeState);
+      setCurrentLikes(prev => newLikeState ? prev + 1 : prev - 1);
+
+      // Update the reel data in parent component
+      onUpdateReel(_id, {
+        ...reel,
+        likes: response.likes || currentLikes + (newLikeState ? 1 : -1)
+      });
+
+      if (newLikeState) {
+        setShowHeartAnimation(true);
+        setTimeout(() => setShowHeartAnimation(false), 1000);
+      }
+
+    } catch (error) {
+      console.error('Error liking reel:', error);
+      // Revert optimistic update on error
+      setIsUserLiked(!isUserLiked);
+      setCurrentLikes(prev => isUserLiked ? prev + 1 : prev - 1);
+      
+      if (error.response?.status === 401) {
+        promptLogin('like this reel');
+      } else {
+        alert('Failed to like reel. Please try again.');
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [_id, currentUser, isUserLiked, isProcessing, reel, onUpdateReel, currentLikes]);
 
   // Handle share action
   const handleShare = useCallback((e) => {
     e.stopPropagation();
     if (navigator.share) {
       navigator.share({
-        title: `Check out this reel by ${username}`,
+        title: `Check out this reel by ${reelOwner?.fullName}`,
         text: caption,
         url: window.location.href,
       });
     } else {
-      // Fallback for browsers that don't support Web Share API
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
-  }, [username, caption]);
+  }, [reelOwner, caption]);
 
-  // Handle comment action
+  // Handle comment action with authentication check
   const handleComment = useCallback((e) => {
     e.stopPropagation();
-    // In a real app, this would open a comment modal or navigate to comments
-    console.log('Open comments for reel:', reel.id);
-  }, [reel.id]);
+    
+    if (!currentUser) {
+      promptLogin('comment on this reel');
+      return;
+    }
+
+    // Simple prompt for now - in a real app, this would open a comment modal
+    const commentText = prompt('Enter your comment:');
+    if (!commentText?.trim()) return;
+
+    const submitComment = async () => {
+      try {
+        setIsProcessing(true);
+        const response = await api.commentOnReel(_id, commentText.trim());
+        
+        // Update the reel data
+        onUpdateReel(_id, {
+          ...reel,
+          comments: response.comments || [...comments, { text: commentText.trim(), user: currentUser }]
+        });
+
+        alert('Comment added successfully!');
+      } catch (error) {
+        console.error('Error commenting on reel:', error);
+        if (error.response?.status === 401) {
+          promptLogin('comment on this reel');
+        } else {
+          alert('Failed to add comment. Please try again.');
+        }
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    submitComment();
+  }, [_id, currentUser, reel, onUpdateReel, comments]);
 
   // Handle double tap to like
   const handleDoubleClick = useCallback((e) => {
     e.preventDefault();
-    if (!isLiked) {
+    if (currentUser && !isUserLiked) {
       handleLike(e);
+    } else if (!currentUser) {
+      promptLogin('like this reel');
     }
-  }, [isLiked, handleLike]);
+  }, [isUserLiked, currentUser, handleLike]);
 
   // Preload video when component mounts
   useEffect(() => {
@@ -154,7 +271,7 @@ const Reel = React.memo(({ reel, isActive }) => {
   return (
     <div
       ref={ref}
-      className="h-[85vh] md:h-screen w-full snap-start flex justify-center items-center bg-black relative"
+      className="h-[90vh] md:h-screen w-full snap-start flex justify-center items-center bg-black relative"
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
@@ -172,7 +289,7 @@ const Reel = React.memo(({ reel, isActive }) => {
       ) : (
         <video
           ref={videoRef}
-          src={video}
+          src={videoUrl}
           className="h-full w-full object-cover"
           loop
           muted={isMuted}
@@ -220,33 +337,35 @@ const Reel = React.memo(({ reel, isActive }) => {
         <div className="flex flex-col items-center">
           <button
             onClick={handleLike}
-            className="bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all transform hover:scale-110"
-            aria-label={isLiked ? 'Unlike video' : 'Like video'}
+            disabled={isProcessing}
+            className={`bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all transform hover:scale-110 ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            aria-label={isUserLiked ? 'Unlike video' : 'Like video'}
           >
             <svg 
-              className={`w-6 h-6 ${isLiked ? 'text-red-500 fill-current' : 'text-white'}`} 
-              fill={isLiked ? 'currentColor' : 'none'} 
+              className={`w-6 h-6 ${isUserLiked ? 'text-red-500 fill-current' : 'text-white'}`} 
+              fill={isUserLiked ? 'currentColor' : 'none'} 
               stroke="currentColor" 
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
-          <span className="text-white text-xs mt-1 font-medium">{formatCount(likeCount)}</span>
+          <span className="text-white text-xs mt-1 font-medium">{formatCount(currentLikes)}</span>
         </div>
 
         {/* Comment Button */}
         <div className="flex flex-col items-center">
           <button
             onClick={handleComment}
-            className="bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all transform hover:scale-110"
-            aria-label="View comments"
+            disabled={isProcessing}
+            className={`bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all transform hover:scale-110 ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            aria-label="Add comment"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </button>
-          <span className="text-white text-xs mt-1 font-medium">{formatCount(comments)}</span>
+          <span className="text-white text-xs mt-1 font-medium">{formatCount(comments.length)}</span>
         </div>
 
         {/* Share Button */}
@@ -267,12 +386,29 @@ const Reel = React.memo(({ reel, isActive }) => {
       {/* Bottom overlay with user info and caption */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 z-20">
         <div className="flex items-center mb-2">
-          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center mr-3">
-            <span className="text-white text-sm font-bold">{username.charAt(0).toUpperCase()}</span>
+          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+            {reelOwner?.profileImage ? (
+              <img 
+                src={reelOwner.profileImage} 
+                alt={reelOwner.fullName} 
+                className="w-full h-full object-cover" 
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <span 
+              className={`text-white text-sm font-bold ${reelOwner?.profileImage ? 'hidden' : 'flex'} items-center justify-center w-full h-full`}
+            >
+              {(reelOwner?.fullName || 'U').charAt(0).toUpperCase()}
+            </span>
           </div>
-          <span className="text-white font-semibold">{username}</span>
+          <span className="text-white font-semibold">
+            {reelOwner?.fullName || 'Unknown User'}
+          </span>
         </div>
-        <p className="text-white text-sm leading-relaxed">{caption}</p>
+        <p className="text-white text-sm leading-relaxed">{caption || 'No description available'}</p>
       </div>
     </div>
   );
@@ -281,10 +417,13 @@ const Reel = React.memo(({ reel, isActive }) => {
 Reel.displayName = 'Reel';
 
 const Reels = () => {
-  const [reels, setReels] = useState(() => generateDummyReels(5));
+  const [reels, setReels] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasReachedEnd, setHasReachedEnd] = useState(false);
-  const maxReels = 50; // Limit to prevent memory issues
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
+  const [originalReels, setOriginalReels] = useState([]); // Store original reels for cycling
+  const [hasLoadedAllReels, setHasLoadedAllReels] = useState(false);
+  const [cycleCount, setCycleCount] = useState(0);
   
   const { ref: loadMoreRef, inView: loadMoreInView } = useInView({
     threshold: 0.1,
@@ -293,46 +432,117 @@ const Reels = () => {
 
   // Memoize the current active reel for better performance
   const activeReelIndex = useMemo(() => {
-    // This would ideally be determined by scroll position
-    // For now, we'll use a simple approach
     return Math.floor(reels.length / 2);
   }, [reels.length]);
 
-  // Debounced load more function
-  const loadMoreReels = useCallback(async () => {
-    if (isLoading || hasReachedEnd) return;
+  // Function to update a specific reel
+  const updateReel = useCallback((reelId, updatedReel) => {
+    setReels(prevReels => 
+      prevReels.map(reel => 
+        reel._id === reelId ? updatedReel : reel
+      )
+    );
+    // Also update original reels if it exists there
+    setOriginalReels(prevReels => 
+      prevReels.map(reel => 
+        reel._id === reelId ? updatedReel : reel
+      )
+    );
+  }, []);
+
+  // Generate unique IDs for cycled reels to avoid React key conflicts
+  const generateCycledReels = useCallback((reels, cycleNumber) => {
+    return shuffleArray(reels).map((reel, index) => ({
+      ...reel,
+      _id: `${reel._id}_cycle_${cycleNumber}_${index}`, // Unique ID for React keys
+      originalId: reel._id, // Keep original ID for API calls
+    }));
+  }, []);
+
+  // Load reels from API (no authentication required for viewing)
+  const loadReels = useCallback(async (pageNum = 1, isInitial = false) => {
+    if (isLoading) return;
     
     setIsLoading(true);
+    setError(null);
     
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    setReels(prev => {
-      const newReels = [...prev, ...generateDummyReels(5)];
+    try {
+      const response = await api.fetchReels(pageNum, 5);
+      const newReels = response.reels || response.data || response || [];
       
-      // Check if we've reached the maximum
-      if (newReels.length >= maxReels) {
-        setHasReachedEnd(true);
-        return newReels.slice(0, maxReels);
+      if (isInitial) {
+        setReels(newReels);
+        setOriginalReels(newReels);
+      } else {
+        // Check if we got new reels from the server
+        if (newReels.length > 0) {
+          setReels(prev => [...prev, ...newReels]);
+          setOriginalReels(prev => [...prev, ...newReels]);
+        } else {
+          // No new reels from server, start cycling through existing ones
+          setHasLoadedAllReels(true);
+        }
       }
       
-      return newReels;
-    });
-    
-    setIsLoading(false);
-  }, [isLoading, hasReachedEnd]);
-
-  // Load more reels when sentinel is in view
-  useEffect(() => {
-    if (loadMoreInView && !isLoading && !hasReachedEnd) {
-      loadMoreReels();
+    } catch (error) {
+      console.error('Error fetching reels:', error);
+      
+      // If it's the first load and fails, show error
+      if (isInitial) {
+        setError('Failed to load reels. Please try again.');
+      } else {
+        // For subsequent loads, just start cycling if we have existing reels
+        if (originalReels.length > 0) {
+          setHasLoadedAllReels(true);
+        } else {
+          setError('Failed to load more reels.');
+        }
+      }
+    } finally {
+      setIsLoading(false);
     }
-  }, [loadMoreInView, loadMoreReels, isLoading, hasReachedEnd]);
+  }, [isLoading, originalReels.length]);
+
+  // Load more content (either new reels or cycled reels)
+  const loadMoreContent = useCallback(() => {
+    if (isLoading) return;
+
+    if (!hasLoadedAllReels) {
+      // Try to load more reels from the server
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadReels(nextPage);
+    } else if (originalReels.length > 0) {
+      // Cycle through existing reels with shuffle
+      const nextCycle = cycleCount + 1;
+      setCycleCount(nextCycle);
+      
+      setIsLoading(true);
+      
+      // Simulate loading delay for better UX
+      setTimeout(() => {
+        const cycledReels = generateCycledReels(originalReels, nextCycle);
+        setReels(prev => [...prev, ...cycledReels]);
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [isLoading, hasLoadedAllReels, page, originalReels, cycleCount, loadReels, generateCycledReels]);
+
+  // Initial load
+  useEffect(() => {
+    loadReels(1, true);
+  }, []);
+
+  // Load more content when sentinel is in view
+  useEffect(() => {
+    if (loadMoreInView && !isLoading && reels.length > 0) {
+      loadMoreContent();
+    }
+  }, [loadMoreInView, isLoading, reels.length, loadMoreContent]);
 
   // Cleanup videos when component unmounts
   useEffect(() => {
     return () => {
-      // Pause all videos to prevent memory leaks
       document.querySelectorAll('video').forEach(video => {
         video.pause();
         video.src = '';
@@ -340,8 +550,25 @@ const Reels = () => {
     };
   }, []);
 
+  if (error && reels.length === 0) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center bg-black text-white">
+        <div className="text-center">
+          <div className="text-2xl mb-2">❌</div>
+          <p>{error}</p>
+          <button 
+            onClick={() => loadReels(1, true)}
+            className="mt-4 px-4 py-2 bg-white text-black rounded-md hover:bg-gray-200"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-[84vh] md:h-screen bg-white w-full md:w-[690px] overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
+    <div className="h-[89vh] md:h-screen bg-white w-full md:w-[690px] overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
       <style jsx>{`
         .scrollbar-hide {
           -ms-overflow-style: none;
@@ -354,40 +581,40 @@ const Reels = () => {
       
       {reels.map((reel, index) => (
         <Reel 
-          key={reel.id} 
-          reel={reel} 
+          key={reel._id} 
+          reel={{...reel, _id: reel.originalId || reel._id}} // Use original ID for API calls
           isActive={index === activeReelIndex}
+          onUpdateReel={updateReel}
         />
       ))}
 
-      {/* Loading/End indicator */}
-      {!hasReachedEnd && (
-        <div
-          ref={loadMoreRef}
-          className="h-screen w-full flex justify-center items-center bg-black text-white"
-        >
-          {isLoading ? (
-            <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-              <p>Loading more reels...</p>
-            </div>
-          ) : (
-            <p>Scroll for more.</p>
-          )}
-        </div>
-      )}
-      
-      {hasReachedEnd && (
-        <div className="h-screen w-full flex justify-center items-center bg-black text-white">
-          <div className="text-center">
-            <div className="text-2xl mb-2">🎉</div>
-            <p>You've reached the end!</p>
-            <p className="text-sm text-gray-400 mt-2">
-              {reels.length} reels loaded
+      {/* Loading indicator - Always show, never show end */}
+      <div
+        ref={loadMoreRef}
+        className="h-screen w-full flex justify-center items-center bg-black text-white"
+      >
+        {isLoading ? (
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
+            <p>
+              {hasLoadedAllReels 
+                ? 'Loading more awesome content...' 
+                : 'Loading more reels...'
+              }
             </p>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-col items-center">
+            <div className="text-2xl mb-2">🔄</div>
+            <p>Keep scrolling for more!</p>
+            {hasLoadedAllReels && (
+              <p className="text-xs text-gray-400 mt-1">
+                Cycling through {originalReels.length} reels
+              </p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

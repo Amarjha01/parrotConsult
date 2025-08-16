@@ -9,7 +9,7 @@ function useQuery() {
 export default function ChatBot() {
   const query = useQuery().get("query"); // 🟢 initial question from search bar
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hi! I'm Parry 🐦 — Ask me anything!" },
+    { sender: "bot", text: "Hi! I'm Parry 🦜 — Ask me anything!" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);

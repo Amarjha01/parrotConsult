@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmojiPicker from "emoji-picker-react";
+import { showErrorToast } from '../util/Notification';
+
 const CHAT_SERVER = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8011';
 
 const getId = (val) => {
@@ -52,7 +54,15 @@ export default function ChatDetail({ currentUserId, otherName, otherProfileImage
 
   useEffect(() => {
     if (!chatId || !otherId || !currentUserId) {
-      setError('Missing required identifiers');
+      console.log(chatId , otherId);
+      
+      if (!chatId || !currentUser) {
+        setError(' Please login to chat')
+        showErrorToast('Please login to chat')
+      }else{
+        setError('Missing required identifiers.');
+        showErrorToast('Missing required identifiers.')
+      }
       setLoading(false);
       return;
     }

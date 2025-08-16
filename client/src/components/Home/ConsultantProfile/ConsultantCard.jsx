@@ -12,6 +12,8 @@ import {
   Calendar,
   ArrowRight,
   Eye,
+  ShieldCheck,
+  Verified
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { globalconsultantdetails } from "../../../apis/globalApi";
@@ -24,7 +26,7 @@ import "slick-carousel/slick/slick-theme.css";
 // ✅ Custom Arrows (define these above sliderSettings)
 const NextArrow = ({ onClick }) => (
   <div
-    className="text-2xl absolute z-10 right-0 top-[35%] bg-red-500 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
+    className="text-2xl absolute z-10 right-0 top-[35%] bg-[#ce663c] text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
     onClick={onClick}
   >
     <ChevronRight />
@@ -33,7 +35,7 @@ const NextArrow = ({ onClick }) => (
 
 const PrevArrow = ({ onClick }) => (
   <div
-    className=" text-2xl absolute z-10 left-0 top-[35%] bg-red-500 text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
+    className=" text-2xl absolute z-10 left-0 top-[35%] bg-[#ce663c] text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
     onClick={onClick}
   >
     <ChevronLeft />
@@ -42,26 +44,34 @@ const PrevArrow = ({ onClick }) => (
 
 // ✅ Now sliderSettings will work
 const sliderSettings = {
-  dots: false,
+  dots: true,
   infinite: true,
   speed: 500,
-  slidesToShow: 4,
+  slidesToShow: 3,
   slidesToScroll: 1,
   arrows: true,
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
-  autoplay: false,
+  autoplay: true,
+  centerPadding: "20px", // Add this
   responsive: [
     {
       breakpoint: 1024,
-      settings: { slidesToShow: 2 },
+      settings: { 
+        slidesToShow: 1,
+        centerPadding: "15px" 
+      },
     },
     {
       breakpoint: 570,
-      settings: { slidesToShow: 1 },
+      settings: { 
+        slidesToShow: 1,
+        centerPadding: "10px"
+      },
     },
   ],
 };
+
 
 const InfoCard = ({ icon, title, value }) => (
   <div className="flex items-start gap-2 bg-white rounded p-2">
@@ -135,14 +145,14 @@ export default function ConsultantCard() {
  
 
  return (
-  <div className="my-7">
+  <div className="my-7 ">
         
      <div className=" flex justify-between px-2">
-       <h2 className="text-xl font-bold md:text-3xl mb-12 ">
+       <h2 className="text-xl font-bold md:text-3xl mb-12 text-[#023c2d] ">
           Meet Our Experts
         </h2>
         <Link to={'/ViewAllConsultants'}
-  className="group flex justify-center items-center h-12 cursor-pointer px-3 py-1.5 md:px-6 md:py-3 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 border-2 overflow-hidden"
+  className="group flex justify-center items-center h-12 cursor-pointer px-3 py-1.5 md:px-6 md:py-3 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 border-2 "
   style={{
     backgroundColor: '#2c7951',
     borderColor: '#1c7259',
@@ -171,11 +181,12 @@ export default function ConsultantCard() {
             No consultants available at the moment.
           </div>
         ) : (
- <div className="relative overflow-hidden w-full ">
+// Update your slider container div
+<div className="   w-full "> {/* Added px-8 for horizontal padding */}
   
   <Slider {...sliderSettings}>
     {consultants.map((consultant, index) => (
-      <div key={index} className="">
+      <div key={index} className="py-5 px-1"> {/* Added padding around each slide */}
         <Card
           consultant={consultant}
           onBookNow={handleBookNow}
@@ -184,7 +195,8 @@ export default function ConsultantCard() {
     ))}
   </Slider>
   
-</div>)}
+</div>
+)}
 
 
 {isBookingOpen && (
@@ -277,118 +289,130 @@ export default function ConsultantCard() {
 
 
 const Card = ({consultant, onBookNow}) => {
-   console.log(consultant);
-   
- const {
+  const {
     fullName,
     primaryCategory = consultant?.consultantRequest?.consultantProfile?.category,
     languageProficiency,
     address = consultant?.location,
     profilePicture = consultant?.profileImage,
-    hourlyRate,
+    hourlyRate = consultant.consultantRequest.consultantProfile.sessionFee,
     experience = consultant?.consultantRequest?.consultantProfile?.yearsOfExperience,
     availabilityPerWeek = consultant?.consultantRequest?.consultantProfile?.daysPerWeek,
     _id,
   } = consultant;
 
-  
-  
-   return (
-    <div className="relative mx-15 sm:mx-10 md:mx-9 bg-white w-[280px] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden group">
-      {/* Offer Tag */}
-      <div className="absolute -top-1 -right-2 z-10">
-        <div className="bg-gradient-to-r from-[#348559] via-[#09533d] to-[#113a39] text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-lg rotate-12 flex items-center gap-1 animate-pulse">
-          <Zap size={10} className="text-yellow-300" />
+  return (
+    <div className=" w-96 h-60 rounded-2xl shadow border-2 border-[#27514b]  transition-all overflow-hidden duration-300 hover:shadow-lg hover:scale-[1.02] relative group">
+      <Link to={`/consultantprofile/${_id}/${fullName}`}>
+      {/* FREE Badge */}
+      <div className="absolute top-3 right-3 z-10">
+        <span className="inline-flex items-center gap-1 text-xs bg-gradient-to-r from-[#348559] via-[#09533d] to-[#113a39] text-white px-2 py-1 rounded-full font-bold shadow-lg">
+          <Zap size={8} className="text-yellow-300" />
           FREE
-        </div>
+        </span>
       </div>
-  
-      {/* Link-wrapped card content */}
-      <Link
-        to={`/consultantprofile/${_id}/${fullName}`}
-        className="block"
-      >
-        <div className="p-4 text-center">
+
+      <div className="flex h-full">
+        {/* Left Side - Brand/Header */}
+        <div className="w-2/5 bg-gradient-to-br from-[#27514b] via-[#2a5a4f] to-[#1e3e35] flex flex-col justify-center items-center p-4 relative">
           {/* Profile Image */}
-          <div className="flex justify-center mb-3">
-            <div className="relative">
-              <img
-                src={profilePicture || "https://i.postimg.cc/bryMmCQB/profile-image.jpg"}
-                alt={`${fullName}'s profile`}
-                className="w-[90px] h-[90px] rounded-full object-cover border-2 border-[#348559] shadow-md group-hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  e.target.src = "https://i.postimg.cc/bryMmCQB/profile-image.jpg";
-                }}
-              />
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-r from-[#348559] to-[#09533d] rounded-full border-2 border-white flex items-center justify-center">
-                <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping"></div>
-              </div>
-            </div>
+          <div className="w-16 h-16 rounded-full border-3 border-[#fdf1df] bg-white shadow-lg overflow-hidden mb-3">
+            <img
+              src={profilePicture || "https://i.postimg.cc/bryMmCQB/profile-image.jpg"}
+              alt={`${fullName}'s profile`}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = "https://i.postimg.cc/bryMmCQB/profile-image.jpg";
+              }}
+            />
           </div>
-  
-          {/* Name and Category */}
-          <h3 className="text-lg font-bold tracking-wide text-gray-800 mb-1 group-hover:text-[#348559] transition-colors duration-300">
-            {fullName}
-          </h3>
-          <div className="inline-flex items-center gap-1 bg-[#348559]/10 px-2 py-0.5 rounded-full text-xs font-medium text-[#348559]">
-            <Badge size={12} />
-            {primaryCategory}
-          </div>
-  
-          {/* Detail Grid */}
-          <div className="bg-gray-50 rounded-lg p-3 mt-4 space-y-2">
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <InfoCard icon={<Languages size={14} />} title="Languages" value={languageProficiency?.slice(0, 2).join(", ") || "English"} />
-              <InfoCard icon={<Clock size={14} />} title="Available" value={`${availabilityPerWeek || "10"} Days/week`} />
-              <InfoCard icon={<MapPin size={14} />} title="Location" value={address?.split(",")[0] || "Remote"} />
-              <InfoCard icon={<IndianRupee size={14} />} title="Rate" value={<><s>₹{hourlyRate}/hr</s> FREE</>} />
+          
+          {/* Rating & Experience */}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-yellow-400 mb-1">
+              <Star size={14} fill="currentColor" />
+              <span className="text-sm font-bold text-[#fdf1df]">4.8</span>
             </div>
-          </div>
-  
-          {/* Stats */}
-          <div className="flex justify-center gap-6 mt-3 text-sm">
-            <div className="text-center">
-              <div className="text-lg font-bold bg-gradient-to-r from-[#348559] to-[#09533d] bg-clip-text text-transparent">
-                {experience}
-              </div>
-              <div className="text-gray-600 text-[10px]">Years Exp.</div>
-            </div>
-            <div className="w-px bg-gray-200"></div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-lg font-bold text-yellow-500">
-                4.8 <Star size={14} fill="currentColor" />
-              </div>
-              <div className="text-gray-600 text-[10px]">Rating</div>
+            <div className="text-[#fdf1df] text-xs font-medium">
+              {experience} Years Experience
             </div>
           </div>
         </div>
-      </Link>
-  
-      {/* Action Buttons */}
-      <div className="flex gap-2 p-4 pt-0">
-        {/* View Button */}
-        <Link
-          to={`/consultantprofile/${_id}/${fullName}`}
-          className="flex-1"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button className="w-full px-3 py-2 rounded-lg text-[#348559] font-medium border border-[#348559] text-sm hover:bg-[#348559] hover:text-white transition-all duration-200">
-            View
-          </button>
-        </Link>
-  
-        {/* Book Button */}
-        <button
-          onClick={(e) => {
-            e.preventDefault(); // prevent link if inside
-            e.stopPropagation(); // prevent card link
-            onBookNow(consultant);
-          }}
-          className="flex-1 px-3 py-2 rounded-lg text-white text-sm bg-gradient-to-r from-[#348559] via-[#09533d] to-[#113a39] hover:from-[#09533d] hover:to-[#113a39] transition-all duration-200"
-        >
-          Book
-        </button>
+
+        {/* Right Side - Information */}
+        <div className="w-3/5 p-4 flex flex-col justify-between">
+          {/* Header Info */}
+          <div>
+           <div className=" flex  items-center gap-1  mb-1">
+             <h3 className="text-lg font-bold text-[#27514b]  leading-tight">
+              {fullName}
+            </h3>
+            {Verified && (
+                <ShieldCheck className="w-5 h-5 text-emerald-600" title="Verified Consultant" />
+              )}
+           </div>
+            <div className="inline-flex items-center gap-1 bg-[#27514b] bg-opacity-10 px-2 py-1 rounded-lg text-xs font-medium text-white mb-3 capitalize">
+              <Badge size={10} />
+              <span className="">Category:</span>
+              {primaryCategory}
+            </div>
+          </div>
+
+          {/* Contact Details */}
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <Languages size={12} />
+              <span className="font-medium">Languages:</span>
+              <span>{languageProficiency?.slice(0,2).join(", ") || "English"}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <MapPin size={12} />
+              <span className="font-medium">Location:</span>
+              <span>{address?.split(",")[0] || "Remote"}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <Clock size={12} />
+              <span className="font-medium">Available:</span>
+              <span>{availabilityPerWeek || "10"} days/week</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <IndianRupee size={12} />
+              <span className="font-medium">Rate:</span>
+              <span className="line-through text-gray-500">₹{hourlyRate}/hr</span>
+              <span className="text-green-600 font-bold ml-1">FREE</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 mt-3">
+            <Link
+              to={`/consultantprofile/${_id}/${fullName}`}
+              className="flex-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="w-full px-3 py-2 rounded-lg border border-[#27514b] text-[#27514b] font-semibold text-xs hover:bg-[#27514b] hover:text-[#fdf1df] transition-all duration-200 cursor-pointer">
+                View Profile
+              </button>
+            </Link>
+            <button
+              className="flex-1 px-3 py-2 rounded-lg font-semibold text-xs bg-gradient-to-r from-[#27514b] via-[#2a5a4f] to-[#1e3e35] text-[#fdf1df] hover:shadow-lg transition-all duration-200 cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onBookNow(consultant);
+              }}
+            >
+              Book Now
+            </button>
+          </div>
+        </div>
       </div>
+      </Link>
     </div>
   );
-}
+};
+
+

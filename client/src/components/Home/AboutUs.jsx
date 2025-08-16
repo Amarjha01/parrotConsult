@@ -16,6 +16,9 @@ import {
   ArrowRight,
   Sparkles
 } from 'lucide-react';
+import { TbTargetArrow } from "react-icons/tb";
+import { FaRegHandshake } from "react-icons/fa6";
+import { HiLightBulb } from "react-icons/hi";
 import {  Zap, DollarSign } from 'lucide-react';
 import { sendContactUsMail } from '../../apis/globalApi';
 const AboutUsPage = () => {
@@ -66,22 +69,22 @@ const [hoveredCard, setHoveredCard] = useState(null);
 
   const values = [
     {
-      icon: Heart,
-      title: 'Judgment-Free Consulting',
-      description: 'Every question is welcome.We create a safe space for entrepreneurs to ask, learn, and grow — without feeling “dumb.',
-      gradient: 'from-pink-400 to-rose-500'
+      icon: TbTargetArrow,
+      title: 'Excellence',
+      description: 'We strive for the higst standards in everything we do.',
+     
     },
     {
       icon: Shield,
-      title: 'Clarity Over Complexity',
-      description: 'We simplify the complicated.Because great advice shouldn’t be hard to understand — or hard to find.',
-      gradient: 'from-emerald-400 to-teal-500'
+      title: 'Integrity',
+      description: 'We conduct our business with honesty and transparency',
+      
     },
     {
-      icon: Lightbulb,
-      title: 'Growth for All',
-      description: 'Whether you’re a first-time founder or a seasoned freelancer, we believe everyone deserves access to quality guidance and growth.',
-      gradient: 'from-amber-400 to-orange-500'
+      icon: HiLightBulb,
+      title: 'Innovation',
+      description: 'We embrace new ideas and continuously seek to Improve',
+     
     }
   ];
 
@@ -119,8 +122,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
       title: "Verified Experts",
       description: "Every consultant on our platform is thoroughly vetted with verified credentials and proven track records.",
       features: ["Background Verified", "Industry Certified", "Client Reviewed"],
-      gradient: "from-emerald-400 to-teal-500",
-      bgGradient: "from-emerald-50 to-teal-50",
+      gradient: "from-slate-900 via-emerald-900 to-teal-900",
       accentColor: "emerald"
     },
     {
@@ -128,74 +130,71 @@ const [hoveredCard, setHoveredCard] = useState(null);
       title: "Built for Bharat",
       description: "Designed specifically for Indian businesses with local insights, cultural understanding, and regional expertise.",
       features: ["Local Context", "Regional Languages", "Cultural Sensitivity"],
-      gradient: "from-rose-400 to-pink-500",
-      bgGradient: "from-rose-50 to-pink-50",
-      accentColor: "rose"
+      gradient: "from-slate-900 via-emerald-900 to-teal-900",
+      accentColor: "emerald"
     },
     {
       icon: Zap,
       title: "Instant Connection",
       description: "Connect with the right expert in minutes, not days. Quick matching algorithm gets you started immediately.",
       features: ["60-Second Matching", "24/7 Availability", "Real-time Chat"],
-      gradient: "from-yellow-400 to-orange-500",
-      bgGradient: "from-yellow-50 to-orange-50",
-      accentColor: "yellow"
+      gradient: "from-slate-900 via-emerald-900 to-teal-900",
+      accentColor: "emerald"
     },
     {
       icon: DollarSign,
       title: "Affordable & Transparent",
       description: "Clear, upfront pricing with no hidden fees. Quality consulting that doesn't break the bank.",
       features: ["No Hidden Costs", "Flexible Pricing", "Money-back Guarantee"],
-      gradient: "from-blue-400 to-indigo-500",
-      bgGradient: "from-blue-50 to-indigo-50",
-      accentColor: "blue"
+     gradient: "from-slate-900 via-emerald-900 to-teal-900",
+      accentColor: "emerald"
     }
   ];
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-">
    
       {/* Hero Section */}
       <div className="relative overflow-hidden py-20 sm:py-32 flex flex-col gap-10 items-center md:flex-row md:justify-center md:items-center ">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.1),transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(245,158,11,0.1),transparent_50%)]"></div>
+        {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(245,158,11,0.1),transparent_50%)]"></div> */}
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-100 to-amber-100 px-6 py-3 rounded-full mb-8">
+            {/* <div className="inline-flex items-center gap-3 bg-emerald-100 px-6 py-3 rounded-full mb-8">
               <Heart className="w-5 h-5 text-emerald-600" />
               <span className="text-sm font-semibold text-gray-700">Our Story</span>
-              <Sparkles className="w-5 h-5 text-amber-600" />
-            </div>
+              <Sparkles className="w-5 h-5 text-[#27514b]" />
+            </div> */}
             
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-slate-900 via-emerald-800 to-amber-700 bg-clip-text text-transparent">
+              <span className="bg-[#27514b] bg-clip-text text-transparent">
                 About Us
               </span>
             </h1>
             
             <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              A smart consulting platform designed to streamline the consulting process for both clients and independent consultants.
+              We are dedicated to providing expert consulting and strategic
+              solutions to help your business thrive. Our mission is to emp-
+              ower businesses with the knowledge and tools they
+              need to achieve their goals.
             </p>
           </div>
         </div>
-        <div className=' h-4/12 w-10/12 md:h-6/12 md:w-4/12 md:pr-10'> 
-                  <img src="/parrot.jpg" className=' rounded-2xl' alt="" />
-
-        </div>
+       
       </div>
 
       {/* vission Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-yellow-50 px-6 py-3 rounded-full mb-8 shadow-lg border border-emerald-200">
+          <div className="inline-flex items-center gap-2 bg-emerald-100  px-6 py-3 rounded-full mb-8 shadow-lg border border-emerald-200">
             <Target className="w-5 h-5 text-emerald-600" />
             <span className="text-sm font-bold text-emerald-700 tracking-wide">Our Big Vision</span>
           </div>
                        
           <h2 className="text-5xl font-bold text-gray-900 mb-8 leading-tight">
             A Smart Consulting 
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600">
+            <span className="block text-transparent bg-clip-text bg-[#27514b]">
               Platform
             </span>
           </h2>
@@ -213,7 +212,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
                     isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
                   }`}
                 >
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 shadow-lg"></div>
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 shadow-lg"></div>
                   <p className="text-lg text-gray-700 font-medium">{point}</p>
                 </div>
               ))}
@@ -221,19 +220,17 @@ const [hoveredCard, setHoveredCard] = useState(null);
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="w-16 h-1 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"></div>
+            <div className="w-16 h-1 bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 rounded-full"></div>
             <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Building Excellence</span>
           </div>
         </div>
                    
         <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-500 to-yellow-300 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
-            <div className="absolute -inset-2 bg-gradient-to-r from-emerald-200 to-yellow-200 rounded-3xl opacity-50"></div>
+            
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#27514b] via-[#27514b] rounded-3xl opacity-50"></div>
             
             <div className="relative bg-white rounded-3xl p-10 shadow-2xl border border-yellow-100">
-              <div className="absolute top-4 right-4 w-8 h-8 bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-full opacity-60"></div>
-              <div className="absolute bottom-4 left-4 w-6 h-6 bg-gradient-to-r from-emerald-300 to-teal-400 rounded-full opacity-60"></div>
               
               <div className="grid grid-cols-2 gap-8">
                 {stats.map((stat, index) => {
@@ -244,8 +241,8 @@ const [hoveredCard, setHoveredCard] = useState(null);
                       className={`text-center group hover:transform hover:scale-105 transition-all duration-300 delay-${index * 100}`}
                     >
                       <div className="relative mb-4">
-                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-200 to-yellow-300 rounded-2xl blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                        <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl shadow-lg group-hover:shadow-xl transition-shadow">
+                        
+                        <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 rounded-2xl shadow-lg group-hover:shadow-xl transition-shadow">
                           <Icon className="w-8 h-8 text-white" />
                         </div>
                       </div>
@@ -262,7 +259,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
               
               <div className="mt-8 pt-6 border-t border-gray-100">
                 <div className="flex justify-center">
-                  <div className="bg-gradient-to-r from-emerald-50 to-yellow-50 px-6 py-2 rounded-full border border-emerald-200">
+                  <div className="bg-emerald-50  px-6 py-2 rounded-full border border-emerald-200">
                     <span className="text-sm font-semibold text-emerald-700">Trusted by Industry Leaders</span>
                   </div>
                 </div>
@@ -274,24 +271,26 @@ const [hoveredCard, setHoveredCard] = useState(null);
     </div>
 
 
-     <div className="bg-gradient-to-br from-gray-50 via-white to-yellow-50 py-20">
+     <div className=" py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
+        {/* Unique Edge Section */}
         <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-yellow-100 px-6 py-3 rounded-full mb-8 shadow-lg border border-emerald-200">
+          <div className="inline-flex items-center gap-2 bg-emerald-100 px-6 py-3 rounded-full mb-8 shadow-lg border border-emerald-200">
             <Star className="w-5 h-5 text-emerald-600" />
             <span className="text-sm font-bold text-emerald-700 tracking-wide">Our Unique Edge</span>
           </div>
           
-          <h2 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          <h2 className="text-5xl font-bold text-black mb-6 leading-tight">
             What Makes Us{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-500 to-yellow-500">
+            <span className="text-transparent bg-clip-text bg-[#27514b] ">
               Different?
             </span>
           </h2>
-          
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We're not just another consulting platform. We're your trusted partner built specifically for Indian businesses with world-class expertise.
+            Our diverse team of seasoned professionals brings together years
+            of experience and a passion for driving success. We believe in
+            building strong relationships and delivering personalized
+            solutions.
           </p>
         </div>
 
@@ -311,27 +310,24 @@ const [hoveredCard, setHoveredCard] = useState(null);
                 onMouseLeave={() => setHoveredCard(null)}
               >
                 {/* Background Glow */}
-                <div className={`absolute -inset-2 bg-gradient-to-r ${item.gradient} rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl`}></div>
+                <div className={`absolute -inset-2  rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl`}></div>
                 
                 {/* Main Card */}
                 <div className={`relative bg-white rounded-3xl p-8 shadow-xl border-2 transition-all duration-500 ${
                   isHovered ? 'border-emerald-200 shadow-2xl transform -translate-y-2' : 'border-gray-100 hover:border-gray-200'
                 }`}>
-                  
-                  {/* Decorative Elements */}
-                  <div className="absolute top-6 right-6 w-12 h-12 bg-gradient-to-r from-yellow-200 to-yellow-300 rounded-full opacity-20"></div>
-                  <div className="absolute bottom-6 left-6 w-8 h-8 bg-gradient-to-r from-emerald-200 to-teal-300 rounded-full opacity-30"></div>
+                 
                   
                   {/* Icon */}
                   <div className="relative mb-6">
-                    <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-opacity`}></div>
+                    <div className={`absolute inset-0  to  rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-opacity`}></div>
                     <div className={`relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${item.gradient} rounded-2xl shadow-lg`}>
                       <Icon className="w-8 h-8 text-white" />
                     </div>
                   </div>
                   
                   {/* Content */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-emerald-600 transition-colors">
+                  <h3 className="text-2xl font-bold text-[#023c2d] mb-4 group-hover:text-emerald-600 transition-colors">
                     {item.title}
                   </h3>
                   
@@ -371,10 +367,10 @@ const [hoveredCard, setHoveredCard] = useState(null);
         </div>
 
       {/* Values Section */}
-      <div className="bg-gradient-to-br from-slate-50 to-amber-50/50 py-20">
+      <div className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Core Values</h2>
+            <h2 className="text-4xl font-bold text-[#023c2d] mb-4">Our Core Values</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               The principles that guide everything we do
             </p>
@@ -391,7 +387,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
                   }`}
                 >
                   <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2">
-                    <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${value.gradient} rounded-2xl mb-6 group-hover:scale-110 transition-transform`}>
+                    <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 shadow-xl rounded-2xl mb-6 group-hover:scale-110 transition-transform`}>
                       <Icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4">{value.title}</h3>
@@ -407,7 +403,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
       {/* Team Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+          <h2 className="text-4xl font-bold text-[#023c2d] mb-4">Meet Our Team</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             The passionate people behind our mission
           </p>
@@ -421,9 +417,9 @@ const [hoveredCard, setHoveredCard] = useState(null);
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
             >
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center group hover:-translate-y-2">
+              <div className="bg-[#fdf1df] rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 text-center group hover:-translate-y-2">
                 <div className="relative inline-block mb-6">
-                  <div className={`absolute inset-0 bg-gradient-to-r ${member.gradient} rounded-full blur opacity-75 group-hover:opacity-100 transition-opacity`}></div>
+                  <div className={`absolute inset-0  rounded-full blur opacity-75 group-hover:opacity-100 transition-opacity`}></div>
                   <img
                     src={member.image}
                     alt={member.name}
@@ -439,7 +435,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
       </div>
 
       {/* Contact Form Section */}
-      <div className="bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 py-20">
+      <div className="bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 py-20 rounded-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Info */}

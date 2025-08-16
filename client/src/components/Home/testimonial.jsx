@@ -33,9 +33,9 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className=" bg-gray-100">
+    <section className=" ">
       <div className=" py-10 max-w-screen-xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#27514b]">
           Early User Testimonials
         </h2>
 

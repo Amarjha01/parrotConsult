@@ -34,7 +34,7 @@ const FAQItem = ({ question, answer, isOpen, onToggle }) => {
         className="w-full py-4 px-0 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
         onClick={onToggle}
       >
-        <span className="text-gray-900 font-medium pr-4">{question}</span>
+        <span className="text-[#023c2d] font-medium pr-4">{question}</span>
         <div className="transition-transform duration-200" style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
           <ChevronRight className="w-5 h-5 text-gray-500" />
         </div>
@@ -91,13 +91,13 @@ export default function FAQ() {
   };
 
   return (
-    <div className="bg-gray-50 py-16">
+    <div className="py-16">
       <div className="max-w-5xl mx-auto px-6">
         {/* FAQ Section */}
         <div>
           <AnimatedStep delay={1200}>
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">Frequently Asked</h2>
-            <h2 className="text-4xl font-bold text-gray-900 mb-8">Questions</h2>
+            <h2 className="text-4xl font-bold text-[#023c2d] mb-2">Frequently Asked</h2>
+            <h2 className="text-4xl font-bold text-[#023c2d] mb-8">Questions</h2>
             <div className="w-24 h-1 bg-teal-600 mb-12"></div>
           </AnimatedStep>
           

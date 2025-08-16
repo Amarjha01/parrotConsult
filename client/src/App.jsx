@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { SiGoogledisplayandvideo360 } from "react-icons/si";
 import ScrollToTop from './util/ScrollToTop';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css'
 const navItems = [
   { name: 'Home', icon: <Home size={20} />, path: '/', color: 'hover:bg-[#1a5a3e]' },
@@ -112,6 +113,7 @@ console.log(location.pathname);
   return (
     <>
       <ScrollToTop />
+       <ToastContainer />
       <div className="flex md:min-h-screen ">
         {/* Sidebar (Desktop only) */}
         <aside
@@ -164,7 +166,7 @@ console.log(location.pathname);
 
         {/* Main Content Area */}
         <main
-          className="flex-1 ml-0 md:ml-20 overflow-x-hidden  md:pt-2  sm:pl-2"
+          className="flex-1 ml-0 md:ml-20 overflow-x-hidden  md:pt-2  sm:pl-2 bg-[#fefaee]"
         >
           <Outlet />
         </main>
@@ -205,7 +207,7 @@ console.log(location.pathname);
       </nav>
 
       {/* Spacer for mobile bottom nav */}
-      <div className="md:hidden h-20" />
+      {/* <div className="md:hidden h-20" /> */}
     </>
   );
 };
