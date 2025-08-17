@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, User, MessageCircle } from 'lucide-react';
 import { createBooking, verifyPayment } from '../../apis/bookingApi';
+import { showErrorToast } from '../../util/Notification';
 
 const BookingPage = ({ isOpen = true, onClose = () => {}, consultant}) => {
   const [selectedDuration, setSelectedDuration] = useState('5');
@@ -86,8 +87,18 @@ const getAvailableTimesForDate = () => {
 
 
 const handleBookMeeting = async () => {
-  const user = JSON.parse(localStorage.user);
+  console.log('yha call hua');
+  
+ const user = JSON.parse(localStorage.getItem("user") || "null");
+  console.log(user);
+  
+if(!user){
+  showErrorToast('Please login to book meeting');
+  setTimeout(() => {
+    window.open("/newsignin", "_blank");
 
+  }, 2000);
+}
   const combinedDateTime = new Date(`${selectedDate}T${selectedTime}:00`);
 
   const payload = {
