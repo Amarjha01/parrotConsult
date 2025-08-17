@@ -44,33 +44,45 @@ const PrevArrow = ({ onClick }) => (
 
 // ✅ Now sliderSettings will work
 const sliderSettings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 3,
-  slidesToScroll: 1,
-  arrows: true,
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    //  speed: 4000,
+    // autoplaySpeed: 500,
+    // cssEase: "linear",
+    slidesToShow: 3,
+    slidesToScroll: 1,
+     arrows: true,
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
-  autoplay: true,
-  centerPadding: "20px", // Add this
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: { 
-        slidesToShow: 1,
-        centerPadding: "15px" 
+    initialSlide: 0,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
       },
-    },
-    {
-      breakpoint: 570,
-      settings: { 
-        slidesToShow: 1,
-        centerPadding: "10px"
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          initialSlide: 1
+        }
       },
-    },
-  ],
-};
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
 
 
 const InfoCard = ({ icon, title, value }) => (
@@ -182,7 +194,7 @@ export default function ConsultantCard() {
           </div>
         ) : (
 // Update your slider container div
-<div className="   w-full "> {/* Added px-8 for horizontal padding */}
+<div className=" slider-container  w-full "> {/* Added px-8 for horizontal padding */}
   
   <Slider {...sliderSettings}>
     {consultants.map((consultant, index) => (

@@ -148,7 +148,7 @@ const PopularCategoriesPage = () => {
                     </div>
 
                     {/* CTA Button */}
-                    <button className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r ${category.gradient} text-green-900 hover:shadow-lg transform hover:scale-105 group-hover:shadow-xl`}>
+                    <button className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r ${category.gradient} text-green-900 shadow-lg md:shadow-none  hover:shadow-lg transform hover:scale-105 group-hover:shadow-xl`}>
                       <span className="flex items-center justify-center gap-2">
                         Explore Consultants
                         <ArrowRight className={`w-4 h-4 transition-transform ${isHovered ? 'translate-x-1' : ''}`} />

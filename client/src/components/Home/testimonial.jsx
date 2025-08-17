@@ -59,7 +59,7 @@ export default function Testimonials() {
                 </div>
 
                 {/* Quote */}
-                <blockquote className="text-2xl md:text-3xl font-semibold text-gray-800 max-w-3xl mb-6">
+                <blockquote className="text-2xl md:text-3xl font-semibold text-black max-w-3xl mb-6">
                   “{testimonial.quote}”
                 </blockquote>
 

@@ -21,6 +21,7 @@ import { FaRegHandshake } from "react-icons/fa6";
 import { HiLightBulb } from "react-icons/hi";
 import {  Zap, DollarSign } from 'lucide-react';
 import { sendContactUsMail } from '../../apis/globalApi';
+import { showSuccessToast } from '../../util/Notification';
 const AboutUsPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -47,17 +48,12 @@ const [hoveredCard, setHoveredCard] = useState(null);
     e.preventDefault();
     setIsSubmitting(true);
     
-    await sendContactUsMail(formData);
-    
-    // Simulate form submission
-    setTimeout(() => {
+    const response = await sendContactUsMail(formData);
+    if(response.status === 200){
+      showSuccessToast('Form submited successfully')
       setIsSubmitting(false);
       setIsSubmitted(true);
-      // setFormData({ name: '', email: '', subject: '', message: '' });
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => setIsSubmitted(false), 3000);
-    }, 7000);
+    }
   };
 
   const stats = [
@@ -228,7 +224,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
         <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
           <div className="relative">
             
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#27514b] via-[#27514b] rounded-3xl opacity-50"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-950 to-[#fef8e4]   rounded-3xl opacity-50"></div>
             
             <div className="relative bg-white rounded-3xl p-10 shadow-2xl border border-yellow-100">
               
@@ -447,7 +443,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
               
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 rounded-lg flex items-center justify-center">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -457,7 +453,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 rounded-lg flex items-center justify-center">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -467,7 +463,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 rounded-lg flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -539,7 +535,7 @@ const [hoveredCard, setHoveredCard] = useState(null);
                   disabled={isSubmitting}
                   className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 ${
                     isSubmitted
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-gradient-to-br from-slate-900 via-emerald-900 to-teal-900 text-white'
                       : isSubmitting
                       ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
                       : 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-600 hover:to-teal-700 transform hover:scale-105 shadow-lg hover:shadow-xl'

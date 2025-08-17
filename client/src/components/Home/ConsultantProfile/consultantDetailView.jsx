@@ -11,6 +11,10 @@ import {
   Briefcase,
   ExternalLink,
   Calendar,
+  Shield,
+  Users,
+  Globe,
+  CheckCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,7 +29,6 @@ export default function ConsultantDetailView() {
   const [consultant, setConsultant] = useState(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [getStarted, setGetStarted] = useState(false);
-
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -34,7 +37,7 @@ export default function ConsultantDetailView() {
   }, []);
 
   const userId = currentUser?._id;
-  const role = currentUser?.role;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const stepVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -57,7 +60,12 @@ export default function ConsultantDetailView() {
     fetchConsultant();
   }, [id]);
 
-  if (!consultant) return <div className="text-center py-10">Loading...</div>;
+  if (!consultant) 
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600"></div>
+      </div>
+    );
 
   const {
     fullName,
@@ -81,9 +89,6 @@ export default function ConsultantDetailView() {
     certificates,
     _id,
   } = consultant;
-console.log('Specialized' , specializedServices);
-
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleSendMessage = async () => {
     try {
@@ -100,203 +105,316 @@ console.log('Specialized' , specializedServices);
   };
 
   return (
-    <div className="lg:min-h-screen h-[89vh] px-4 sm:px-6 lg:px-20 py-8 ">
-      {/* Booking Modal */}
-      {isBookingOpen && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center backdrop-blur-sm p-4">
-          <div className="border border-teal-900 rounded-2xl shadow-xl w-full max-w-md md:max-w-lg bg-white/60 backdrop-blur-xl">
-            <div className="border-b border-gray-200 p-6 flex items-center space-x-4">
-              <Calendar className="w-6 h-6 text-teal-700" />
-              <h1 className="text-xl md:text-2xl font-bold text-teal-900">Book a consultation</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative max-w-7xl mx-auto px-6 py-16">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Profile Image */}
+            <div className="relative">
+              <div className="w-48 h-48 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 p-1 shadow-2xl">
+                <img
+                  src={profileImage || "https://i.postimg.cc/bryMmCQB/profile-image.jpg"}
+                  alt={fullName}
+                  className="w-full h-full rounded-full object-cover border-4 border-white"
+                />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-green-500 rounded-full p-3 shadow-lg">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
             </div>
-            <div className="p-6">
-              <motion.section
-                className="bg-teal-50 rounded-2xl p-4"
-                variants={stepVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <h2 className="text-lg md:text-xl font-semibold text-teal-900 mb-4 md:mb-6">How it works</h2>
-                <ul className="list-decimal list-inside space-y-4 text-gray-700 text-sm">
-                  <li>
-                    <strong>Choose your consult:</strong> Select the consultant who fits best your needs.
-                  </li>
-                  <li>
-                    <strong>Select date & time:</strong> Pick an available slot that works for you.
-                  </li>
-                  <li>
-                    <strong>Let's connect:</strong> Meet with your consultant and get the guidance you seek.
-                  </li>
-                </ul>
-              </motion.section>
-              <div className="mt-6 flex justify-center">
+
+            {/* Profile Info */}
+            <div className="flex-1 text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+                <h1 className="text-4xl lg:text-5xl font-bold capitalize">{fullName}</h1>
+                <CheckCircle className="w-8 h-8 text-green-400" />
+              </div>
+              
+              <p className="text-2xl text-blue-300 mb-4 capitalize">{primaryCategory}</p>
+              
+              <div className="flex flex-wrap justify-center lg:justify-start gap-6 text-slate-300 mb-8">
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  <span className="font-semibold">4.8 Rating</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-5 h-5" />
+                  <span>{experience} Years Experience</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  <span>100+ Clients</span>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <button
-                  onClick={() => {
-                    setGetStarted(true);
-                    setIsBookingOpen(false);
-                  }}
-                  className="bg-teal-600 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:shadow-xl transition duration-300 hover:scale-105"
+                  onClick={handleBookNow}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
                 >
-                  Get Started
+                  Book Consultation
+                </button>
+                <button
+                  onClick={handleSendMessage}
+                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-slate-900 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200"
+                >
+                  Send Message
                 </button>
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* About Section */}
+            {shortBio && (
+              <motion.div 
+                className="bg-white rounded-2xl p-8 shadow-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Users className="w-5 h-5 text-blue-600" />
+                  </div>
+                  About
+                </h2>
+                <p className="text-slate-600 leading-relaxed text-lg">{shortBio}</p>
+              </motion.div>
+            )}
+
+            {/* Skills & Services */}
+            <motion.div 
+              className="bg-white rounded-2xl p-8 shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Award className="w-5 h-5 text-purple-600" />
+                </div>
+                Expertise
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { title: "Specialized Services", items: specializedServices, color: "bg-blue-50 text-blue-700 border-blue-200" },
+                  { title: "Key Skills", items: keySkills, color: "bg-purple-50 text-purple-700 border-purple-200" },
+                ].map(({ title, items, color }) => (
+                  <div key={title}>
+                    <h3 className="font-semibold text-slate-700 mb-3">{title}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {(items || []).map((item, idx) => (
+                        <span key={idx} className={`px-3 py-1 rounded-full text-sm font-medium border ${color}`}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Education & Certifications */}
+            {HeighestQualification && (
+              <motion.div 
+                className="bg-white rounded-2xl p-8 shadow-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-green-600" />
+                  </div>
+                  Education & Credentials
+                </h2>
+                
+                <div className="border-l-4 border-blue-500 pl-6 mb-6">
+                  <h3 className="text-xl font-semibold text-slate-800">{HeighestQualification.toUpperCase()}</h3>
+                  <p className="text-slate-600 font-medium">{university}</p>
+                  <p className="text-slate-500">{fieldOfStudy} • {graduationYear}</p>
+                </div>
+
+                {certificates?.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-slate-700 mb-3">Certifications</h3>
+                    <div className="space-y-3">
+                      {certificates.map((cert, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                          <span className="font-medium text-slate-800">{cert.name}</span>
+                          {cert.fileUrl && (
+                            <a
+                              href={cert.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                              View
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-8">
+            
+            {/* Contact Info */}
+            <motion.div 
+              className="bg-white rounded-2xl p-6 shadow-lg"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <h3 className="text-xl font-bold text-slate-800 mb-6">Contact Information</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-slate-400" />
+                  <span className="text-slate-600">{email}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-slate-400" />
+                  <span className="text-slate-600">*******{phoneNumber?.toString().slice(-3)}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-slate-400" />
+                  <span className="text-slate-600">{address}</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Availability */}
+            <motion.div 
+              className="bg-white rounded-2xl p-6 shadow-lg"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h3 className="text-xl font-bold text-slate-800 mb-6">Availability</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-slate-400" />
+                  <div>
+                    <p className="font-medium text-slate-700">Working Hours</p>
+                    <p className="text-slate-600">{preferredWorkingHours || "09:30 - 05:00"}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-slate-400" />
+                  <div>
+                    <p className="font-medium text-slate-700">Available Days</p>
+                    <p className="text-slate-600">{daysPerWeek ? daysPerWeek.join(", ") : "Monday - Friday"}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Languages */}
+            {languageProficiency && (
+              <motion.div 
+                className="bg-white rounded-2xl p-6 shadow-lg"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <Languages className="w-5 h-5 text-slate-600" />
+                  Languages
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {languageProficiency.map((lang, idx) => (
+                    <span key={idx} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">
+                      {lang}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Pricing */}
+            <motion.div 
+              className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 shadow-lg border border-green-200"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <h3 className="text-xl font-bold text-slate-800 mb-4">Pricing</h3>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-600 mb-2">FREE</div>
+                <p className="text-slate-600 line-through mb-4">₹{hourlyRate}/hour</p>
+                <p className="text-sm text-slate-500">Limited time offer for new clients</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Booking Modal */}
+      {isBookingOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+          <motion.div 
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-md border-2 border-slate-200"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="border-b border-slate-200 p-6 flex items-center space-x-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-blue-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800">Book Consultation</h2>
+            </div>
+            <div className="p-6">
+              <div className="bg-blue-50 rounded-2xl p-4 mb-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">How it works</h3>
+                <ol className="list-decimal list-inside space-y-3 text-slate-600">
+                  <li><strong>Choose consultant:</strong> You've selected the perfect expert</li>
+                  <li><strong>Pick date & time:</strong> Select a convenient slot</li>
+                  <li><strong>Connect:</strong> Meet and get expert guidance</li>
+                </ol>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsBookingOpen(false)}
+                  className="flex-1 px-4 py-3 border border-slate-300 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setGetStarted(true);
+                    setIsBookingOpen(false);
+                  }}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       )}
 
       <BookingPage isOpen={getStarted} onClose={() => setGetStarted(false)} consultant={consultant} />
-
-      {/* Profile Header */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-12 flex flex-col md:flex-row gap-8 items-center md:items-start">
-  {/* Profile Image */}
-  <img
-    src={profileImage || "https://i.postimg.cc/bryMmCQB/profile-image.jpg"}
-    alt={fullName}
-    className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white shadow-lg flex-shrink-0"
-  />
-
-  {/* Profile Details */}
-  <div className="flex-1 min-w-0 max-w-full md:max-w-2xl">
-    <h2 className="text-3xl font-bold text-gray-900 mb-3 truncate capitalize">{fullName}</h2>
-    <p className="text-xl font-semibold text-teal-700 mb-6 capitalize truncate"> {primaryCategory}</p>
-
-    <div className="text-gray-700 space-y-3 text-base md:text-lg max-w-xl">
-      <p className="flex items-center gap-2 truncate">
-        <Mail className="w-5 h-5 text-teal-600 flex-shrink-0" />
-        <span title={email}>{email}</span>
-      </p>
-      <p className="flex items-center gap-2 truncate">
-        <Phone className="w-5 h-5 text-teal-600 flex-shrink-0" />
-        <span title={phoneNumber}>*******{phoneNumber?.toString().slice(-3)}</span>
-      </p>
-      <p className="flex items-center gap-2 truncate">
-        <MapPin className="w-5 h-5 text-teal-600 flex-shrink-0" />
-        <span title={address}>{address}</span>
-      </p>
-      <p className="flex items-center gap-2 truncate">
-        <Briefcase className="w-5 h-5 text-teal-600 flex-shrink-0" />
-        <span>{experience} years experience</span>
-      </p>
-    </div>
-
-    <div className="mt-8 flex flex-wrap gap-5 max-w-xl">
-      <div className="bg-gray-100 px-6 py-3 rounded-lg font-semibold text-gray-800 shadow-sm flex items-center space-x-2">
-        <span className="line-through text-gray-500">₹{hourlyRate}</span>
-        <span className="text-green-600">FREE</span>
-      </div>
-      <div className="bg-gray-100 px-6 py-3 rounded-lg font-semibold text-gray-800 shadow-sm flex items-center space-x-2">
-        <Star className="text-yellow-400 w-6 h-6" />
-        <span className="text-lg">4.8</span>
-      </div>
-    </div>
-  </div>
-
-  {/* Buttons on Right Side */}
-  <div className="flex flex-col gap-4 min-w-[180px]">
-    <button
-      onClick={handleBookNow}
-      className="bg-teal-700 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:bg-teal-800 transition-shadow shadow-md hover:shadow-lg w-full"
-    >
-      Book Consultation
-    </button>
-    <button
-      onClick={handleSendMessage}
-      className="border border-teal-700 text-teal-700 px-6 py-4 rounded-lg font-semibold text-lg hover:bg-teal-700 hover:text-white transition-shadow shadow-sm hover:shadow-md w-full"
-    >
-      Send Message
-    </button>
-  </div>
-</div>
-
-
-      {/* Short Bio */}
-      {shortBio && (
-        <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm mb-10">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Short Bio</h3>
-          <p className="text-gray-700 leading-relaxed">{shortBio}</p>
-        </section>
-      )}
-
-      {/* Specialized Sections */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {[ 
-          { title: "Specialized Services", icon: <Star />, items: specializedServices, color: "bg-teal-100 text-teal-800" },
-          { title: "Key Skills", icon: <Award />, items: keySkills, color: "bg-blue-100 text-blue-800" },
-          { title: "Language Proficiency", icon: <Languages />, items: languageProficiency, color: "bg-green-100 text-green-800" },
-        ].map(({ title, icon, items, color }, i) => (
-          <div key={i} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              {icon}
-              {title}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {(items || []).map((item, idx) => (
-                <span key={idx} className={`px-3 py-1 ${color} rounded-full text-sm font-medium`}>
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Availability Section */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-teal-600" />
-            Availability
-          </h3>
-          <p className="text-gray-600 text-sm md:text-base">
-            <strong>Working Hours:</strong> {preferredWorkingHours || "09:30 - 05:00"}
-          </p>
-          <p className="text-gray-600 text-sm md:text-base mt-2">
-            <strong>Days Per Week:</strong> {daysPerWeek ? daysPerWeek.join(", ") : "Not specified"}
-          </p>
-        </div>
-      </section>
-
-      {/* Education Section */}
-      {HeighestQualification && (
-        <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mt-10">
-          <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-teal-600" />
-            Education
-          </h3>
-          <div className="border-l-4 border-teal-500 pl-5">
-            <h4 className="font-semibold text-gray-800">{HeighestQualification.toUpperCase()}</h4>
-            <p className="text-gray-600">{university}</p>
-            <p className="text-sm text-gray-500">{fieldOfStudy} • {graduationYear}</p>
-          </div>
-        </section>
-      )}
-
-      {/* Certificates Section */}
-      {certificates?.length > 0 && (
-        <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mt-10">
-          <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Award className="w-5 h-5 text-teal-600" />
-            Certificates
-          </h3>
-          <div className="space-y-3">
-            {certificates.map((cert, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="font-medium text-gray-800">{cert.name}</span>
-                {cert.fileUrl && (
-                  <a
-                    href={cert.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-teal-600 hover:text-teal-800 flex items-center gap-1"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    View
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { globalconsultantdetails } from "../../../apis/globalApi";
 import BookingPage from "../../booking/BookingPage";
 import { motion } from 'framer-motion';
 import { Link } from "react-router-dom";
-
+import { Languages, MapPin, Clock, IndianRupee, ShieldCheck, Zap } from 'lucide-react';
 const availabilities = ["All Availability", "Available", "Busy"];
 const priceRanges = ["All Prices", "Budget", "Standard", "Premium"];
 
@@ -23,18 +23,18 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
       <div className="relative">
         <button
           type="button"
-          className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-left text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition"
+          className="w-full bg-[#fefaee] border border-gray-300 rounded-md px-3 py-2 text-left text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#28544c] focus:border-[#28544c] transition"
           onClick={() => setIsOpen(!isOpen)}
         >
           <span className="block truncate">{value}</span>
           <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
         </button>
         {isOpen && (
-          <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 mt-1 w-full bg-[#fefaee]  border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
             {options.map((option) => (
               <button
                 key={option}
-                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-teal-50 focus:outline-none focus:bg-teal-50 transition"
+                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-[#fdf1df] focus:outline-none focus:bg-[#fdf1df] transition"
                 onClick={() => {
                   onChange(option);
                   setIsOpen(false);
@@ -62,18 +62,26 @@ const ConsultantCard = ({ consultant, onBookNow }) => {
   };
 
   return (
-    <div
-      className="bg-white rounded-lg border border-gray-200 overflow-hidden relative cursor-pointer max-w-lg mx-auto"
+    <Link to={`/consultantprofile/${consultant._id}/${consultant.fullName}`}
+      className="bg-[#fdf1df] h-61 rounded-2xl border-2 border-[#27514b] overflow-hidden relative max-w-3xl mx-auto"
       style={hoverStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link 
-        to={`/consultantprofile/${consultant._id}/${consultant.fullName}`} 
-        className="flex p-6 space-x-6 items-center no-underline"
-      >
-        <div className="flex-shrink-0">
-          <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden border border-gray-300 shadow-sm">
+      
+      {/* FREE Badge */}
+      <div className="absolute top-3 right-3 z-10">
+        <span className="inline-flex items-center gap-1 bg-[#27514b] text-[#fdf1df] px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+          <Zap size={10} className="text-yellow-300" />
+          FREE
+        </span>
+      </div>
+
+      <div className="flex">
+        {/* Left Side - Dark Green Section */}
+        <div className="w-2/5 bg-gradient-to-br from-[#27514b] via-[#2a5a4f] to-[#1e3e35] flex flex-col justify-center items-center h-60 relative">
+          {/* Profile Image */}
+          <div className="w-20 h-20 rounded-full border-4 border-[#fdf1df] bg-white shadow-lg overflow-hidden mb-4">
             {consultant.profileImage || consultant.profilePicture ? (
               <img
                 src={consultant.profileImage || consultant.profilePicture}
@@ -85,61 +93,105 @@ const ConsultantCard = ({ consultant, onBookNow }) => {
               <User className="w-10 h-10 text-gray-400 m-5" />
             )}
           </div>
+          
+          {/* Rating */}
+          <div className="flex items-center gap-1 text-yellow-400 mb-2">
+            <Star size={16} fill="currentColor" />
+            <span className="text-lg font-bold text-[#fdf1df]">
+              {(consultant.rating || 4.8).toFixed(1)}
+            </span>
+          </div>
+          
+          {/* Experience */}
+          <div className="text-center">
+            <div className="text-[#fdf1df] text-sm font-medium">
+              {consultant.consultantRequest?.consultantProfile?.yearsOfExperience || consultant.experience || 0} Years Experience
+            </div>
+          </div>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 capitalize truncate">{consultant.fullName}</h3>
-          <p className="text-sm text-gray-600 mb-1 capitalize truncate">
-            {consultant.consultantRequest?.consultantProfile?.category || consultant.primaryCategory || "General Consultant"}
-          </p>
-          {consultant.consultantRequest?.consultantProfile?.shortBio && (
-            <p className="text-xs text-gray-500 mb-3 line-clamp-2">
-              {consultant.consultantRequest.consultantProfile.shortBio}
-            </p>
-          )}
-
-          <div className="flex text-xs text-gray-500 space-x-4">
-            <div className="flex items-center space-x-1 truncate">
-              <Star className="w-4 h-4 text-yellow-400" />
-              <span>{(consultant.rating || 4.8).toFixed(1)}</span>
+        {/* Right Side - Light Section */}
+        <div className="w-72 h-60 p-1 flex flex-col justify-between">
+          {/* Header Info */}
+          <div>
+            <div className="flex items-center gap-0.5 mb-2">
+              <h3 className="text-xl font-bold text-[#27514b] capitalize">
+                {consultant.fullName}
+              </h3>
+              {/* Verified Badge */}
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
             </div>
-            <div className="truncate">{consultant.availability || "Unknown Availability"}</div>
-            <div className="truncate">
-              ₹{consultant.consultantRequest?.consultantProfile?.sessionFee || 0}/hr
+            
+            {/* Category Badge */}
+            <div className="inline-flex items-center gap-1 bg-[#27514b] text-[#fdf1df] px-3 py-1 rounded-lg text-sm font-medium mb-2">
+              Category: {consultant.consultantRequest?.consultantProfile?.category || consultant.primaryCategory || "Strategy"}
             </div>
           </div>
 
-          <div className="text-xs text-gray-400 truncate mt-1">
-            {consultant.location || consultant.address || "Remote"}
+          {/* Details */}
+          <div className="space-y-0.5 text-sm mb-2">
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <Languages size={14} />
+              <span className="font-medium">Languages:</span>
+              <span>
+                {consultant.consultantRequest?.consultantProfile?.languages?.slice(0, 2).join(", ") || 
+                 consultant.languageProficiency?.slice(0, 2).join(", ") || 
+                 "English"}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <MapPin size={14} />
+              <span className="font-medium">Location:</span>
+              <span>{consultant.location?.split(",")[0] || consultant.address?.split(",") || "Remote"}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <Clock size={14} />
+              <span className="font-medium">Available:</span>
+              <span>
+                {consultant.consultantRequest?.consultantProfile?.daysPerWeek || 
+                 consultant.availabilityPerWeek || "5"} days/week
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[#27514b]">
+              <IndianRupee size={14} />
+              <span className="font-medium">Rate:</span>
+              <span className="line-through text-gray-500">
+                ₹{consultant.consultantRequest?.consultantProfile?.sessionFee || consultant.hourlyRate || 0}/hr
+              </span>
+              <span className="text-green-600 font-bold ml-2">FREE</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <Link
+              to={`/consultantprofile/${consultant._id}/${consultant.fullName}`}
+              className="flex-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="w-full px-4 py-1 rounded-lg border-2 border-[#27514b] text-[#27514b] text-xs font-semibold hover:bg-[#27514b] hover:text-[#fdf1df] transition-all duration-200">
+                View Profile
+              </button>
+            </Link>
+            
+            <button
+              className="flex-1 px-4 py-1 text-xs rounded-lg font-semibold bg-[#27514b] text-[#fdf1df] hover:bg-[#1e3e35] transition-all duration-200"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onBookNow(consultant);
+              }}
+            >
+              Book Now
+            </button>
           </div>
         </div>
-      </Link>
-
-      <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 flex space-x-4">
-        <Link 
-          to={`/consultantprofile/${consultant._id}/${consultant.fullName}`} 
-          className="flex-1"
-          onClick={e => e.stopPropagation()}
-        >
-          <button 
-            className="w-full px-4 py-2 rounded-md border border-teal-500 text-teal-600 font-medium hover:bg-teal-50 transition"
-          >
-            View Profile
-          </button>
-        </Link>
-
-        <button 
-          onClick={e => {
-            e.preventDefault();
-            e.stopPropagation();
-            onBookNow(consultant);
-          }}
-          className="flex-1 px-4 py-2 rounded-md bg-teal-600 text-white font-semibold hover:bg-teal-700 transition"
-        >
-          Book Now
-        </button>
       </div>
-    </div>
+      
+    </Link>
   );
 };
 
@@ -226,7 +278,7 @@ export default function ViewAllConsultant() {
   };
 
   return (
-    <div className="lg:min-h-screen h-[89vh]  p-6">
+    <div className="lg:h-auto h-[89vh]  py-6 mb-3.5">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Search</h1>
         <div className="relative max-w-lg mb-8">
@@ -240,8 +292,8 @@ export default function ViewAllConsultant() {
           />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-10">
-          <aside className="lg:w-64 w-full bg-white rounded-lg p-6 border border-gray-200">
+        <div className="flex flex-col lg:flex-row gap-2 pb-12">
+          <aside className="lg:w-64 w-full bg-[#fefaee] shadow rounded-lg p-6 border border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Filters</h2>
             <div className="space-y-6">
               <FilterDropdown label="Category" options={dynamicCategories} value={selectedCategory} onChange={setSelectedCategory} />
