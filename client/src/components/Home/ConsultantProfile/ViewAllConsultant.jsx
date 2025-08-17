@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, ChevronDown, Star, User, Calendar } from "lucide-react";
+import { Search, ChevronDown, Star, User, Calendar, Filter, X } from "lucide-react";
 import { globalconsultantdetails } from "../../../apis/globalApi";
 import BookingPage from "../../booking/BookingPage";
 import { motion } from 'framer-motion';
 import { Link } from "react-router-dom";
 import { Languages, MapPin, Clock, IndianRupee, ShieldCheck, Zap } from 'lucide-react';
+
 const availabilities = ["All Availability", "Available", "Busy"];
 const priceRanges = ["All Prices", "Budget", "Standard", "Premium"];
 
@@ -30,7 +31,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
           <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
         </button>
         {isOpen && (
-          <div className="absolute z-10 mt-1 w-full bg-[#fefaee]  border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 mt-1 w-full bg-[#fefaee] border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
             {options.map((option) => (
               <button
                 key={option}
@@ -204,8 +205,9 @@ export default function ViewAllConsultant() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [getStarted , setGetStarted] = useState(false);
+  const [getStarted, setGetStarted] = useState(false);
   const [selectedConsultant, setSelectedConsultant] = useState(null);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const dynamicCategories = useMemo(() => {
     const unique = consultants
@@ -277,10 +279,45 @@ export default function ViewAllConsultant() {
     }
   };
 
+  // Filter component
+  const FilterSection = () => (
+    <div className="bg-[#fefaee] shadow rounded-lg p-6 border border-gray-200">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+        {/* Close button for mobile */}
+        <button
+          className="lg:hidden p-1 rounded-full hover:bg-gray-200 transition-colors"
+          onClick={() => setIsMobileFilterOpen(false)}
+        >
+          <X className="w-5 h-5 text-gray-500" />
+        </button>
+      </div>
+      <div className="space-y-6">
+        <FilterDropdown label="Category" options={dynamicCategories} value={selectedCategory} onChange={setSelectedCategory} />
+        <FilterDropdown label="Availability" options={availabilities} value={selectedAvailability} onChange={setSelectedAvailability} />
+        <FilterDropdown label="Price" options={priceRanges} value={selectedPrice} onChange={setSelectedPrice} />
+      </div>
+    </div>
+  );
+
   return (
-    <div className="lg:h-auto h-[89vh]  py-6 mb-3.5">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Search</h1>
+    <div className="lg:h-auto h-[89vh] py-6 mb-3.5">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Search</h1>
+          
+          {/* Mobile Filter Button */}
+          <button
+            className="lg:hidden flex items-center gap-2 bg-[#27514b] text-white px-4 py-2 rounded-lg font-medium shadow-md hover:bg-[#1e3e35] transition-colors"
+            onClick={() => setIsMobileFilterOpen(true)}
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+          </button>
+        </div>
+
+        {/* Search Bar */}
         <div className="relative max-w-lg mb-8">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -293,16 +330,39 @@ export default function ViewAllConsultant() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-2 pb-12">
-          <aside className="lg:w-64 w-full bg-[#fefaee] shadow rounded-lg p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">Filters</h2>
-            <div className="space-y-6">
-              <FilterDropdown label="Category" options={dynamicCategories} value={selectedCategory} onChange={setSelectedCategory} />
-              <FilterDropdown label="Availability" options={availabilities} value={selectedAvailability} onChange={setSelectedAvailability} />
-              <FilterDropdown label="Price" options={priceRanges} value={selectedPrice} onChange={setSelectedPrice} />
+          {/* Desktop Filter Sidebar - Fixed on left */}
+          <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0">
+            <div className="sticky top-6">
+              <FilterSection />
             </div>
           </aside>
 
-          <main className="flex-1">
+          {/* Mobile Filter Overlay */}
+          {isMobileFilterOpen && (
+            <div className="lg:hidden fixed inset-0 z-50 flex">
+              {/* Backdrop */}
+              <div 
+                className="absolute inset-0 bg-black bg-opacity-50"
+                onClick={() => setIsMobileFilterOpen(false)}
+              />
+              
+              {/* Filter Panel */}
+              <motion.div
+                className="relative bg-[#fefaee] w-80 max-w-[85vw] h-full overflow-y-auto"
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'tween', duration: 0.3 }}
+              >
+                <div className="p-4">
+                  <FilterSection />
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {/* Main Content */}
+          <main className="flex-1 lg:pl-8">
             {loading ? (
               <p className="text-center text-gray-500 py-12">Loading consultants...</p>
             ) : error ? (
@@ -310,7 +370,7 @@ export default function ViewAllConsultant() {
             ) : filteredConsultants.length === 0 ? (
               <p className="text-center text-gray-500 py-12">No consultants found matching your criteria.</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {filteredConsultants.map((consultant, index) => (
                   <ConsultantCard key={consultant._id} consultant={consultant} onBookNow={handleBookNow} />
                 ))}
@@ -320,6 +380,7 @@ export default function ViewAllConsultant() {
         </div>
       </div>
 
+      {/* Booking Modal */}
       {isBookingOpen && (
         <div className="fixed inset-0 z-30 flex items-center justify-center backdrop-blur-sm p-4">
           <div className="border border-teal-700 rounded-2xl shadow-xl w-full max-w-md md:max-w-lg bg-white/70 backdrop-blur-xl">
