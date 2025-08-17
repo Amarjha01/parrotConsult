@@ -184,7 +184,7 @@ if(!user){
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div className="fixed inset-0 z-50 flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="fixed pb-20 md:pb-0 inset-0 z-50 flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div className="bg-white border border-green-900 h-full w-full md:w-2/3 lg:w-1/2 overflow-y-auto" variants={containerVariants} initial="hidden" animate="visible" exit="exit">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
               <div className="flex items-center space-x-3">

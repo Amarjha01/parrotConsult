@@ -15,7 +15,7 @@ import ImageSlider from '../components/Home/ImageSlide'
 
 const Home = () => {
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen pb-18 md:pb-0">
       {/* <ImageSlider /> */}
       <Hero />
       <ConsultantCard />

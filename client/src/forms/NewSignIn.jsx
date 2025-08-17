@@ -167,7 +167,7 @@ try {
   );
 
   return (
-    <div className="md:min-h-screen h-[92.5vh] text-white bg-gradient-to-r from-green-900 via-green-800 to-green-950 flex items-center justify-center px-4 ">
+    <div className="md:min-h-screen h-[90vh] text-white bg-gradient-to-r from-green-900 via-green-800 to-green-950 flex items-center justify-center px-4 ">
       <ToastContainer />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
