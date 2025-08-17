@@ -166,7 +166,7 @@ console.log(location.pathname);
 
         {/* Main Content Area */}
         <main
-          className="flex-1 ml-0 md:ml-20 overflow-x-hidden pb-20  md:pt-2  sm:pl-2 bg-[#fefaee]"
+          className="flex-1 ml-0 md:ml-20 overflow-x-hidden  md:pt-2  sm:pl-2 bg-[#fefaee]"
         >
           <Outlet />
         </main>
