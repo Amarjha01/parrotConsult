@@ -26,7 +26,7 @@ import "slick-carousel/slick/slick-theme.css";
 // Custom Arrows
 const NextArrow = ({ onClick }) => (
   <div
-    className="text-2xl absolute z-10 right-2 top-[35%] bg-[#ce663c] text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
+    className="text-2xl absolute z-10 right-2 md:right-0 top-[35%] bg-[#ce663c] text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
     onClick={onClick}
   >
     <ChevronRight />
@@ -35,7 +35,7 @@ const NextArrow = ({ onClick }) => (
 
 const PrevArrow = ({ onClick }) => (
   <div
-    className="text-2xl absolute z-10 left-2 top-[35%] bg-[#ce663c] text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
+    className="text-2xl absolute z-10 left-2 md:left-0 top-[35%] bg-[#ce663c] text-white w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md cursor-pointer"
     onClick={onClick}
   >
     <ChevronLeft />
@@ -54,7 +54,7 @@ const sliderSettings = {
   prevArrow: <PrevArrow />,
   initialSlide: 0,
   centerMode: true,
-  centerPadding: "20px",
+  centerPadding: "5px",
   responsive: [
     {
       breakpoint: 1024,
@@ -64,17 +64,17 @@ const sliderSettings = {
         infinite: true,
         dots: true,
         centerMode: true,
-        centerPadding: "15px"
+        centerPadding: "5px"
       }
     },
     {
-      breakpoint: 600,
+      breakpoint: 700,
       settings: {
         slidesToShow: 1,
         slidesToScroll: 1,
         initialSlide: 0,
         centerMode: true,
-        centerPadding: "40px"
+        centerPadding: "5px"
       }
     },
     {
@@ -83,7 +83,7 @@ const sliderSettings = {
         slidesToShow: 1,
         slidesToScroll: 1,
         centerMode: true,
-        centerPadding: "20px"
+        centerPadding: "5px"
       }
     }
   ]
@@ -235,7 +235,7 @@ export default function ConsultantCard() {
           No consultants available at the moment.
         </div>
       ) : (
-        <div className="slider-container w-full px-4">
+        <div className="slider-container w-full px-1">
           <Slider {...sliderSettings}>
             {consultants.map((consultant, index) => (
               <div key={index} className="py-5 px-2 focus:outline-none">
