@@ -310,7 +310,7 @@ export default function ViewAllConsultant() {
             ) : filteredConsultants.length === 0 ? (
               <p className="text-center text-gray-500 py-12">No consultants found matching your criteria.</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 px-2">
                 {filteredConsultants.map((consultant, index) => (
                   <ConsultantCard key={consultant._id} consultant={consultant} onBookNow={handleBookNow} />
                 ))}
