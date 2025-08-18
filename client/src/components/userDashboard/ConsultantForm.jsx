@@ -2,67 +2,51 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FileDown, IndianRupee, Calendar, GraduationCap, School, BriefcaseBusiness, Tag } from 'lucide-react';
 import {FaUser} from 'react-icons/fa'
-import {getAadharVerify, submitConsultantApplication} from '../../apis/userApi.js'
-import { showSuccessToast } from '../../util/Notification.jsx';
-
+import {AadharPanVerification,  getConsultantStatus, submitConsultantApplication} from '../../apis/userApi.js'
+import { showErrorToast, showSuccessToast } from '../../util/Notification.jsx';
+import { TbUpload } from "react-icons/tb";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const ConsultantForm = () => {
   const [aadhaarVerified, setAadhaarVerified] = useState(false);
-  const [aadhaarNumber, setAadhaarNumber] = useState('');
-  const [panNumber, setPanNumber] = useState('');
+  const [aadhaarPhoto, setAadhaarPhoto] = useState();
+  const [panPhoto, setPanPhoto] = useState();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formStatus, setFormStatus] = useState('pending');
   const { register, handleSubmit , reset  } = useForm();
 console.log(formStatus);
 
-useEffect(()=>{
-  const userData = localStorage.user
-  
-     if (userData) {
-      setAadhaarVerified(JSON.parse(userData).aadharVerified)
-     }
-      if (userData) {
-        let user = JSON.parse(userData )
-        console.log(user);
-        
-        if (user.consultantRequest.status === 'pending') {
-          setFormSubmitted(true)
-        }
-        setFormStatus(user.consultantRequest.status)
+useEffect(() => {
+  const fetchData = async () => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+      const user = JSON.parse(userData);
+
+      // Example: set Aadhaar verified flag
+      if (user.aadharVerified) {
+        setAadhaarVerified(user.aadharVerified);
       }
 
-},[])
+      if (user.consultantRequest?.status === "pending") {
+        setFormSubmitted(true);
+      }
+
+      try {
+        const response = await getConsultantStatus();
+        setFormStatus(response);
+      } catch (err) {
+        console.error("Error fetching consultant status:", err);
+      }
+    }
+  };
+
+  fetchData();
+}, []);
+
 
  
-const handleVerification = async () => {
-  if (aadhaarNumber.length === 12 && panNumber.length === 10) {
-    const payload = {
-    aadharVerified: true,
-     kycVerify:{
-      aadharNumber: aadhaarNumber,
-      panNumber: panNumber,
-  },
-    };
 
-    try {
-      const response = await getAadharVerify(payload);
-      console.log("Verification successful:", response);
-      
-      
-      setAadhaarVerified(true);
-      // Optional: update localStorage
-      if (response.data?.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
-
-    } catch (error) {
-      console.error("Verification failed:", error);
-    }
-  } else {
-    alert("Please enter valid Aadhaar and PAN numbers.");
-  }
-};
 
 
  const onSubmit = async (data) => {
@@ -79,10 +63,6 @@ const handleVerification = async () => {
     });
 
 
-      // console.log("FormData preview:");
-      // for (let [key, val] of formData.entries()) {
-      //   console.log(`${key}:`, val);
-      // }
   
   
    const response = await submitConsultantApplication(formData)
@@ -97,6 +77,28 @@ const handleVerification = async () => {
    }
 
   };
+
+  useEffect(() => {
+  return () => {
+    aadhaarPhoto && URL.revokeObjectURL(aadhaarPhoto);
+    panPhoto && URL.revokeObjectURL(panPhoto);
+  };
+}, [aadhaarPhoto, panPhoto]);
+
+const handleAadharPanVerification = async()=>{
+  const payload = new FormData()
+  payload.append('aadhaarCard' , aadhaarPhoto)
+  payload.append('panCard' , panPhoto)
+  const response = await AadharPanVerification(payload)
+  console.log(' response upload aadhar pan' , response);
+
+  if(response.status === 200){
+    setAadhaarVerified(true)
+    showSuccessToast('aadhar and pan uploaded successfully')
+  }else{
+    showErrorToast(response.response.data.message)
+  }
+}
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg p-8 shadow-md mt-6">
@@ -114,36 +116,78 @@ const handleVerification = async () => {
 />
       <h2 className="text-2xl font-semibold text-[#0f5f42] mb-6">Become Consultant - Application Form</h2>
 
-      {!aadhaarVerified &&  (
-        <div className="space-y-4 mb-8">
-          <div>
-            <label className="block mb-1 font-medium">Aadhaar Number</label>
-            <input
-              type="text"
-              value={aadhaarNumber}
-              onChange={(e) => setAadhaarNumber(e.target.value)}
-              placeholder="Enter 12-digit Aadhaar number"
-              className="border rounded w-full px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">PAN Number</label>
-            <input
-              type="text"
-              value={panNumber}
-              onChange={(e) => setPanNumber(e.target.value)}
-              placeholder="Enter 10-character PAN number"
-              className="border rounded w-full px-3 py-2"
-            />
-          </div>
-          <button
-            onClick={handleVerification}
-            className="bg-[#2a7d51] hover:bg-[#0f5f42] text-white px-4 py-2 rounded"
-          >
-            Verify Aadhaar & PAN
-          </button>
-        </div>
-      )}
+     {!aadhaarVerified && (
+  <div className="space-y-4 mb-8">
+    <div className="flex flex-col md:flex-row justify-around gap-6">
+      
+      {/* Aadhaar Upload */}
+      <div className="flex flex-col items-center">
+        <label
+          htmlFor="aadharCard"
+          className="border-dotted border-2 bg-green-700/20 cursor-pointer border-green-950 flex justify-center px-20 py-10 rounded-2xl"
+        >
+          <span className="flex flex-col items-center text-green-950">
+            <TbUpload />
+            Aadhaar Photo
+          </span>
+        </label>
+        <input
+          type="file"
+          accept="pdf"
+          onChange={(e) => setAadhaarPhoto(e.target.files[0])}
+          className="hidden"
+          id="aadharCard"
+        />
+
+        {/* Preview Aadhaar */}
+        {aadhaarPhoto && (
+          <img
+            src={URL.createObjectURL(aadhaarPhoto)}
+            alt="Aadhaar Preview"
+            className="mt-4 w-40 h-40 object-cover rounded-xl shadow"
+          />
+        )}
+      </div>
+
+      {/* PAN Upload */}
+      <div className="flex flex-col items-center">
+        <label
+          htmlFor="PANCard"
+          className="border-dotted border-2 bg-green-700/20 cursor-pointer border-green-950 flex justify-center px-20 py-10 rounded-2xl"
+        >
+          <span className="flex flex-col items-center text-green-950">
+            <TbUpload />
+            PAN Card Photo
+          </span>
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setPanPhoto(e.target.files[0])}
+          className="hidden"
+          id="PANCard"
+        />
+
+        {/* Preview PAN */}
+        {panPhoto && (
+          <img
+            src={URL.createObjectURL(panPhoto)}
+            alt="PAN Preview"
+            className="mt-4 w-40 h-40 object-cover rounded-xl shadow"
+          />
+        )}
+      </div>
+    </div>
+
+    <button
+      onClick={handleAadharPanVerification}
+      className="bg-[#2a7d51] hover:bg-[#0f5f42] text-white px-4 py-2 rounded mt-6"
+    >
+      Verify Aadhaar & PAN
+    </button>
+  </div>
+)}
+
 
       {aadhaarVerified && !formSubmitted && (formStatus === 'pending' || formStatus === null) && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">

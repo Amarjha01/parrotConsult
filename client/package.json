@@ -10,6 +10,7 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@tailwindcss/vite": "^4.1.7",
     "agora-react-uikit": "^1.2.0",
     "agora-rtc-sdk-ng": "^4.24.0",

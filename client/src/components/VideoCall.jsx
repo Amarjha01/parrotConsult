@@ -26,11 +26,12 @@ export default function VideoCall() {
     getToken();
   }, []);
 
-  const connectionData = {
-    appId: APP_ID,
-    channel: channelName,
-    token: token
-  };
+ const connectionData = {
+  appId: APP_ID,
+  channel: channelName,
+  token: token,
+  role: 'host', 
+}
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>

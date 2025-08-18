@@ -52,6 +52,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => {
 };
 
 const ConsultantCard = ({ consultant, onBookNow }) => {
+  
   const [isHovered, setIsHovered] = useState(false);
 
   const hoverStyle = {
@@ -195,7 +196,7 @@ const ConsultantCard = ({ consultant, onBookNow }) => {
     </Link>
   );
 };
-
+import { Player } from '@lottiefiles/react-lottie-player';
 export default function ViewAllConsultant() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
@@ -368,7 +369,16 @@ export default function ViewAllConsultant() {
             ) : error ? (
               <p className="text-center text-red-500 py-12">{error}</p>
             ) : filteredConsultants.length === 0 ? (
-              <p className="text-center text-gray-500 py-12">No consultants found matching your criteria.</p>
+            <div className="flex flex-col items-center justify-center h-48 bg-yellow-50 rounded-md border border-yellow-200 mx-auto max-w-md p-6">
+  <Player
+    autoplay
+    loop
+    src="https://assets5.lottiefiles.com/packages/lf20_kcsr6fcp.json"
+    style={{ height: '90px', width: '90px' }}
+  />
+  <p className="text-lg font-semibold text-yellow-700 mt-2">No consultants available at the moment.</p>
+  <p className="text-sm text-yellow-600 mt-1">Please check back later or adjust your filters.</p>
+</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {filteredConsultants.map((consultant, index) => (

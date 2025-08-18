@@ -22,6 +22,7 @@ import BookingPage from "../../booking/BookingPage";
 import { motion, AnimatePresence } from 'framer-motion';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Player } from '@lottiefiles/react-lottie-player';
 
 // Custom Arrows
 const NextArrow = ({ onClick }) => (
@@ -221,7 +222,7 @@ export default function ConsultantCard() {
 
       {/* Loading State */}
       {loading ? (
-        <div className="slider-container w-full px-4">
+        <div className="slider-container w-full">
           <Slider {...sliderSettings}>
             {[...Array(3)].map((_, index) => (
               <div key={index} className="py-5 px-2">
@@ -231,9 +232,16 @@ export default function ConsultantCard() {
           </Slider>
         </div>
       ) : consultants.length === 0 ? (
-        <div className="text-center py-12 text-gray-600">
-          No consultants available at the moment.
-        </div>
+      <div className="flex flex-col items-center justify-center h-48 bg-yellow-50 rounded-md border border-yellow-200 mx-auto max-w-md p-6">
+  <Player
+    autoplay
+    loop
+    src="https://assets5.lottiefiles.com/packages/lf20_kcsr6fcp.json"
+    style={{ height: '90px', width: '90px' }}
+  />
+  <p className="text-lg font-semibold text-yellow-700 mt-2">No consultants available at the moment.</p>
+  <p className="text-sm text-yellow-600 mt-1">Please check back later or adjust your filters.</p>
+</div>
       ) : (
         <div className="slider-container w-full px-1">
           <Slider {...sliderSettings}>
@@ -430,15 +438,14 @@ const Card = ({consultant, onBookNow}) => {
 
             {/* Action Buttons */}
             <div className="flex gap-2 mt-3">
-              <Link
-                to={`/consultantprofile/${_id}/${fullName}`}
+              <div
                 className="flex-1"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button className="w-full px-3 py-2 rounded-lg border border-[#27514b] text-[#27514b] font-semibold text-xs hover:bg-[#27514b] hover:text-[#fdf1df] transition-all duration-200 cursor-pointer">
                   View Profile
                 </button>
-              </Link>
+              </div>
               <button
                 className="flex-1 px-3 py-2 rounded-lg font-semibold text-xs bg-gradient-to-r from-[#27514b] via-[#2a5a4f] to-[#1e3e35] text-[#fdf1df] hover:shadow-lg transition-all duration-200 cursor-pointer"
                 onClick={(e) => {

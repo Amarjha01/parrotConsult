@@ -76,8 +76,6 @@ try {
   // ⬇️ Store the user data in localStorage
   localStorage.setItem("user", JSON.stringify(response.data.data));
 
-  // Optional: store token if you're handling it manually
-  // localStorage.setItem("accessToken", response.data.accessToken);
 
   // ⬇️ Redirect to dashboard
   setTimeout(() => navigate("/userdashboard/dashboard"), 1000);

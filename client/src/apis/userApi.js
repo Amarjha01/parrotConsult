@@ -70,7 +70,6 @@ try {
     },
   });
     console.log('response' , response);
-
   return response.data;
 } catch (error) {
    console.log('error in update profile', error);
@@ -81,18 +80,19 @@ try {
   
 };
 
-export const getAadharVerify = async(DataToVerify)=>{
+export const AadharPanVerification = async(DataToVerify)=>{
   try {
-    const response = await API.post('/user/aadharVerify' , DataToVerify , {
+    const response = await API.post('/user/aadharpanVerify' , DataToVerify , {
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'multipart/form-data'
       }
     })
-    console.log('aadasj' ,response);
+    console.log('AadharPanVerification' ,response);
     return response;
     
   } catch (error) {
-    
+    console.log(error);
+    return error
   }
 }
 
@@ -112,6 +112,19 @@ export const submitConsultantApplication = async(data) =>{
     
   } catch (error) {
     console.log(error);
+    
+  }
+}
+
+export const getConsultantStatus = async()=>{
+  try {
+    const response = await API.get('/user/consultantStatus')
+    console.log(response);
+    if(response.status === 200){
+    return response.data.status;
+    }
+    
+  } catch (error) {
     
   }
 }
